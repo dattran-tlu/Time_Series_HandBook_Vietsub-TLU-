@@ -1,0 +1,7 @@
+# Chương 2: Dự báo Tuyến tính, Xu hướng và Động lượng
+
+Trong chương này, chúng tôi giới thiệu các công cụ cơ bản về dự báo, những công cụ sử dụng công thức đại số đơn giản. Ở chương trước, chúng ta đã thảo luận về ARIMA, nơi các giá trị tương lai của một chuỗi thời gian được dự báo bằng cách sử dụng các giá trị quá khứ hoặc giá trị trễ của nó. Chúng ta đã thấy rằng ARIMA chỉ có thể được áp dụng sau khi đã loại bỏ xu hướng và tính thời vụ của dữ liệu. Tuy nhiên, chúng tôi lưu ý rằng đối với một số công cụ dự báo, xu hướng là yếu tố có liên quan và là một phần của công thức dự đoán. Trong phần này, việc dự báo sẽ được trình diễn trong khi tận dụng các mối quan hệ và xu hướng trong dữ liệu.
+
+Trong nửa đầu của sổ tay này, chúng tôi trình diễn việc dự báo bằng cách khớp dữ liệu chuỗi thời gian với hồi quy tuyến tính. Đối với nửa sau, chúng tôi chứng minh rằng bằng cách sử dụng các xu hướng của dữ liệu chuỗi thời gian như trung bình trượt, chúng ta có thể dự đoán hướng đi tương lai có thể có của xu hướng bằng cách sử dụng dự báo động lượng.
+
+Cuối cùng, một điều quan trọng cần lưu ý là khái niệm trung bình trượt (MA) trong ARIMA không giống với khái niệm trong chương này, vì trung bình trượt sẽ được thảo luận ở đây chỉ là định nghĩa cổ điển của MA.

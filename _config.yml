@@ -1,0 +1,26 @@
+# Book settings
+title: "Bản dịch Time Series Analysis Handbook"
+author: "By AI Department - TLU"
+
+# CẤM CỬA: Không cho quét linh tinh vào folder venv và các file rác
+exclude_patterns:
+  - venv/*
+  - .jupyter_cache/*
+  - _build/*
+  - "**/README.md" # Tạm thời bỏ qua các file README con để đỡ Warning
+
+execute:
+  execute_notebooks: off
+
+html:
+  use_issues_button: false
+  use_repository_button: false
+  launch_buttons:
+    thebe: false 
+
+parse:
+  myst_enable_extensions:
+    - amsmath
+    - dollarmath
+    - html_image
+    - colon_fence

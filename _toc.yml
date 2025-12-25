@@ -1,0 +1,12 @@
+format: jb-book
+root: Preface/Preface
+chapters:
+  - file: 00_Introduction/00_Introduction
+  - file: 01_AutoRegressiveIntegratedMovingAverage/01_AutoRegressiveIntegratedMovingAverage
+  - file: 02_LinearForecastingTrendandMomentumForecasting/02_LinearTrendandMomentumForecasting
+  - file: 03_VectorAutoregressiveModels/03_VectorAutoregressiveMethods
+  - file: 04_GrangerCausality/04_GrangerCausality
+  - file: 05_SimplexandSmapProjections/05_Empirical Dynamic Modelling (Simplex and SMap_Projections)
+  - file: 06_ConvergentCrossMappingandSugiharaCausality/ccm_sugihara
+  - file: 07_CrosscorrelationsFourierTransformandWaveletTransform/07_CrosscorrelationsFourierTransformandWaveletTransform
+  - file: 08_WinningestMethods/lightgbm_m5_forecasting

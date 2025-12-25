@@ -1,0 +1,38 @@
+# --- Rác từ lệnh Build (Cái này là thủ phạm làm rối Git status của anh) ---
+_build/
+dist/
+build/
+
+# --- Môi trường ảo (Tuyệt đối không push cái này!) ---
+venv/
+.venv/
+env/
+ENV/
+bin/
+lib/
+include/
+
+# --- Dữ liệu Big Data (Nặng quá GitHub nó "vả" đấy anh) ---
+data/
+*.csv
+*.json
+*.parquet
+*.zip
+*.gz
+*.tar.gz
+
+# --- Jupyter Notebook & Python rác ---
+.ipynb_checkpoints/
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# --- Cấu hình VS Code & Editor ---
+.vscode/
+.idea/
+.DS_Store
+*.swp
+
+# --- File cấu hình cá nhân ---
+.env

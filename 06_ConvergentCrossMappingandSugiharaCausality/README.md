@@ -1,0 +1,7 @@
+## Giới thiệu
+Trong các chương trước, chúng ta đã nói về Simplex Projection, một kỹ thuật dự báo tìm kiếm các xu hướng tương tự trong quá khứ để dự báo tương lai bằng cách tính toán các láng giềng gần nhất trong một embedding. Trong chương này, chúng ta thảo luận về Convergent Cross Mapping (CCM), cũng được đề xuất bởi [Sugihara et al., 2012](https://science.sciencemag.org/content/338/6106/496) như một phương pháp sử dụng các ý tưởng từ Simplex Projection để xác định quan hệ nhân quả giữa các biến trong một hệ động lực phức tạp (ví dụ: hệ sinh thái) chỉ bằng dữ liệu chuỗi thời gian.
+
+Chúng ta sẽ lần lượt đi qua các ý tưởng cốt lõi của CCM, cách phương pháp này giải quyết các hạn chế của nhân quả Granger, và thuật toán đứng sau nó. Sau đó, chúng ta sẽ kiểm nghiệm khuôn khổ CCM trên dữ liệu mô phỏng, trong đó chúng ta cố ý điều chỉnh mức độ ảnh hưởng của một biến lên biến còn lại. Cuối cùng, chúng ta sẽ áp dụng CCM lên một số dữ liệu thực tế để suy luận các mối quan hệ giữa các biến trong một hệ thống.
+
+### Gói causal-ccm
+`ccm_sugihara.ipynb` giải thích chi tiết phương pháp CCM. Nếu bạn muốn áp dụng phương pháp này trong các dự án của riêng mình, hãy cài đặt framework bằng lệnh `pip install causal-ccm`. Xem notebook `using_causal_ccm_package.ipynb` để biết chi tiết cách sử dụng.
