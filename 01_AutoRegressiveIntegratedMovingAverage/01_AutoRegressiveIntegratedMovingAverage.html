@@ -1,0 +1,1503 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Chương 1: Trung bình trượt tích hợp tự hồi quy (ARIMA) &#8212; Bản dịch Time Series Analysis Handbook</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" href="../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../_static/sphinx-thebe.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '01_AutoRegressiveIntegratedMovingAverage/01_AutoRegressiveIntegratedMovingAverage';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Chương 2: Dự báo Tuyến tính, Xu hướng và Động lượng" href="../02_LinearForecastingTrendandMomentumForecasting/02_LinearTrendandMomentumForecasting.html" />
+    <link rel="prev" title="Chương 0: Phân tích Chuỗi Thời gian Nâng cao (Advanced Time Series Analysis)" href="../00_Introduction/00_Introduction.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../Preface/Preface.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">Bản dịch Time Series Analysis Handbook</p>
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../Preface/Preface.html">
+                    Lời nói đầu: Giới thiệu về Phân tích Chuỗi Thời Gian (Time Series Analysis)
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../00_Introduction/00_Introduction.html">Chương 0: Phân tích Chuỗi Thời gian Nâng cao (Advanced Time Series Analysis)</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Chương 1: Trung bình trượt tích hợp tự hồi quy (ARIMA)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../02_LinearForecastingTrendandMomentumForecasting/02_LinearTrendandMomentumForecasting.html">Chương 2: Dự báo Tuyến tính, Xu hướng và Động lượng</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../03_VectorAutoregressiveModels/03_VectorAutoregressiveMethods.html">Chương 3: Các phương pháp Vectơ tự hồi quy (Vector Autoregressive Methods)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../04_GrangerCausality/04_GrangerCausality.html">Chương 4: Kiểm định nhân quả Granger (Granger Causality)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../05_SimplexandSmapProjections/05_Empirical%20Dynamic%20Modelling%20%28Simplex%20and%20SMap_Projections%29.html">Chương 5: Các phương pháp dự báo động lực (Simplex và SMap Projections)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../06_ConvergentCrossMappingandSugiharaCausality/ccm_sugihara.html">Chương 6: Ánh xạ chéo hội tụ (Convergent Cross Mapping)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../07_CrosscorrelationsFourierTransformandWaveletTransform/07_CrosscorrelationsFourierTransformandWaveletTransform.html">Chương 7: Tương quan chéo, Biến đổi Fourier và Biến đổi Wavelet (Cross-Correlations, Fourier Transform, and Wavelet Transform)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../08_WinningestMethods/lightgbm_m5_forecasting.html">Chapter 8: Winningest Methods in Time Series Forecasting</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/01_AutoRegressiveIntegratedMovingAverage/01_AutoRegressiveIntegratedMovingAverage.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Chương 1: Trung bình trượt tích hợp tự hồi quy (ARIMA)</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gioi-thieu-ve-arima">Giới thiệu về ARIMA</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#vi-du-1-chuoi-thoi-gian-don-bien-dung-va-khong-dung">Ví dụ 1: Chuỗi thời gian đơn biến dừng và không dừng</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#thanh-phan-mo-hinh">Thành phần mô hình</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cac-tham-so-mo-hinh-p-d-and-q-va-cac-truong-hop-dac-biet">Các tham số mô hình <em>p, d, and q</em> và các trường hợp đặc biệt</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#xac-dinh-p-d-va-q">Xác định <em>p</em>, <em>d</em>, và <em>q</em></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#tim-bac-sai-phan-d">Tìm bậc sai phân <em>d</em></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#tim-bac-cua-thanh-phan-tu-hoi-quy-p">Tìm bậc của thành phần Tự hồi quy <em>p</em></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#tim-bac-cua-thanh-phan-trung-binh-truot-q">Tìm bậc của thành phần Trung bình trượt <em>q</em></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#xay-dung-mo-hinh-arima">Xây dựng mô hình ARIMA</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#trien-khai-va-du-bao-bang-arima">Triển khai và Dự báo bằng ARIMA</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#vi-du-2-du-bao-nhiet-do-trong-bo-du-lieu-khi-hau-jena">Ví dụ 2: Dự báo nhiệt độ trong Bộ dữ liệu Khí hậu Jena</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#lua-chon-bac-mo-hinh-tinh-chinh-sieu-tham-so">Lựa chọn bậc mô hình (tinh chỉnh siêu tham số)</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#danh-gia-hieu-suat-mo-hinh-tren-tap-kiem-tra">Đánh giá hiệu suất mô hình trên tập kiểm tra</a><ul class="nav section-nav flex-column">
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#du-bao-24-gio-tiep-theo-ngoai-tap-kiem-tra">Dự báo 24 giờ tiếp theo ngoài tập kiểm tra</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#vi-du-3-su-dung-arima-cho-chuoi-thoi-gian-da-bien-multivariate-time-series">Ví dụ 3: Sử dụng ARIMA cho chuỗi thời gian đa biến (Multivariate Time Series)</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#xem-truoc-chuong-tiep-theo">Xem trước chương tiếp theo</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tai-lieu-tham-khao">Tài liệu tham khảo</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="chuong-1-trung-binh-truot-tich-hop-tu-hoi-quy-arima">
+<h1>Chương 1: Trung bình trượt tích hợp tự hồi quy (ARIMA)<a class="headerlink" href="#chuong-1-trung-binh-truot-tich-hop-tu-hoi-quy-arima" title="Permalink to this heading">#</a></h1>
+<p>Biên soạn bởi: Benjur Emmanuel L. Borja and Maria Eloisa M. Ventura</p>
+<p>Trong sổ tay này, chúng ta sẽ giới thiệu phương pháp tiếp cận đầu tiên đối với dự báo chuỗi thời gian, đó là <strong>ARIMA</strong>hay Trung bình trượt tích hợp tự hồi quy. Notebook này sẽ thảo luận về:</p>
+<ol class="arabic simple">
+<li><p>Định nghĩa và Công thức của các mô hình ARIMA</p></li>
+<li><p>Các tham số của mô hình (p, d, và q) và các trường hợp đặc biệt của mô hình ARIMA</p></li>
+<li><p>Các thống kê mô hình và cách giải thích</p></li>
+<li><p>Triển khai và dự báo bằng ARIMA</p></li>
+</ol>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#Import required Libraries</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span><span class="o">,</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">statsmodels.graphics.tsaplots</span><span class="w"> </span><span class="kn">import</span> <span class="n">plot_acf</span><span class="p">,</span> <span class="n">plot_pacf</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">statsmodels.tsa.stattools</span><span class="w"> </span><span class="kn">import</span> <span class="n">adfuller</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="kn">import</span> <span class="n">log</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">statsmodels.tsa.arima_model</span><span class="w"> </span><span class="kn">import</span> <span class="n">ARIMA</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">mean_squared_error</span><span class="p">,</span> <span class="n">mean_absolute_error</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">math</span><span class="w"> </span><span class="kn">import</span> <span class="n">sqrt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="kn">import</span> <span class="n">read_csv</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">multiprocessing</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">mp</span>
+
+<span class="c1">### Just to remove warnings to prettify the notebook. </span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<section id="gioi-thieu-ve-arima">
+<h2>Giới thiệu về ARIMA<a class="headerlink" href="#gioi-thieu-ve-arima" title="Permalink to this heading">#</a></h2>
+<p>ARIMA, hay Trung bình trượt tích hợp tự hồi quy, là một tập hợp các mô hình giải thích một chuỗi thời gian bằng cách sử dụng các giá trị trước đó của chính nó thông qua các độ trễ (<strong>A</strong>uto<strong>R</strong>egressive - Tự hồi quy) và các sai số trễ (<strong>M</strong>oving <strong>A</strong>verage - Trung bình trượt), đồng thời xem xét tính dừng đã được hiệu chỉnh bằng cách lấy sai phân (ngược lại với Integration - Tích hợp). Nói cách khác, ARIMA giả định rằng chuỗi thời gian được mô tả bởi các tương quan tự thuận trong dữ liệu thay vì các xu hướng và tính thời vụ. Trong bối cảnh này, chúng ta định nghĩa xu hướng và tính thời vụ như sau:</p>
+<ul class="simple">
+<li><p><strong>Xu hướng (Trend)</strong>: Một chuỗi thời gian có xu hướng nếu có một sự tăng hoặc giảm dài hạn bao trùm trong dữ liệu, và sự tăng giảm này không nhất thiết phải là tuyến tính.</p></li>
+<li><p><strong>Tính thời vụ (Seasonality)</strong>: Dữ liệu chuỗi thời gian có tính thời vụ khi nó bị ảnh hưởng bởi các yếu tố thời vụ như thời điểm trong năm hoặc các ngày trong tuần. Tính thời vụ của dữ liệu là rõ rệt khi có một tần suất xuất hiện quy luật cố định.</p></li>
+</ul>
+<section id="vi-du-1-chuoi-thoi-gian-don-bien-dung-va-khong-dung">
+<h3>Ví dụ 1: Chuỗi thời gian đơn biến dừng và không dừng<a class="headerlink" href="#vi-du-1-chuoi-thoi-gian-don-bien-dung-va-khong-dung" title="Permalink to this heading">#</a></h3>
+<p>Để minh họa, hãy cùng xem các ví dụ sau đây về chuỗi thời gian (<strong><a class="reference external" href="https://otexts.com/fpp2/fpp_files/figure-html/stationary-1.png">source</a></strong>):</p>
+<p>(a) Giá cổ phiếu Google trong 200 ngày liên tiếp</p>
+<p>(b) Sự thay đổi giá cổ phiếu Google hàng ngày trong 200 ngày liên tiếp</p>
+<p>(c) Số lượng các cuộc đình công hàng năm ở Hoa Kỳ</p>
+<p>(d) Doanh số bán nhà mới cho một gia đình hàng tháng tại Hoa Kỳ; (e) Giá hàng năm của một tá trứng tại Hoa Kỳ (theo giá trị đồng đô la không đổi)</p>
+<p>(f) Tổng số lợn bị giết mổ hàng tháng ở Victoria, Úc</p>
+<p>(g) Tổng số linh miêu bị bẫy hàng năm ở khu vực sông McKenzie thuộc phía tây bắc Canada; (h) Sản lượng bia hàng tháng của Úc</p>
+<p>(i) Sản lượng điện hàng tháng của Úc.</p>
+<p><img alt="stationary-1.png" src="../_images/stationary-1.png" /></p>
+<p><strong>Chuỗi nào trong số này là chuỗi dừng?</strong></p>
+<p>Tính thời vụ rõ rệt đã loại trừ các chuỗi (d), (h) và (i). Các xu hướng và mức độ thay đổi đã loại trừ các chuỗi (a), (c), (e), (f) và (i). Phương sai tăng dần cũng loại trừ chuỗi (i). Như vậy chỉ còn lại (b) và (g) là các chuỗi dừng. Thoạt nhìn, (g) có vẻ không dừng nhưng các chu kỳ này không có tính chu kỳ cố định, và phụ thuộc vào các tương tác phức tạp giữa quần thể linh miêu và nguồn thức ăn sẵn có. Thời điểm của các chu kỳ này là không thể dự đoán được, do đó, chuỗi thời gian này là dừng.</p>
+<p>Bây giờ hãy chú ý đến Giá cổ phiếu Google (a) và sự thay đổi hàng ngày của Giá cổ phiếu Google (b). Các chuỗi thời gian này đến từ cùng một hệ thống, nhưng biểu hiện các động lực khác nhau. điều này minh họa rằng chúng ta có thể biến chuỗi thời gian không dừng thành chuỗi dừng bằng cách lấy hiệu số giữa các quan sát liên tiếp - hay còn gọi là <strong>Lấy sai phân (Differencing)</strong>. Lấy sai phân giúp ổn định chuỗi thời gian của chúng ta bằng cách loại bỏ những thay đổi về mức độ của chuỗi thời gian, từ đó giảm thiểu các xu hướng và tính thời vụ.</p>
+</section>
+<section id="thanh-phan-mo-hinh">
+<h3>Thành phần mô hình<a class="headerlink" href="#thanh-phan-mo-hinh" title="Permalink to this heading">#</a></h3>
+<p>Như đã đề cập trước đó, các mô hình ARIMA được xây dựng dựa trên các khía cạnh then chốt sau:</p>
+<p><strong>AR</strong>: Tự hồi quy. Một mô hình sử dụng mối quan hệ phụ thuộc giữa một quan sát và một số lượng nhất định các quan sát trễ.<br />
+<strong>I</strong>: Tích hợp. Việc sử dụng sai phân các quan sát thô (ví dụ: lấy một quan sát trừ đi quan sát ở bước thời gian trước đó) để làm cho chuỗi thời gian trở nên dừng.<br />
+<strong>MA</strong>: Trung bình trượt. Một mô hình sử dụng sự phụ thuộc giữa một quan sát và sai số dư từ một mô hình trung bình trượt áp dụng cho các quan sát trễ.</p>
+<p>Mỗi thành phần này được chỉ định rõ ràng trong mô hình dưới dạng một tham số. Một ký hiệu tiêu chuẩn được sử dụng là ARIMA(p,d,q), trong đó các tham số được thay thế bằng các giá trị nguyên để chỉ ra nhanh chóng mô hình ARIMA cụ thể đang được sử dụng:
+<strong>p</strong>: Số lượng quan sát trễ có trong mô hình, còn được gọi là bậc trễ (xử lý với <strong>cửa sổ</strong> của <span class="math notranslate nohighlight">\(X_t\)</span>).
+<strong>d</strong>: Số lần các quan sát thô được lấy sai phân, còn được gọi là bậc sai phân (<em>xử lý bậc <strong>sai phân (differencing)</strong> của <span class="math notranslate nohighlight">\(X_t\)</span></em>)<br />
+<strong>q</strong>: Kích thước của cửa sổ trung bình trượt, còn được gọi là bậc của trung bình trượt (<em>xử lý các <strong>phần dư (residuals)</strong></em>)</p>
+<p>Dựa trên điều này, trường hợp tổng quát của <em><strong>ARIMA(p,d,q)</strong></em> có thể được viết là:</p>
+<div class="amsmath math notranslate nohighlight" id="equation-32b67f57-559a-4fb9-ac5c-12b16236b615">
+<span class="eqno">(1)<a class="headerlink" href="#equation-32b67f57-559a-4fb9-ac5c-12b16236b615" title="Permalink to this equation">#</a></span>\[\begin{equation}
+X_{t} = \alpha _{1}X_{t-1} + \dots + \alpha _{p}X_{t-p} + \varepsilon _{t}+\theta_{1}\varepsilon _{t-1}+\cdots +\theta _{q}\varepsilon _{t-q}
+\end{equation}\]</div>
+<p>Hoặc diễn giải bằng lời:</p>
+<p><strong>Dự báo <span class="math notranslate nohighlight">\(X_t\)</span></strong> = Hằng số + Kết hợp tuyến tính của <strong>Các trễ của <span class="math notranslate nohighlight">\(X\)</span> (lên đến <span class="math notranslate nohighlight">\(p\)</span> trễ)</strong> + Kết hợp tuyến tính của <strong>Các sai số dự báo trễ (lên đến q trễ)</strong>. Với điều kiện là chuỗi thời gian đã được lấy <strong>sai phân (lên đến d số hạng)</strong> để đảm bảo tính dừng.</p>
+</section>
+</section>
+<section id="cac-tham-so-mo-hinh-p-d-and-q-va-cac-truong-hop-dac-biet">
+<h2>Các tham số mô hình <em>p, d, and q</em> và các trường hợp đặc biệt<a class="headerlink" href="#cac-tham-so-mo-hinh-p-d-and-q-va-cac-truong-hop-dac-biet" title="Permalink to this heading">#</a></h2>
+<p>Trước khi thảo luận về cách xác định p, d và q tốt nhất để đại diện cho một chuỗi thời gian, trước tiên hãy cùng xem xét các trường hợp đặc biệt của mô hình ARIMA nhằm giúp minh họa việc thiết lập phương trình ARIMA.</p>
+<p><strong>Case 1: ARIMA(p,0,0) = mô hình tự hồi quy (autoregressive model)</strong>: nếu chuỗi là dừng và có tự tương quan, có lẽ nó có thể được dự báo bằng bội số của giá trị trước đó của chính nó, cộng với một hằng số.</p>
+<p>Phương trình dự báo cho ARIMA(1,0,0) là:</p>
+<div class="amsmath math notranslate nohighlight" id="equation-7d23a5eb-5387-4427-bb14-19889a0f01ea">
+<span class="eqno">(2)<a class="headerlink" href="#equation-7d23a5eb-5387-4427-bb14-19889a0f01ea" title="Permalink to this equation">#</a></span>\[\begin{equation}
+X_{t}  =  \mu  + \alpha _{1}X_{t-1}
+\end{equation}\]</div>
+<p>trong khi ARIMA(2,0,0) là:</p>
+<div class="amsmath math notranslate nohighlight" id="equation-4e664c76-2438-4478-a793-028c45c10d30">
+<span class="eqno">(3)<a class="headerlink" href="#equation-4e664c76-2438-4478-a793-028c45c10d30" title="Permalink to this equation">#</a></span>\[\begin{equation}
+X_{t}  =  \mu  + \alpha _{1}X_{t-1} +  \alpha _{2}X_{t-2}
+\end{equation}\]</div>
+<p>hoặc tổng quát ARIMA(p,0,0):</p>
+<div class="amsmath math notranslate nohighlight" id="equation-b26e78fc-0ad5-43e0-9efa-44233f682236">
+<span class="eqno">(4)<a class="headerlink" href="#equation-b26e78fc-0ad5-43e0-9efa-44233f682236" title="Permalink to this equation">#</a></span>\[\begin{equation}
+X_{t}  =  \mu  + \alpha _{1}X_{t-1} +  \alpha _{2}X_{t-2} \dots + \alpha _{p}X_{t-p}
+\end{equation}\]</div>
+<p><strong>Trường hợp 2: ARIMA(0,0,q) = mô hình trung bình trượt (moving average model)</strong>: nếu chuỗi là dừng nhưng tương quan với các sai số của các giá trị trước đó, chúng ta có thể hồi quy bằng cách sử dụng các sai số dự báo trong quá khứ.</p>
+<p>Phương trình dự báo cho ARIMA(0,0,1) được cho bởi:</p>
+<div class="amsmath math notranslate nohighlight" id="equation-821236a3-c359-44e4-8e90-26c666bb3781">
+<span class="eqno">(5)<a class="headerlink" href="#equation-821236a3-c359-44e4-8e90-26c666bb3781" title="Permalink to this equation">#</a></span>\[\begin{equation}
+X_{t} = \varepsilon _{t}+\theta_{1}\varepsilon _{t-1}
+\end{equation}\]</div>
+<p>hoặc theo cách tương tự như p, điều này có thể được tổng quát hóa thành ARIMA(0,0,q):</p>
+<div class="amsmath math notranslate nohighlight" id="equation-40c8a3c5-94c3-4853-a1e4-f841cf2f53b9">
+<span class="eqno">(6)<a class="headerlink" href="#equation-40c8a3c5-94c3-4853-a1e4-f841cf2f53b9" title="Permalink to this equation">#</a></span>\[\begin{equation}
+X_{t} = \varepsilon _{t}+\theta_{1}\varepsilon _{t-1}+\cdots +\theta _{q}\varepsilon _{t-q}
+\end{equation}\]</div>
+<p>trong đó <span class="math notranslate nohighlight">\(\theta_{q}\)</span> là hệ số tại thời điểm <span class="math notranslate nohighlight">\(t-q\)</span> của phần dư <span class="math notranslate nohighlight">\(\varepsilon _{t-q}\)</span>.</p>
+<p><strong>Trường hợp 3: ARIMA(0,1,0) = Bước đi ngẫu nhiên (Random Walk)</strong>: nếu chuỗi là không dừng thì mô hình đơn giản nhất mà chúng ta có thể sử dụng là mô hình bước đi ngẫu nhiên, được cho bởi:</p>
+<div class="amsmath math notranslate nohighlight" id="equation-870f8c2b-a29c-40a8-9b5c-283071d35ca7">
+<span class="eqno">(7)<a class="headerlink" href="#equation-870f8c2b-a29c-40a8-9b5c-283071d35ca7" title="Permalink to this equation">#</a></span>\[\begin{equation}
+X_{t}  =  \mu  + X_{t-1}
+\end{equation}\]</div>
+<p><em>Điều này sau đó có thể được tổng quát hóa thêm thành ARIMA(0,d,0) tương tự như hai trường hợp đầu tiên.</em></p>
+<p>hư đã trình bày trong các trường hợp của chúng ta, chúng ta có thể sử dụng giá trị 0 cho một tham số, điều này chỉ ra việc không sử dụng thành phần đó của mô hình. Bằng cách này, mô hình ARIMA có thể được cấu hình để thực hiện chức năng của một mô hình ARMA, và thậm chí là một mô hình AR, I hoặc MA đơn giản. <strong>Cần lưu ý rằng trường hợp ARIMA(0,1,1) chính là mô hình San bằng mũ đơn giản (Simple Exponential Smoothing)</strong> nhưng chúng ta sẽ để điều đó trong một cuộc thảo luận khác.</p>
+<p>Việc triển khai một mô hình ARIMA cho một chuỗi thời gian giả định rằng các quan sát là một tiến trình ARIMA. Để triển khai ARIMA, một mô hình hồi quy tuyến tính được xây dựng bao gồm số lượng và loại các số hạng đã chỉ định, và dữ liệu được chuẩn bị bằng một bậc sai phân nhằm làm cho nó trở nên dừng, nghĩa là để loại bỏ các cấu trúc xu hướng và thời vụ ảnh hưởng tiêu cực đến mô hình hồi quy.</p>
+<section id="xac-dinh-p-d-va-q">
+<h3>Xác định <em>p</em>, <em>d</em>, và <em>q</em><a class="headerlink" href="#xac-dinh-p-d-va-q" title="Permalink to this heading">#</a></h3>
+<p>Chúng ta cần chỉ định rõ ràng các giá trị <span class="math notranslate nohighlight">\(p, d,\)</span> và <span class="math notranslate nohighlight">\(q\)</span> khi triển khai các mô hình ARIMA. Việc lựa chọn bộ tham số phù hợp có thể khá khó khăn, nhưng có một vài phương pháp để tự động hóa quy trình này. Ví dụ, chúng ta có thể sử dụng tìm kiếm lưới trong Python để quét qua các giá trị khác nhau và kiểm tra xem mô hình nào là tối ưu (sẽ được thảo luận sau). Ngôn ngữ R thì sử dụng hàm auto.arima() để thực hiện việc này một cách tự động. Trong trường hợp của chúng ta, chúng ta sẽ xem xét Kiểm định Augmented Dickey-Fuller (ADF), Hàm tự tương quan (ACF) và Hàm tự tương quan riêng phần (PACF) để xác định các tham số của mô hình.</p>
+<section id="tim-bac-sai-phan-d">
+<h4>Tìm bậc sai phân <em>d</em><a class="headerlink" href="#tim-bac-sai-phan-d" title="Permalink to this heading">#</a></h4>
+<p>Như đã trình bày trước đó, các mô hình ARIMA được giả định là phải dừng. Việc thực hiện lấy sai phân có thể giúp tạo ra tính dừng cho nhiều loại chuỗi thời gian khác nhau. Cách nhanh nhất để xác định <em>d</em> cho mô hình là thực hiện lấy sai phân và chạy kiểm định ADF để kiểm tra tính dừng. Chúng ta cũng có thể quan sát PACF và ACF để xem liệu chuỗi thời gian đã dừng sau khi lấy sai phân bậc <em>d</em> hay chưa.</p>
+<p>Để minh họa, hãy cùng xem ví dụ sau:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># We&#39;re using a sample data from https://raw.githubusercontent.com/selva86/datasets/master/wwwusage.csv</span>
+<span class="c1"># Import data</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;../data/wwwusage.csv&#39;</span><span class="p">,</span> <span class="n">names</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;value&#39;</span><span class="p">],</span> <span class="n">header</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Original Series&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Value&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/97c086f53681fdddd5e1647a523ebbba12d276a1bc0db1f5a58e9a25d250bc64.png" src="../_images/97c086f53681fdddd5e1647a523ebbba12d276a1bc0db1f5a58e9a25d250bc64.png" />
+</div>
+</div>
+<p>Việc quan sát sơ bộ ban đầu cho thấy chuỗi thời gian này có một xu hướng rõ rệt và không dừng. Kiểm tra bằng cách sử dụng kiểm định ADF:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">result</span> <span class="o">=</span> <span class="n">adfuller</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">dropna</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;ADF Statistic: </span><span class="si">%f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;p-value: </span><span class="si">%f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">result</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>ADF Statistic: -2.464240
+p-value: 0.124419
+</pre></div>
+</div>
+</div>
+</div>
+<p>Giả thuyết không của kiểm định ADF là chuỗi thời gian không dừng. Do đó, nếu giá trị <span class="math notranslate nohighlight">\(p\)</span> (<span class="math notranslate nohighlight">\(p\text{-value}\)</span>) của kiểm định nhỏ hơn mức ý nghĩa (<span class="math notranslate nohighlight">\(0,05\)</span>), bạn sẽ bác bỏ giả thuyết không và suy ra rằng chuỗi thời gian thực sự là dừng. Đối với ví dụ của chúng ta, chúng ta đã thất bại trong việc bác bỏ giả thuyết không (nghĩa là chuỗi vẫn chưa dừng).</p>
+<p>Tiếp theo, chúng ta lấy sai phân chuỗi thời gian và kiểm tra kết quả của kiểm định ADF. Chúng ta cũng sẽ xem xét biểu đồ ACF.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;figure.figsize&#39;</span><span class="p">:(</span><span class="mi">15</span><span class="p">,</span><span class="mi">8</span><span class="p">),</span> <span class="s1">&#39;figure.dpi&#39;</span><span class="p">:</span><span class="mi">120</span><span class="p">})</span>
+
+<span class="c1"># Original Series</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">value</span><span class="p">);</span> <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Original Series&#39;</span><span class="p">)</span>
+<span class="n">plot_acf</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+
+<span class="c1"># 1st Differencing</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">diff</span><span class="p">());</span> <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;1st Order Differencing&#39;</span><span class="p">)</span>
+<span class="n">plot_acf</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">diff</span><span class="p">()</span><span class="o">.</span><span class="n">dropna</span><span class="p">(),</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+
+<span class="c1"># 2nd Differencing</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">diff</span><span class="p">()</span><span class="o">.</span><span class="n">diff</span><span class="p">());</span> <span class="n">axes</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;2nd Order Differencing&#39;</span><span class="p">)</span>
+<span class="n">plot_acf</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">diff</span><span class="p">()</span><span class="o">.</span><span class="n">diff</span><span class="p">()</span><span class="o">.</span><span class="n">dropna</span><span class="p">(),</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;ADF Statistic for 1st Order Differencing&#39;</span><span class="p">)</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">adfuller</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">diff</span><span class="p">()</span><span class="o">.</span><span class="n">dropna</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;ADF Statistic: </span><span class="si">%f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;p-value: </span><span class="si">%f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">result</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Critical Values:&#39;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">result</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t</span><span class="si">%s</span><span class="s1">: </span><span class="si">%.3f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">))</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1"> ADF Statistic for 2nd Order Differencing&#39;</span><span class="p">)</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">adfuller</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">diff</span><span class="p">()</span><span class="o">.</span><span class="n">diff</span><span class="p">()</span><span class="o">.</span><span class="n">dropna</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;ADF Statistic: </span><span class="si">%f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;p-value: </span><span class="si">%f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">result</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Critical Values:&#39;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">result</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t</span><span class="si">%s</span><span class="s1">: </span><span class="si">%.3f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/e31f90ed5a298e5a002455616c84ede4425ea315fd54fd377db5dec7183260a1.png" src="../_images/e31f90ed5a298e5a002455616c84ede4425ea315fd54fd377db5dec7183260a1.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>ADF Statistic for 1st Order Differencing
+ADF Statistic: -2.722238
+p-value: 0.070268
+Critical Values:
+	1%: -3.500
+	5%: -2.892
+	10%: -2.583
+
+ ADF Statistic for 2nd Order Differencing
+ADF Statistic: -9.929762
+p-value: 0.000000
+Critical Values:
+	1%: -3.500
+	5%: -2.892
+	10%: -2.583
+</pre></div>
+</div>
+</div>
+</div>
+<p>Dựa trên kết quả của ACF và ADF, chúng ta có thể thấy rằng chuỗi thời gian đạt được tính dừng sau hai bậc lấy sai phân. Tuy nhiên, biểu đồ ACF của sai phân bậc 2 rơi vào vùng âm khá nhanh. Điều này có thể cho thấy chuỗi dữ liệu có khả năng đã bị lấy sai phân quá mức (over-differenced). Việc quyết định sử dụng sai phân bậc một hay bậc hai cho các mô hình ARIMA hiện tại là tùy thuộc vào chúng ta.</p>
+</section>
+<section id="tim-bac-cua-thanh-phan-tu-hoi-quy-p">
+<h4>Tìm bậc của thành phần Tự hồi quy <em>p</em><a class="headerlink" href="#tim-bac-cua-thanh-phan-tu-hoi-quy-p" title="Permalink to this heading">#</a></h4>
+<p>Như chúng ta đã thảo luận trước đó, chúng ta có thể quan sát biểu đồ PACF để xác định độ trễ cho các thành phần AR. Tự tương quan riêng phần có thể được hình dung là sự tương quan giữa chuỗi dữ liệu và độ trễ của chính nó, sau khi đã loại trừ đi sự đóng góp từ các độ trễ trung gian. Vì vậy, PACF truyền tải một cách thuần túy mối tương quan giữa một độ trễ và chuỗi dữ liệu. Bằng cách đó, chúng ta sẽ biết liệu độ trễ đó có cần thiết trong thành phần AR hay không.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># PACF plot of 1st differenced series</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;figure.figsize&#39;</span><span class="p">:(</span><span class="mi">15</span><span class="p">,</span><span class="mf">2.5</span><span class="p">),</span> <span class="s1">&#39;figure.dpi&#39;</span><span class="p">:</span><span class="mi">120</span><span class="p">})</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">diff</span><span class="p">());</span> <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;1st Differencing&#39;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">ylim</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">5</span><span class="p">))</span>
+<span class="n">plot_pacf</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">diff</span><span class="p">()</span><span class="o">.</span><span class="n">dropna</span><span class="p">(),</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/bd62eedf892e40a739f9c34170757f7587c2d1dba725c7d6dba1a3adf42e7b93.png" src="../_images/bd62eedf892e40a739f9c34170757f7587c2d1dba725c7d6dba1a3adf42e7b93.png" />
+</div>
+</div>
+<p>Ngay lập tức, chúng ta có thể quan sát thấy biểu đồ PACF cho kết quả có ý nghĩa thống kê tại Độ trễ 1 và Độ trễ 2, nghĩa là nó vượt qua giới hạn ý nghĩa (vùng màu xanh). Chúng ta cũng có thể thấy các giá trị có ý nghĩa ở các bậc cao hơn, nhưng hãy lưu ý rằng với số lượng độ trễ mà chúng ta đang kiểm tra, về mặt thống kê, việc xuất hiện các cột nhọn ngẫu nhiên (random spikes) trong biểu đồ PACF và ACF là điều hoàn toàn có thể xảy ra. <em>Mặc dù điều này cũng có thể là do Tính thời vụ, vấn đề mà chúng ta sẽ giải quyết riêng biệt.</em></p>
+<p>Với kết quả này, giờ đây chúng ta có thể quyết định sử dụng <span class="math notranslate nohighlight">\(p = 2\)</span> cho mô hình ARIMA của mình.</p>
+</section>
+<section id="tim-bac-cua-thanh-phan-trung-binh-truot-q">
+<h4>Tìm bậc của thành phần Trung bình trượt <em>q</em><a class="headerlink" href="#tim-bac-cua-thanh-phan-trung-binh-truot-q" title="Permalink to this heading">#</a></h4>
+<p>Tương tự như cách chúng ta xác định <span class="math notranslate nohighlight">\(p\)</span>, bây giờ chúng ta sẽ nhìn vào biểu đồ ACF để xác định các thành phần <span class="math notranslate nohighlight">\(q\)</span> cần xem xét cho phần MA. Biểu đồ ACF cho biết cần bao nhiêu thành phần MA để loại bỏ bất kỳ sự tự tương quan nào trong chuỗi đã dừng.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># ACF plot of 1st differenced series</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;figure.figsize&#39;</span><span class="p">:(</span><span class="mi">15</span><span class="p">,</span><span class="mi">4</span><span class="p">),</span> <span class="s1">&#39;figure.dpi&#39;</span><span class="p">:</span><span class="mi">120</span><span class="p">})</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">diff</span><span class="p">());</span> <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;1st Differencing&#39;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">ylim</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span>
+<span class="n">plot_acf</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">diff</span><span class="p">()</span><span class="o">.</span><span class="n">dropna</span><span class="p">(),</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/de1b0adc2464e68d5acadfd1067b9b08d024b84492597389ca93427d5308a250.png" src="../_images/de1b0adc2464e68d5acadfd1067b9b08d024b84492597389ca93427d5308a250.png" />
+</div>
+</div>
+<p>Kết quả trên biểu đồ ACF của chúng ta không rõ ràng như biểu đồ PACF. Chúng ta có thể quan sát thấy một vài số hạng ACF nằm trên mức ý nghĩa. Điều này có thể là do mô hình của chúng ta có tính dừng yếu. Nguyên nhân cũng có thể xuất phát từ việc chuỗi thời gian này không phải là một mô hình MA thuần túy mà là một mô hình ARIMA. Tạm thời, chúng ta hãy cân nhắc chọn <span class="math notranslate nohighlight">\(q = 3\)</span>.</p>
+</section>
+</section>
+</section>
+<section id="xay-dung-mo-hinh-arima">
+<h2>Xây dựng mô hình ARIMA<a class="headerlink" href="#xay-dung-mo-hinh-arima" title="Permalink to this heading">#</a></h2>
+<p>Bây giờ chúng ta đã xác định được các giá trị <span class="math notranslate nohighlight">\(p, d\)</span> và <span class="math notranslate nohighlight">\(q\)</span>, chúng ta đã có mọi thứ cần thiết để khớp mô hình ARIMA. Hãy triển khai trên bộ dữ liệu này trước khi chúng ta đi sâu hơn vào cách thực hiện ARIMA trong phần tiếp theo. Chúng ta sẽ sử dụng thư viện ARIMA() trong gói statsmodels. Theo như tính toán, chúng ta sẽ sử dụng bộ tham số ARIMA(2,1,3):</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">ARIMA</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">))</span>
+<span class="n">model_fit</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">disp</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">model_fit</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>                             ARIMA Model Results                              
+==============================================================================
+Dep. Variable:                D.value   No. Observations:                   99
+Model:                 ARIMA(2, 1, 3)   Log Likelihood                -251.701
+Method:                       css-mle   S.D. of innovations              3.050
+Date:                Sun, 21 Feb 2021   AIC                            517.402
+Time:                        00:47:38   BIC                            535.568
+Sample:                             1   HQIC                           524.752
+                                                                              
+=================================================================================
+                    coef    std err          z      P&gt;|z|      [0.025      0.975]
+---------------------------------------------------------------------------------
+const             1.0049      1.584      0.635      0.526      -2.099       4.109
+ar.L1.D.value     0.5502      0.299      1.840      0.066      -0.036       1.136
+ar.L2.D.value     0.2364      0.217      1.091      0.275      -0.188       0.661
+ma.L1.D.value     0.6316      0.289      2.187      0.029       0.066       1.198
+ma.L2.D.value    -0.1730      0.219     -0.789      0.430      -0.603       0.257
+ma.L3.D.value    -0.3149      0.142     -2.211      0.027      -0.594      -0.036
+                                    Roots                                    
+=============================================================================
+                  Real          Imaginary           Modulus         Frequency
+-----------------------------------------------------------------------------
+AR.1            1.1994           +0.0000j            1.1994            0.0000
+AR.2           -3.5268           +0.0000j            3.5268            0.5000
+MA.1            1.7100           -0.0000j            1.7100           -0.0000
+MA.2           -1.1296           -0.7624j            1.3628           -0.4055
+MA.3           -1.1296           +0.7624j            1.3628            0.4055
+-----------------------------------------------------------------------------
+</pre></div>
+</div>
+</div>
+</div>
+<p>Có khá nhiều thông tin cần được bóc tách từ bảng tổng kết (summary). Nhìn chung, chúng ta thường quan tâm đến Chỉ số Thông tin Akaike (AIC), các hệ số của các thành phần AR và MA (coef_), và giá trị p-values của các số hạng (P&gt;|z|). Chúng ta cần giá trị <span class="math notranslate nohighlight">\(p\)</span> nhỏ hơn 0,05 để đạt được ý nghĩa thống kê, điều này có nghĩa là mô hình của chúng ta đã thất bại trong việc đạt được ý nghĩa thống kê cho các thành phần AR và MA (ở bộ thông số trước). Hãy thử cách tiếp cận thận trọng hơn bằng cách sử dụng các giá trị p và d, i.e. Cụ thể là ARIMA(1,1,1), như được gợi ý bởi giá trị <span class="math notranslate nohighlight">\(p\)</span> của AR1 và MA1 trong kết quả của chúng ta.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">ARIMA</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span>
+<span class="n">model_fit</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">disp</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">model_fit</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>                             ARIMA Model Results                              
+==============================================================================
+Dep. Variable:                D.value   No. Observations:                   99
+Model:                 ARIMA(1, 1, 1)   Log Likelihood                -253.790
+Method:                       css-mle   S.D. of innovations              3.119
+Date:                Sun, 21 Feb 2021   AIC                            515.579
+Time:                        00:47:38   BIC                            525.960
+Sample:                             1   HQIC                           519.779
+                                                                              
+=================================================================================
+                    coef    std err          z      P&gt;|z|      [0.025      0.975]
+---------------------------------------------------------------------------------
+const             1.1205      1.286      0.871      0.384      -1.400       3.641
+ar.L1.D.value     0.6344      0.087      7.317      0.000       0.464       0.804
+ma.L1.D.value     0.5297      0.089      5.932      0.000       0.355       0.705
+                                    Roots                                    
+=============================================================================
+                  Real          Imaginary           Modulus         Frequency
+-----------------------------------------------------------------------------
+AR.1            1.5764           +0.0000j            1.5764            0.0000
+MA.1           -1.8879           +0.0000j            1.8879            0.5000
+-----------------------------------------------------------------------------
+</pre></div>
+</div>
+</div>
+</div>
+<p>Ngay lập tức, chúng ta có thể thấy rằng giá trị <span class="math notranslate nohighlight">\(p\)</span> hiện tại đã nhỏ hơn rất nhiều so với <span class="math notranslate nohighlight">\(0,05\)</span> cho cả hai thành phần AR và MA, đạt ý nghĩa thống kê rất cao. Bây giờ, chúng ta sẽ kiểm tra phần dư (residuals) của chuỗi thời gian để đảm bảo rằng không còn quy luật nào sót lại và phần dư có giá trị trung bình cũng như phương sai không đổi.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Plot residual errors</span>
+<span class="n">residuals</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">model_fit</span><span class="o">.</span><span class="n">resid</span><span class="p">)</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span><span class="mf">2.5</span><span class="p">))</span>
+<span class="n">residuals</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;Residuals&quot;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">residuals</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">kind</span><span class="o">=</span><span class="s1">&#39;kde&#39;</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Density&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/c561531e7cd5a83ed8e23b90dcb2609e077daeff60cd92c5b7ac0e889ec0d1fe.png" src="../_images/c561531e7cd5a83ed8e23b90dcb2609e077daeff60cd92c5b7ac0e889ec0d1fe.png" />
+</div>
+</div>
+<p>Phần dư là một bước kiểm tra cuối cùng hữu ích cho các mô hình ARIMA của chúng ta. Về mặt lý tưởng, các sai số dư nên tuân theo phân phối Gaussian (phân phối chuẩn) với giá trị trung bình bằng không và phương sai đồng nhất. Với kết quả này, giờ đây chúng ta có thể tiến hành khớp chuỗi thời gian ban đầu với mô hình của mình.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Actual vs Fitted</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">model_fit</span><span class="o">.</span><span class="n">plot_predict</span><span class="p">(</span><span class="mi">85</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="n">dynamic</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">plot_insample</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/1c3166e2fc6fac7ef0d0ebfe8ac0b1549000f50d939db16e992de63fdb06a85c.png" src="../_images/1c3166e2fc6fac7ef0d0ebfe8ac0b1549000f50d939db16e992de63fdb06a85c.png" />
+</div>
+</div>
+<p>Khi chúng ta thiết lập dynamic=False, các giá trị trễ trong mẫu (in-sample) sẽ được sử dụng để dự báo. Điều đó có nghĩa là mô hình sẽ được huấn luyện cho đến giá trị ngay trước đó để đưa ra dự báo tiếp theo. Chúng ta cũng có thể gọi đây là dự báo <strong>tịnh tiến (walk-forward)</strong> hoặc dự báo <strong>trước một bước (one-step ahead)</strong>.</p>
+<p>Tuy nhiên, chúng ta cần lưu ý hai điều:</p>
+<ol class="arabic simple">
+<li><p>Chúng ta đã sử dụng toàn bộ chuỗi thời gian để huấn luyện mô hình.</p></li>
+<li><p>Một số trường hợp sử dụng mà chúng ta sẽ giải quyết yêu cầu chúng ta phải dự báo trước t bước.</p></li>
+</ol>
+<p>Chúng ta sẽ giải quyết điểm thứ nhất trong phần tiếp theo bằng cách xử lý các bộ dữ liệu thực tế. Điểm thứ hai có thể được giải quyết ngay lập tức bằng cách sử dụng đối số dynamic=True như được hiển thị bên dưới.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Actual vs Fitted</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">model_fit</span><span class="o">.</span><span class="n">plot_predict</span><span class="p">(</span><span class="mi">90</span><span class="p">,</span> <span class="mi">110</span><span class="p">,</span> <span class="n">dynamic</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">plot_insample</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/f9cbf2d9269327beaac08465b57b22b0518e353eb429c3014d959d91087657c1.png" src="../_images/f9cbf2d9269327beaac08465b57b22b0518e353eb429c3014d959d91087657c1.png" />
+</div>
+</div>
+<p>Hãy chú ý rằng khoảng tin cậy (confidence interval) của chúng ta hiện đang tăng dần khi chúng ta đi xa hơn bộ dữ liệu đã cho, vì các sai số từ những giá trị dự báo sẽ bị cộng dồn lại. Đồng thời, hãy lưu ý rằng nhìn chung, mô hình ARIMA của chúng ta đã nắm bắt được hướng của xu hướng trong chuỗi thời gian nhưng kết quả dự báo lại thấp hơn một cách nhất quán so với các giá trị thực tế. Chúng ta có thể khắc phục điều này bằng cách thay đổi các tham số của mô hình ARIMA và xác thực bằng các chỉ số đo lường hiệu suất.</p>
+</section>
+<section id="trien-khai-va-du-bao-bang-arima">
+<h2>Triển khai và Dự báo bằng ARIMA<a class="headerlink" href="#trien-khai-va-du-bao-bang-arima" title="Permalink to this heading">#</a></h2>
+<p>Dựa trên các bước đã thảo luận trong ba phần đầu của sổ tay này, giờ đây chúng ta có thể tạo ra một framework về cách tiếp cận các mô hình ARIMA nói chung. Chúng ta có thể sử dụng một phiên bản sửa đổi của thuật toán Hyndman-Khandakar (Hyndman &amp; Khandakar, 2008), thuật toán này kết hợp các kiểm định nghiệm đơn vị (unit root tests), tối thiểu hóa chỉ số AIC và phương pháp ước lượng hợp lý cực đại (MLE) để thu được một mô hình ARIMA. Các bước được phác thảo dưới đây:</p>
+<ol class="arabic simple">
+<li><p>Bậc sai phân d được xác định bằng cách thực hiện lặp lại các kiểm định ADF.</p></li>
+<li><p>Các giá trị p và q ược chọn dựa trên AIC, ACF và PACF của chuỗi thời gian đã lấy sai phân.</p></li>
+<li><p>Sử dụng phương pháp duyệt từng bước (step-wise traversal) trong không gian tham số (<span class="math notranslate nohighlight">\(\pm 1\)</span>) cho p, d, và q để tìm chỉ số AIC thấp hơn. <em>Chúng ta có thể sử dụng kinh nghiệm và các quy tắc suy nghiệm (heuristics) khi quan sát ACF và PACF để quyết định xem cần tăng hay giảm p, d, và q.</em></p></li>
+<li><p>Kiểm tra phần dư xem có tuân theo Phân phối Gaussian hay không để xác lập tính dừng.</p></li>
+</ol>
+<p>Hoặc trong trường hợp của chúng ta, chúng ta sẽ sử dụng thuật toán tìm kiếm lưới để tự động cấu hình ARIMA và tìm các siêu tham số. Chúng ta sẽ tìm kiếm các kết hợp giá trị của p, d, và q (bỏ qua những kết hợp không hội tụ) và tìm ra kết hợp mang lại hiệu suất tốt nhất trên tập kiểm tra. Chúng ta sử dụng tìm kiếm lưới để khám phá tất cả các kết hợp trong một tập hợp con các giá trị nguyên.</p>
+<p>Cụ thể, chúng ta sẽ tìm kiếm tất cả các kết hợp của các tham số sau:</p>
+<p>p: 0 đến 4. d: 0 đến 3. q: 0 đến 4. Như vậy sẽ có (<span class="math notranslate nohighlight">\(4 \times 3 \times 4\)</span>), hay 48 lượt chạy tiềm năng cho hệ thống thử nghiệm và sẽ mất một khoảng thời gian để thực thi.</p>
+<p>Ví dụ hoàn chỉnh về việc áp dụng tìm kiếm lưới cho hệ thống thử nghiệm được liệt kê dưới đây.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># create a differenced series</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">difference</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">interval</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+    <span class="n">diff</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">interval</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">dataset</span><span class="p">)):</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">dataset</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">dataset</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="n">interval</span><span class="p">]</span>
+        <span class="n">diff</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">diff</span><span class="p">)</span>
+
+<span class="c1"># invert differenced value</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">inverse_difference</span><span class="p">(</span><span class="n">history</span><span class="p">,</span> <span class="n">yhat</span><span class="p">,</span> <span class="n">interval</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">yhat</span> <span class="o">+</span> <span class="n">history</span><span class="p">[</span><span class="o">-</span><span class="n">interval</span><span class="p">]</span>
+
+<span class="c1"># evaluate an ARIMA model for a given order (p,d,q) and return RMSE</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">evaluate_arima_model</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">arima_order</span><span class="p">,</span> <span class="n">train_size</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="c1"># prepare training dataset</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;float32&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">train_size</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">train_size</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">X</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.50</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">train_size</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">train_size</span><span class="p">)</span>
+    <span class="n">train</span><span class="p">,</span> <span class="n">test</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">train_size</span><span class="p">],</span> <span class="n">X</span><span class="p">[</span><span class="n">train_size</span><span class="p">:]</span>
+    <span class="n">history</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">train</span><span class="p">]</span>
+    <span class="c1"># make predictions</span>
+    <span class="n">predictions</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">test</span><span class="p">)):</span>
+        <span class="c1"># difference data</span>
+        <span class="n">diff</span> <span class="o">=</span> <span class="n">difference</span><span class="p">(</span><span class="n">history</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">ARIMA</span><span class="p">(</span><span class="n">diff</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="n">arima_order</span><span class="p">)</span>
+        <span class="n">model_fit</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">trend</span><span class="o">=</span><span class="s1">&#39;nc&#39;</span><span class="p">,</span> <span class="n">disp</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">yhat</span> <span class="o">=</span> <span class="n">model_fit</span><span class="o">.</span><span class="n">forecast</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">yhat</span> <span class="o">=</span> <span class="n">inverse_difference</span><span class="p">(</span><span class="n">history</span><span class="p">,</span> <span class="n">yhat</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">predictions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">yhat</span><span class="p">)</span>
+        <span class="n">history</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">test</span><span class="p">[</span><span class="n">t</span><span class="p">])</span>
+    <span class="c1"># calculate out of sample error</span>
+    <span class="n">mae</span> <span class="o">=</span> <span class="n">mean_absolute_error</span><span class="p">(</span><span class="n">test</span><span class="p">,</span> <span class="n">predictions</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">mae</span>
+
+
+<span class="c1"># evaluate combinations of p, d and q values for an ARIMA model</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">evaluate_models</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">p_values</span><span class="p">,</span> <span class="n">d_values</span><span class="p">,</span> <span class="n">q_values</span><span class="p">):</span>
+    <span class="n">dataset</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;float32&#39;</span><span class="p">)</span>
+    <span class="n">best_score</span><span class="p">,</span> <span class="n">best_cfg</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;inf&quot;</span><span class="p">),</span> <span class="kc">None</span>
+    <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">p_values</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">d_values</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">q</span> <span class="ow">in</span> <span class="n">q_values</span><span class="p">:</span>
+                <span class="n">order</span> <span class="o">=</span> <span class="p">(</span><span class="n">p</span><span class="p">,</span><span class="n">d</span><span class="p">,</span><span class="n">q</span><span class="p">)</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">mse</span> <span class="o">=</span> <span class="n">evaluate_arima_model</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">order</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">mse</span> <span class="o">&lt;</span> <span class="n">best_score</span><span class="p">:</span>
+                        <span class="n">best_score</span><span class="p">,</span> <span class="n">best_cfg</span> <span class="o">=</span> <span class="n">mse</span><span class="p">,</span> <span class="n">order</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;ARIMA</span><span class="si">%s</span><span class="s1"> RMSE=</span><span class="si">%.3f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">order</span><span class="p">,</span><span class="n">mse</span><span class="p">))</span>
+                <span class="k">except</span><span class="p">:</span>
+                    <span class="k">continue</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Best ARIMA</span><span class="si">%s</span><span class="s1"> RMSE=</span><span class="si">%.3f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">best_cfg</span><span class="p">,</span> <span class="n">best_score</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<section id="vi-du-2-du-bao-nhiet-do-trong-bo-du-lieu-khi-hau-jena">
+<h3>Ví dụ 2: Dự báo nhiệt độ trong Bộ dữ liệu Khí hậu Jena<a class="headerlink" href="#vi-du-2-du-bao-nhiet-do-trong-bo-du-lieu-khi-hau-jena" title="Permalink to this heading">#</a></h3>
+<p>Giờ đây, chúng ta sử dụng phương pháp nêu trên để thực hiện <strong>dự báo đa bước - multi-step forecasting</strong> (dự báo trước 24 bước) đối với dữ liệu nhiệt độ Jena.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">train_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;../data/train_series.csv&#39;</span><span class="p">,</span><span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="p">[</span><span class="s1">&#39;T (degC)&#39;</span><span class="p">]]</span>
+<span class="n">val_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;../data/val_series.csv&#39;</span><span class="p">,</span><span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="p">[</span><span class="s1">&#39;T (degC)&#39;</span><span class="p">]]</span>
+<span class="n">temp</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">train_data</span><span class="p">,</span> <span class="n">val_data</span><span class="p">])</span><span class="o">.</span><span class="n">values</span>  <span class="c1">#temperature (in degrees Celsius)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">temp</span><span class="p">)),</span> <span class="n">temp</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Temperature </span><span class="se">\n</span><span class="s1">(degree Celcius)&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time (every hour)&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/b60937971c3f47f1701d37effe00ca674f313e25e6f03ecdb2e9a7439ad89fc4.png" src="../_images/b60937971c3f47f1701d37effe00ca674f313e25e6f03ecdb2e9a7439ad89fc4.png" />
+</div>
+</div>
+<section id="lua-chon-bac-mo-hinh-tinh-chinh-sieu-tham-so">
+<h4>Lựa chọn bậc mô hình (tinh chỉnh siêu tham số)<a class="headerlink" href="#lua-chon-bac-mo-hinh-tinh-chinh-sieu-tham-so" title="Permalink to this heading">#</a></h4>
+<p>Trước khi tiến hành thuật toán tìm kiếm lưới (grid-search), chúng ta thực hiện một số kiểm tra sơ bộ trên chuỗi thời gian để thu hẹp phạm vi tìm kiếm tham số. Chúng ta có thể bắt đầu bằng cách kiểm tra tính dừng của tín hiệu để ước tính <span class="math notranslate nohighlight">\(d\)</span>. Sau đó, chúng ta vẽ biểu đồ PACF và ACF của chuỗi thời gian để lần lượt ước tính <span class="math notranslate nohighlight">\(p\)</span> và <span class="math notranslate nohighlight">\(q\)</span>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">result</span> <span class="o">=</span> <span class="n">adfuller</span><span class="p">(</span><span class="n">temp</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;ADF Statistic: </span><span class="si">%f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;p-value: </span><span class="si">%f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">result</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Critical Values:&#39;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">result</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t</span><span class="si">%s</span><span class="s1">: </span><span class="si">%.3f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>ADF Statistic: -7.958617
+p-value: 0.000000
+Critical Values:
+	1%: -3.430
+	5%: -2.862
+	10%: -2.567
+</pre></div>
+</div>
+</div>
+</div>
+<p><strong>Quan sát</strong>: Dựa trên kết quả của kiểm định ADF, tín hiệu đã đạt tính dừng. Điều này ngụ ý rằng <span class="math notranslate nohighlight">\(d=0\)</span> vì vậy chúng ta không cần phải thực hiện lấy sai phân nữa.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;figure.figsize&#39;</span><span class="p">:(</span><span class="mi">15</span><span class="p">,</span><span class="mf">2.5</span><span class="p">),</span> <span class="s1">&#39;figure.dpi&#39;</span><span class="p">:</span><span class="mi">120</span><span class="p">})</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">temp</span><span class="o">.</span><span class="n">flatten</span><span class="p">())</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Temperature Signal&#39;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">xlim</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">20</span><span class="p">))</span>
+<span class="n">plot_pacf</span><span class="p">(</span><span class="n">temp</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/eae6887b759768a25b77c9065c6c63483d28b87e0db3634670748d5bcb92338c.png" src="../_images/eae6887b759768a25b77c9065c6c63483d28b87e0db3634670748d5bcb92338c.png" />
+</div>
+</div>
+<p><strong>Quan sát</strong>: Dựa trên biểu đồ PACF, chúng ta có thể thấy rằng giá trị của hàm giảm xuống gần bằng không đối với các độ trễ lags &gt; 2. Do đó, chúng ta có thể thiết lập <span class="math notranslate nohighlight">\(p\)</span> trong khoảng từ 0 đến 2.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;figure.figsize&#39;</span><span class="p">:(</span><span class="mi">15</span><span class="p">,</span><span class="mf">2.5</span><span class="p">),</span> <span class="s1">&#39;figure.dpi&#39;</span><span class="p">:</span><span class="mi">120</span><span class="p">})</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">temp</span><span class="o">.</span><span class="n">flatten</span><span class="p">())</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Temperature Signal&#39;</span><span class="p">)</span>
+<span class="n">plot_acf</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">temp</span><span class="o">.</span><span class="n">flatten</span><span class="p">()),</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/b140478c6d373c1dc0f92c35100ab5fe2b8254a9a17518e0b9c78e9161c9bb38.png" src="../_images/b140478c6d373c1dc0f92c35100ab5fe2b8254a9a17518e0b9c78e9161c9bb38.png" />
+</div>
+</div>
+<p><strong>Quan sát</strong>: Không giống như PACF hiển thị sự đứt đoạn đột ngột, biểu đồ ACF suy giảm chậm hơn. Chúng ta có thể nói rằng chuỗi dữ liệu này có một <em>autoregressive signature</em> nghĩa là quy luật tự tương quan có thể được giải thích dễ dàng hơn bằng cách thêm các số hạng AR thay vì thêm các số hạng MA. Hãy thử nghiệm các giá trị <span class="math notranslate nohighlight">\(q\)</span> từ 0 đến <span class="math notranslate nohighlight">\(5\)</span>.</p>
+<p>Do hạn chế về tài nguyên tính toán, chúng ta sẽ giới hạn độ dài của dữ liệu huấn luyện (từ 35045 xuống còn 17524 mẫu). Chúng ta cũng sẽ giảm số lượng tập kiểm định chéo (folds) sẽ sử dụng (từ 730 xuống còn 20).</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># evaluate an ARIMA model for a given order (p,d,q) and return RMSE</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">evaluate_arima_jena_24hrstep</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">arima_order</span><span class="p">,</span> <span class="n">train_size</span><span class="o">=</span><span class="mi">35045</span><span class="p">):</span>
+    <span class="c1"># prepare training dataset</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;float32&#39;</span><span class="p">)</span>
+    <span class="n">train</span><span class="p">,</span> <span class="n">test</span> <span class="o">=</span> <span class="n">X</span><span class="p">[:</span><span class="n">train_size</span><span class="p">],</span> <span class="n">X</span><span class="p">[</span><span class="n">train_size</span><span class="p">:]</span>
+    <span class="n">test</span> <span class="o">=</span> <span class="n">test</span><span class="p">[:</span><span class="nb">len</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">train_size</span><span class="p">:])</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">train_size</span><span class="p">:])</span><span class="o">%</span><span class="k">24</span>]
+    <span class="n">test_24</span> <span class="o">=</span> <span class="n">test</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">24</span><span class="p">)</span>
+    <span class="n">history</span> <span class="o">=</span> <span class="n">train</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+
+    <span class="n">mae_cv</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="c1"># There are 730 folds (24 hr chunks), for faster computation, we limit the number of folds to 20 only</span>
+    <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">test_24</span><span class="p">))[::</span><span class="mi">37</span><span class="p">]:</span>
+        <span class="n">x_cv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">([</span><span class="n">history</span><span class="p">,</span> <span class="n">test_24</span><span class="p">[:</span><span class="n">t</span><span class="p">,</span> <span class="p">:]</span><span class="o">.</span><span class="n">flatten</span><span class="p">()])</span>
+        <span class="n">y_cv</span> <span class="o">=</span> <span class="n">test_24</span><span class="p">[</span><span class="n">t</span><span class="p">]</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">ARIMA</span><span class="p">(</span><span class="n">x_cv</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="n">arima_order</span><span class="p">)</span>
+        <span class="n">model_fit</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">disp</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">y_hat</span> <span class="o">=</span> <span class="n">model_fit</span><span class="o">.</span><span class="n">forecast</span><span class="p">(</span><span class="n">steps</span><span class="o">=</span><span class="mi">24</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">mae_cv</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mean_absolute_error</span><span class="p">(</span><span class="n">y_cv</span><span class="p">,</span> <span class="n">y_hat</span><span class="p">))</span>
+    <span class="n">mean_mae</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">mae_cv</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">mean_mae</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">## Uncomment the lines to perform model order selection</span>
+<span class="c1"># arima_orders = [(0, 0, 0), </span>
+<span class="c1">#                 (1, 0, 0), </span>
+<span class="c1">#                 (0, 0, 1),</span>
+<span class="c1">#                 (2, 0, 0),</span>
+<span class="c1">#                 (1, 0, 1), </span>
+<span class="c1">#                 (1, 0, 2), </span>
+<span class="c1">#                 (2, 0, 1), </span>
+<span class="c1">#                 (2, 0, 2)]</span>
+<span class="c1"># mae_ao_list = []</span>
+<span class="c1"># for ao in arima_orders:</span>
+<span class="c1">#     mae_ao = evaluate_arima_jena_24hrstep(temp[-2*len(val_data):], </span>
+<span class="c1">#                                           arima_order=ao, </span>
+<span class="c1">#                                           train_size=len(val_data))</span>
+<span class="c1">#     mae_ao_list.append((ao, mae_ao))</span>
+<span class="c1">#     print(ao, mae_ao)</span>
+    
+<span class="c1"># selected_order, best_mae = np.array(mae_ao_list)[np.argmin(np.array(mae_ao_list)[:,-1])]</span>
+<span class="c1"># print(f&#39;Selected order: {selected_order}, MAE: {best_mae}&#39;)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">## Expected results from code above: </span>
+<span class="c1">## (p, d, q) MAE</span>
+<span class="c1">## ---------------------------</span>
+<span class="c1">## (0, 0, 0) 6.035602297003233</span>
+<span class="c1">## (1, 0, 0) 3.025640357465662</span>
+<span class="c1">## (0, 0, 1) 5.922866295058727</span>
+<span class="c1">## (2, 0, 0) 3.124825200033295</span>
+<span class="c1">## (1, 0, 1) 2.967933864811228</span>
+<span class="c1">## (1, 0, 2) 2.9481444828018253 </span>
+<span class="c1">## (2, 0, 1) 3.5091372748649037</span>
+<span class="c1">## (2, 0, 2) 3.4143813707023325</span>
+<span class="c1">## Selected order: (1, 0, 2), MAE: 2.9481444828018253</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">selected_order</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="danh-gia-hieu-suat-mo-hinh-tren-tap-kiem-tra">
+<h4>Đánh giá hiệu suất mô hình trên tập kiểm tra<a class="headerlink" href="#danh-gia-hieu-suat-mo-hinh-tren-tap-kiem-tra" title="Permalink to this heading">#</a></h4>
+<p>Chúng ta sử dụng gói multiprocessing, gói này hỗ trợ việc tạo ra các tiến trình (processes) bằng cách sử dụng một API tương tự như mô đun threading.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">wrapper_fit_arima</span><span class="p">(</span><span class="n">x_vals</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">)):</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">ARIMA</span><span class="p">(</span><span class="n">x_vals</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="n">order</span><span class="p">)</span>
+    <span class="n">model_fit</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">disp</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">y_hat</span> <span class="o">=</span> <span class="n">model_fit</span><span class="o">.</span><span class="n">forecast</span><span class="p">(</span><span class="n">steps</span><span class="o">=</span><span class="mi">24</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="c1">#     print(len(x_vals))</span>
+    <span class="k">return</span> <span class="n">y_hat</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">evaluate_arima_jena_mp</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">arima_order</span><span class="p">,</span> <span class="n">train_size</span><span class="o">=</span><span class="mi">35045</span><span class="p">):</span>
+    <span class="c1"># prepare training dataset</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;float32&#39;</span><span class="p">)</span>
+    <span class="n">train</span><span class="p">,</span> <span class="n">test</span> <span class="o">=</span> <span class="n">X</span><span class="p">[:</span><span class="n">train_size</span><span class="p">],</span> <span class="n">X</span><span class="p">[</span><span class="n">train_size</span><span class="p">:]</span>
+    <span class="n">test</span> <span class="o">=</span> <span class="n">test</span><span class="p">[:</span><span class="nb">len</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">train_size</span><span class="p">:])</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">train_size</span><span class="p">:])</span><span class="o">%</span><span class="k">24</span>]
+    <span class="n">test_24</span> <span class="o">=</span> <span class="n">test</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">24</span><span class="p">)</span>
+    <span class="n">history</span> <span class="o">=</span> <span class="n">train</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+    
+    <span class="n">X_cv</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">Y_cv</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">test_24</span><span class="p">)):</span>
+        <span class="n">x_cv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">([</span><span class="n">history</span><span class="p">,</span> <span class="n">test_24</span><span class="p">[:</span><span class="n">t</span><span class="p">,</span> <span class="p">:]</span><span class="o">.</span><span class="n">flatten</span><span class="p">()])</span>
+        <span class="n">y_cv</span> <span class="o">=</span> <span class="n">test_24</span><span class="p">[</span><span class="n">t</span><span class="p">]</span>
+        <span class="n">X_cv</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x_cv</span><span class="p">)</span>
+        <span class="n">Y_cv</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">y_cv</span><span class="p">)</span>
+
+    <span class="n">pool</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">Pool</span><span class="p">(</span><span class="n">processes</span><span class="o">=</span><span class="n">mp</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">()</span><span class="o">-</span><span class="mi">4</span><span class="p">)</span>
+    <span class="n">y_hats</span> <span class="o">=</span> <span class="n">pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">wrapper_fit_arima</span><span class="p">,</span> <span class="n">X_cv</span><span class="p">)</span>        
+    
+    <span class="n">mae_cv</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">test_24</span><span class="p">)):</span>
+        <span class="n">mae_cv</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mean_absolute_error</span><span class="p">(</span><span class="n">Y_cv</span><span class="p">[</span><span class="n">t</span><span class="p">],</span> <span class="n">y_hats</span><span class="p">[</span><span class="n">t</span><span class="p">]))</span>
+    <span class="n">mean_mae</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">mae_cv</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">mean_mae</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Load test data</span>
+<span class="n">test_data</span><span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;../data/test_series.csv&#39;</span><span class="p">,</span><span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="p">[</span><span class="s1">&#39;T (degC)&#39;</span><span class="p">]]</span>
+<span class="n">temp2</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">val_data</span><span class="p">,</span> <span class="n">test_data</span><span class="p">])</span><span class="o">.</span><span class="n">values</span>  <span class="c1">#temperature (in degrees Celsius)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Chúng ta khớp mô hình ARIMA(1,0,2) bằng cách sử dụng tập kiểm định để dự báo các đoạn dữ liệu nhiệt độ dài 24 giờ trong tập kiểm tra.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">## Uncomment code below to fit and predict temperature values in the test set</span>
+<span class="c1">## By using CPU count of 28, the code ran for about 70 mins. </span>
+<span class="c1"># MAE = evaluate_arima_jena_mp(temp2, arima_order=selected_order, train_size=len(val_data))</span>
+<span class="c1"># print(f&#39;ARIMA MAE: {np.mean(MAE)}&#39;) </span>
+
+<span class="c1">## Expected result from running the code above:</span>
+<span class="c1">## ARIMA MAE: 3.191548582794122</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;ARIMA MAE for Jena test data: 3.191548582794122&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>ARIMA MAE for Jena test data: 3.191548582794122
+</pre></div>
+</div>
+</div>
+</div>
+<p><strong>Quan sát/s</strong>: Mô hình ARIMA(1,0,2) có hiệu suất kém hơn (ARIMA MAE: 3.19) trên tập kiểm tra khi so sánh với các <a class="reference internal" href="../08_WinningestMethods/lightgbm_jena_forecasting.html"><span class="doc std std-doc">baseline models</span></a> của chúng ta (naive MAE: 3.18, seasonal naive MAE: 2.61).</p>
+<section id="du-bao-24-gio-tiep-theo-ngoai-tap-kiem-tra">
+<h5>Dự báo 24 giờ tiếp theo ngoài tập kiểm tra<a class="headerlink" href="#du-bao-24-gio-tiep-theo-ngoai-tap-kiem-tra" title="Permalink to this heading">#</a></h5>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%%time</span>
+<span class="n">future_data</span> <span class="o">=</span> <span class="n">wrapper_fit_arima</span><span class="p">(</span><span class="n">temp2</span><span class="p">)</span>
+<span class="n">future_data</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 24.7 s, sys: 25.2 s, total: 49.9 s
+Wall time: 49.3 s
+</pre></div>
+</div>
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([-4.28561198, -4.26056166, -4.02705644, -3.79736279, -3.57141847,
+       -3.3491623 , -3.13053407, -2.91547455, -2.7039255 , -2.49582961,
+       -2.29113051, -2.08977277, -1.89170183, -1.69686405, -1.50520666,
+       -1.31667773, -1.1312262 , -0.94880183, -0.76935522, -0.59283776,
+       -0.41920164, -0.24839981, -0.08038602,  0.08488524])
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">temp2</span><span class="p">[</span><span class="o">-</span><span class="mi">500</span><span class="p">:])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">24</span><span class="p">)</span><span class="o">+</span><span class="mi">500</span><span class="p">,</span> <span class="n">future_data</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;forecast&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Temperature (degree Celsius)&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/a095822f391dfc62a8f50b115e06b607433e68df715173b9d70f955d965cc8e3.png" src="../_images/a095822f391dfc62a8f50b115e06b607433e68df715173b9d70f955d965cc8e3.png" />
+</div>
+</div>
+</section>
+</section>
+</section>
+<section id="vi-du-3-su-dung-arima-cho-chuoi-thoi-gian-da-bien-multivariate-time-series">
+<h3>Ví dụ 3: Sử dụng ARIMA cho chuỗi thời gian đa biến (Multivariate Time Series)<a class="headerlink" href="#vi-du-3-su-dung-arima-cho-chuoi-thoi-gian-da-bien-multivariate-time-series" title="Permalink to this heading">#</a></h3>
+<p>Trong ví dụ cuối cùng này, chúng ta sử dụng ARIMA để dự báo các tín hiệu chuỗi thời gian khác nhau từ Bộ dữ liệu Chất lượng Không khí (Air Quality Dataset), được đo tại một khu vực ô nhiễm ở một thành phố của Ý. Để minh họa, chúng ta sẽ dự báo dữ liệu trong 24 giờ cuối cùng cho nồng độ CO và NO2. Hình dưới đây hiển thị dữ liệu huấn luyện cho từng tham số này.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">train_aq</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;../data/AirQualityUCI/train_data.csv&#39;</span><span class="p">,</span><span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;Date_Time&#39;</span><span class="p">)</span>
+<span class="n">test_aq</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;../data/AirQualityUCI/test_data.csv&#39;</span><span class="p">,</span><span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;Date_Time&#39;</span><span class="p">)</span>
+<span class="n">train_aq</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>CO(GT)</th>
+      <th>NO2(GT)</th>
+      <th>RH</th>
+    </tr>
+    <tr>
+      <th>Date_Time</th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>2004-10-01 01:00:00</th>
+      <td>1.6</td>
+      <td>74.0</td>
+      <td>69.275002</td>
+    </tr>
+    <tr>
+      <th>2004-10-01 02:00:00</th>
+      <td>1.3</td>
+      <td>69.0</td>
+      <td>70.775000</td>
+    </tr>
+    <tr>
+      <th>2004-10-01 03:00:00</th>
+      <td>0.8</td>
+      <td>61.5</td>
+      <td>65.833332</td>
+    </tr>
+    <tr>
+      <th>2004-10-01 04:00:00</th>
+      <td>0.6</td>
+      <td>54.0</td>
+      <td>67.174999</td>
+    </tr>
+    <tr>
+      <th>2004-10-01 05:00:00</th>
+      <td>0.7</td>
+      <td>60.0</td>
+      <td>70.275000</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span><span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">train_aq</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">subplots</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/c5cf2cd33024974181b00572b3ff28e2e25dfc6f731fb796a85b829e1075a671.png" src="../_images/c5cf2cd33024974181b00572b3ff28e2e25dfc6f731fb796a85b829e1075a671.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">evaluate_arima_multistep</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">arima_order</span><span class="p">,</span> <span class="n">train_size</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="c1"># prepare training dataset</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;float32&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">train_size</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">train_size</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">X</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.50</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">train_size</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">train_size</span><span class="p">)</span>
+    <span class="n">train</span><span class="p">,</span> <span class="n">test</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">train_size</span><span class="p">],</span> <span class="n">X</span><span class="p">[</span><span class="n">train_size</span><span class="p">:]</span>
+    <span class="n">history</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">train</span><span class="p">]</span>
+    <span class="c1"># make predictions</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">ARIMA</span><span class="p">(</span><span class="n">history</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="n">arima_order</span><span class="p">)</span>
+    <span class="n">model_fit</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">disp</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">yhat</span> <span class="o">=</span> <span class="n">model_fit</span><span class="o">.</span><span class="n">forecast</span><span class="p">(</span><span class="n">steps</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">test</span><span class="p">))</span>
+    <span class="n">predictions</span> <span class="o">=</span> <span class="n">yhat</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">mean_absolute_error</span><span class="p">(</span><span class="n">test</span><span class="p">,</span> <span class="n">predictions</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">evaluate_models_mae</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">p_values</span><span class="p">,</span> <span class="n">d_values</span><span class="p">,</span> <span class="n">q_values</span><span class="p">,</span> <span class="n">train_size</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="n">dataset</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;float32&#39;</span><span class="p">)</span>
+    <span class="n">best_score</span><span class="p">,</span> <span class="n">best_cfg</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;inf&quot;</span><span class="p">),</span> <span class="kc">None</span>
+    <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">p_values</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">d_values</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">q</span> <span class="ow">in</span> <span class="n">q_values</span><span class="p">:</span>
+                <span class="n">order</span> <span class="o">=</span> <span class="p">(</span><span class="n">p</span><span class="p">,</span><span class="n">d</span><span class="p">,</span><span class="n">q</span><span class="p">)</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">mae</span> <span class="o">=</span> <span class="n">evaluate_arima_model_mae</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">order</span><span class="p">,</span> <span class="n">train_size</span><span class="o">=</span><span class="n">train_size</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">mae</span> <span class="o">&lt;</span> <span class="n">best_score</span><span class="p">:</span>
+                        <span class="n">best_score</span><span class="p">,</span> <span class="n">best_cfg</span> <span class="o">=</span> <span class="n">mae</span><span class="p">,</span> <span class="n">order</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;ARIMA</span><span class="si">%s</span><span class="s1"> MAE=</span><span class="si">%.3f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">order</span><span class="p">,</span><span class="n">mae</span><span class="p">))</span>
+                <span class="k">except</span><span class="p">:</span>
+                    <span class="k">continue</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Best ARIMA</span><span class="si">%s</span><span class="s1"> AME=</span><span class="si">%.3f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">best_cfg</span><span class="p">,</span> <span class="n">best_score</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Để thực hiện dự báo, chúng ta sẽ huấn luyện 3 mô hình ARIMA riêng biệt—một cho CO, một cho NO2 và một cho RH (Độ ẩm tương đối). Chúng ta tiến hành tìm kiếm lưới cho các tham số sau:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">p_values</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+<span class="n">d_values</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">q_values</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+
+<span class="n">arima_orders</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">p_values</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">d_values</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">q</span> <span class="ow">in</span> <span class="n">q_values</span><span class="p">:</span>
+            <span class="n">arima_orders</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">p</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">q</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">var_col</span> <span class="o">=</span> <span class="n">train_aq</span><span class="o">.</span><span class="n">columns</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">var_col</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Index([&#39;CO(GT)&#39;, &#39;NO2(GT)&#39;, &#39;RH&#39;], dtype=&#39;object&#39;)
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">var_col</span><span class="p">:</span> 
+    <span class="n">df_var</span> <span class="o">=</span> <span class="n">train_aq</span><span class="p">[</span><span class="n">c</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+    
+    <span class="n">mae_order_list_var</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">ao</span> <span class="ow">in</span> <span class="n">arima_orders</span><span class="p">:</span>
+        <span class="n">metric</span> <span class="o">=</span> <span class="n">evaluate_arima_multistep</span><span class="p">(</span><span class="n">df_var</span><span class="p">,</span> <span class="n">arima_order</span><span class="o">=</span><span class="n">ao</span><span class="p">,</span> <span class="n">train_size</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">train_aq</span><span class="p">)</span><span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="n">test_aq</span><span class="p">))</span>
+        <span class="n">mae_order_list_var</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">ao</span><span class="p">,</span> <span class="n">metric</span><span class="p">))</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">c</span><span class="si">}</span><span class="s1">: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">mae_order_list_var</span><span class="p">)[</span><span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">mae_order_list_var</span><span class="p">)[:,</span><span class="o">-</span><span class="mi">1</span><span class="p">])]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CO(GT): [(0, 1, 0) 0.23812050839538637]
+NO2(GT): [(0, 1, 0) 20.849329460041616]
+RH: [(3, 1, 1) 9.583232972711079]
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># For model order selection, refer to Chapter 1</span>
+<span class="n">selected_order</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;CO(GT)&#39;</span><span class="p">:</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)],</span>
+                  <span class="s1">&#39;NO2(GT)&#39;</span><span class="p">:</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)],</span>
+                  <span class="s1">&#39;RH&#39;</span><span class="p">:</span> <span class="p">[(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)]}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%%time</span>
+<span class="n">forecast_arima</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">var_col</span><span class="p">:</span>    
+    <span class="n">model</span> <span class="o">=</span> <span class="n">ARIMA</span><span class="p">(</span><span class="n">train_aq</span><span class="p">[</span><span class="n">c</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="n">selected_order</span><span class="p">[</span><span class="n">c</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">model_fit</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">disp</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">y_hat</span> <span class="o">=</span> <span class="n">model_fit</span><span class="o">.</span><span class="n">forecast</span><span class="p">(</span><span class="n">steps</span><span class="o">=</span><span class="mi">24</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">train_aq</span><span class="p">[</span><span class="n">c</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;train&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">test_aq</span><span class="p">))</span><span class="o">+</span><span class="nb">len</span><span class="p">(</span><span class="n">train_aq</span><span class="p">),</span> <span class="n">test_aq</span><span class="p">[</span><span class="n">c</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;train&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">test_aq</span><span class="p">))</span><span class="o">+</span><span class="nb">len</span><span class="p">(</span><span class="n">train_aq</span><span class="p">),</span> <span class="n">y_hat</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;train&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="n">xmin</span><span class="o">=</span><span class="mi">3500</span><span class="p">,</span> <span class="n">xmax</span><span class="o">=</span><span class="mi">4460</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/dd6d9832b399a786389935fdb0dd7d1d25be0d680344f237c09a999f458ffdf6.png" src="../_images/dd6d9832b399a786389935fdb0dd7d1d25be0d680344f237c09a999f458ffdf6.png" />
+<img alt="../_images/f17a59eb533d68abee9c8d8ef83b36aeafd5481ed33a0c3715d096e374a54c66.png" src="../_images/f17a59eb533d68abee9c8d8ef83b36aeafd5481ed33a0c3715d096e374a54c66.png" />
+<img alt="../_images/80173aaea585bb99f84b9b2b3733be3711ed0220424b775c8fcc62a3e7c40775.png" src="../_images/80173aaea585bb99f84b9b2b3733be3711ed0220424b775c8fcc62a3e7c40775.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 6.32 s, sys: 192 ms, total: 6.52 s
+Wall time: 1.9 s
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="xem-truoc-chuong-tiep-theo">
+<h2>Xem trước chương tiếp theo<a class="headerlink" href="#xem-truoc-chuong-tiep-theo" title="Permalink to this heading">#</a></h2>
+<p>Mô hình ARIMA chỉ là một trong số nhiều thuật toán mà chúng ta sẽ thảo luận. Chúng ta có thể thấy những hạn chế cố hữu của ARIMA. Cụ thể, chúng ta đang không xem xét đến:</p>
+<ol class="arabic simple">
+<li><p>Xu hướng và tính thời vụ</p></li>
+<li><p>Sự phụ thuộc tầm xa</p></li>
+<li><p>Chuỗi thời gian đa biến</p></li>
+</ol>
+<p>Những yếu tố này thường phổ biến hơn và sẽ quan trọng trong nhiều ứng dụng. Ví dụ, xu hướng rất quan trọng trong phân tích kỹ thuật của giao dịch chứng khoán. Điều này có thể được giải quyết bằng cách sử dụng Dự báo Động lượng (Momentum Forecasting), thứ sẽ được thảo luận trong Chương 2 cùng với các phương pháp khác.</p>
+<p>Trong Chương 3, chúng ta sẽ xem lại ví dụ về Chất lượng Không khí và sử dụng phương pháp tiếp cận đa biến. Chúng ta sẽ giới thiệu các phương pháp tự hồi quy vectơ (VAR) — một họ mô hình biểu diễn mỗi biến dưới dạng hàm tuyến tính của các độ trễ trong quá khứ của chính nó và độ trễ trong quá khứ của các biến khác — và cho thấy rằng chúng ta có thể cải thiện các dự báo bằng cách mở rộng điều này thành một bài toán chuỗi thời gian đa biến.</p>
+</section>
+<section id="tai-lieu-tham-khao">
+<h2>Tài liệu tham khảo<a class="headerlink" href="#tai-lieu-tham-khao" title="Permalink to this heading">#</a></h2>
+<p>Nội dung của sổ tay này được biên soạn từ các nguồn sau:</p>
+<ul class="simple">
+<li><p>https://www.machinelearningplus.com/time-series/arima-model-time-series-forecasting-python/</p></li>
+<li><p>https://otexts.com/fpp2/arima.html</p></li>
+<li><p>https://people.duke.edu/~rnau/411arim.htm</p></li>
+<li><p>https://www.analyticsvidhya.com/blog/2018/02/time-series-forecasting-methods/</p></li>
+<li><p>https://machinelearningmastery.com/time-series-forecast-study-python-monthly-sales-french-champagne/</p></li>
+<li><p>https://medium.com/&#64;josemarcialportilla/using-python-and-auto-arima-to-forecast-seasonal-time-series-90877adff03c</p></li>
+<li><p>https://en.wikipedia.org/wiki/Autoregressive_integrated_moving_average</p></li>
+<li><p>C.Monterola, <em>“Notebook 10 Time Series Forecasting Method — ARIMA MSDS2021”</em></p></li>
+<li><p>Hyndman, R. J., &amp; Khandakar, Y. (2008). Automatic time series forecasting: The forecast package for R. Journal of Statistical Software, 27(1), 1–22. https://doi.org/10.18637/jss.v027.i03</p></li>
+</ul>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./01_AutoRegressiveIntegratedMovingAverage"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../00_Introduction/00_Introduction.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Chương 0: Phân tích Chuỗi Thời gian Nâng cao (Advanced Time Series Analysis)</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../02_LinearForecastingTrendandMomentumForecasting/02_LinearTrendandMomentumForecasting.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Chương 2: Dự báo Tuyến tính, Xu hướng và Động lượng</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gioi-thieu-ve-arima">Giới thiệu về ARIMA</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#vi-du-1-chuoi-thoi-gian-don-bien-dung-va-khong-dung">Ví dụ 1: Chuỗi thời gian đơn biến dừng và không dừng</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#thanh-phan-mo-hinh">Thành phần mô hình</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cac-tham-so-mo-hinh-p-d-and-q-va-cac-truong-hop-dac-biet">Các tham số mô hình <em>p, d, and q</em> và các trường hợp đặc biệt</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#xac-dinh-p-d-va-q">Xác định <em>p</em>, <em>d</em>, và <em>q</em></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#tim-bac-sai-phan-d">Tìm bậc sai phân <em>d</em></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#tim-bac-cua-thanh-phan-tu-hoi-quy-p">Tìm bậc của thành phần Tự hồi quy <em>p</em></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#tim-bac-cua-thanh-phan-trung-binh-truot-q">Tìm bậc của thành phần Trung bình trượt <em>q</em></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#xay-dung-mo-hinh-arima">Xây dựng mô hình ARIMA</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#trien-khai-va-du-bao-bang-arima">Triển khai và Dự báo bằng ARIMA</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#vi-du-2-du-bao-nhiet-do-trong-bo-du-lieu-khi-hau-jena">Ví dụ 2: Dự báo nhiệt độ trong Bộ dữ liệu Khí hậu Jena</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#lua-chon-bac-mo-hinh-tinh-chinh-sieu-tham-so">Lựa chọn bậc mô hình (tinh chỉnh siêu tham số)</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#danh-gia-hieu-suat-mo-hinh-tren-tap-kiem-tra">Đánh giá hiệu suất mô hình trên tập kiểm tra</a><ul class="nav section-nav flex-column">
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#du-bao-24-gio-tiep-theo-ngoai-tap-kiem-tra">Dự báo 24 giờ tiếp theo ngoài tập kiểm tra</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#vi-du-3-su-dung-arima-cho-chuoi-thoi-gian-da-bien-multivariate-time-series">Ví dụ 3: Sử dụng ARIMA cho chuỗi thời gian đa biến (Multivariate Time Series)</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#xem-truoc-chuong-tiep-theo">Xem trước chương tiếp theo</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tai-lieu-tham-khao">Tài liệu tham khảo</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By By AI Department - TLU
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2022.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

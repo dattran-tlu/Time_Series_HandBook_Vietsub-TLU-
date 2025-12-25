@@ -1,0 +1,1174 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Temperature Forecasting (Supplementary Notebook) &#8212; Bản dịch Time Series Analysis Handbook</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" href="../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '08_WinningestMethods/lightgbm_jena_forecasting';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../Preface/Preface.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">Bản dịch Time Series Analysis Handbook</p>
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../Preface/Preface.html">
+                    Lời nói đầu: Giới thiệu về Phân tích Chuỗi Thời Gian (Time Series Analysis)
+                </a>
+            </li>
+        </ul>
+        <ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../00_Introduction/00_Introduction.html">Chương 0: Phân tích Chuỗi Thời gian Nâng cao (Advanced Time Series Analysis)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../01_AutoRegressiveIntegratedMovingAverage/01_AutoRegressiveIntegratedMovingAverage.html">Chương 1: Trung bình trượt tích hợp tự hồi quy (ARIMA)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../02_LinearForecastingTrendandMomentumForecasting/02_LinearTrendandMomentumForecasting.html">Chương 2: Dự báo Tuyến tính, Xu hướng và Động lượng</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../03_VectorAutoregressiveModels/03_VectorAutoregressiveMethods.html">Chương 3: Các phương pháp Vectơ tự hồi quy (Vector Autoregressive Methods)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../04_GrangerCausality/04_GrangerCausality.html">Chương 4: Kiểm định nhân quả Granger (Granger Causality)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../05_SimplexandSmapProjections/05_Empirical%20Dynamic%20Modelling%20%28Simplex%20and%20SMap_Projections%29.html">Chương 5: Các phương pháp dự báo động lực (Simplex và SMap Projections)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../06_ConvergentCrossMappingandSugiharaCausality/ccm_sugihara.html">Chương 6: Ánh xạ chéo hội tụ (Convergent Cross Mapping)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../07_CrosscorrelationsFourierTransformandWaveletTransform/07_CrosscorrelationsFourierTransformandWaveletTransform.html">Chương 7: Tương quan chéo, Biến đổi Fourier và Biến đổi Wavelet (Cross-Correlations, Fourier Transform, and Wavelet Transform)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lightgbm_m5_forecasting.html">Chapter 8: Winningest Methods in Time Series Forecasting</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/08_WinningestMethods/lightgbm_jena_forecasting.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Temperature Forecasting (Supplementary Notebook)</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#jena-climate-dataset">1. Jena Climate Dataset</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#lightgbm">LightGBM</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#summary">Summary</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="temperature-forecasting-supplementary-notebook">
+<h1>Temperature Forecasting (Supplementary Notebook)<a class="headerlink" href="#temperature-forecasting-supplementary-notebook" title="Permalink to this heading">#</a></h1>
+<p>Similar to what was done in previous sections, this notebook applies the methodology used in the M5 Forecasting notebook to the Jena Climate dataset. Specifically, we will be forecasting the temperature variable.</p>
+<section id="jena-climate-dataset">
+<h2>1. Jena Climate Dataset<a class="headerlink" href="#jena-climate-dataset" title="Permalink to this heading">#</a></h2>
+<p>Let’s load the dataset and examine it.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
+<span class="c1">### CREATE X,Y ####</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_xy</span><span class="p">(</span><span class="n">series</span><span class="p">,</span> <span class="n">window_size</span><span class="p">,</span> <span class="n">prediction_horizon</span><span class="p">,</span> <span class="n">shuffle</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">series</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">series</span><span class="p">[(</span><span class="n">i</span> <span class="o">+</span> <span class="n">window_size</span><span class="p">):(</span><span class="n">i</span> <span class="o">+</span> <span class="n">window_size</span> <span class="o">+</span> <span class="n">prediction_horizon</span><span class="p">)])</span> <span class="o">&lt;</span> <span class="n">prediction_horizon</span><span class="p">:</span>
+            <span class="k">break</span>
+        <span class="n">x</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">series</span><span class="p">[</span><span class="n">i</span><span class="p">:(</span><span class="n">i</span> <span class="o">+</span> <span class="n">window_size</span><span class="p">)])</span>
+        <span class="n">y</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">series</span><span class="p">[(</span><span class="n">i</span> <span class="o">+</span> <span class="n">window_size</span><span class="p">):(</span><span class="n">i</span> <span class="o">+</span> <span class="n">window_size</span> <span class="o">+</span> <span class="n">prediction_horizon</span><span class="p">)])</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;figure.figsize&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">15</span><span class="p">,</span> <span class="mi">5</span><span class="p">]</span>
+
+<span class="n">np</span><span class="o">.</span><span class="n">set_printoptions</span><span class="p">(</span><span class="n">precision</span> <span class="o">=</span> <span class="mi">6</span><span class="p">,</span> <span class="n">suppress</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;../data/jena_climate_2009_2016.csv&#39;</span><span class="p">)</span>
+<span class="n">df</span><span class="o">.</span><span class="n">shape</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(420551, 15)
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Date Time</th>
+      <th>p (mbar)</th>
+      <th>T (degC)</th>
+      <th>Tpot (K)</th>
+      <th>Tdew (degC)</th>
+      <th>rh (%)</th>
+      <th>VPmax (mbar)</th>
+      <th>VPact (mbar)</th>
+      <th>VPdef (mbar)</th>
+      <th>sh (g/kg)</th>
+      <th>H2OC (mmol/mol)</th>
+      <th>rho (g/m**3)</th>
+      <th>wv (m/s)</th>
+      <th>max. wv (m/s)</th>
+      <th>wd (deg)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>01.01.2009 00:10:00</td>
+      <td>996.52</td>
+      <td>-8.02</td>
+      <td>265.40</td>
+      <td>-8.90</td>
+      <td>93.3</td>
+      <td>3.33</td>
+      <td>3.11</td>
+      <td>0.22</td>
+      <td>1.94</td>
+      <td>3.12</td>
+      <td>1307.75</td>
+      <td>1.03</td>
+      <td>1.75</td>
+      <td>152.3</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>01.01.2009 00:20:00</td>
+      <td>996.57</td>
+      <td>-8.41</td>
+      <td>265.01</td>
+      <td>-9.28</td>
+      <td>93.4</td>
+      <td>3.23</td>
+      <td>3.02</td>
+      <td>0.21</td>
+      <td>1.89</td>
+      <td>3.03</td>
+      <td>1309.80</td>
+      <td>0.72</td>
+      <td>1.50</td>
+      <td>136.1</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>01.01.2009 00:30:00</td>
+      <td>996.53</td>
+      <td>-8.51</td>
+      <td>264.91</td>
+      <td>-9.31</td>
+      <td>93.9</td>
+      <td>3.21</td>
+      <td>3.01</td>
+      <td>0.20</td>
+      <td>1.88</td>
+      <td>3.02</td>
+      <td>1310.24</td>
+      <td>0.19</td>
+      <td>0.63</td>
+      <td>171.6</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>01.01.2009 00:40:00</td>
+      <td>996.51</td>
+      <td>-8.31</td>
+      <td>265.12</td>
+      <td>-9.07</td>
+      <td>94.2</td>
+      <td>3.26</td>
+      <td>3.07</td>
+      <td>0.19</td>
+      <td>1.92</td>
+      <td>3.08</td>
+      <td>1309.19</td>
+      <td>0.34</td>
+      <td>0.50</td>
+      <td>198.0</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>01.01.2009 00:50:00</td>
+      <td>996.51</td>
+      <td>-8.27</td>
+      <td>265.15</td>
+      <td>-9.04</td>
+      <td>94.1</td>
+      <td>3.27</td>
+      <td>3.08</td>
+      <td>0.19</td>
+      <td>1.92</td>
+      <td>3.09</td>
+      <td>1309.00</td>
+      <td>0.32</td>
+      <td>0.63</td>
+      <td>214.3</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>01.01.2009 01:00:00</td>
+      <td>996.50</td>
+      <td>-8.05</td>
+      <td>265.38</td>
+      <td>-8.78</td>
+      <td>94.4</td>
+      <td>3.33</td>
+      <td>3.14</td>
+      <td>0.19</td>
+      <td>1.96</td>
+      <td>3.15</td>
+      <td>1307.86</td>
+      <td>0.21</td>
+      <td>0.63</td>
+      <td>192.7</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>01.01.2009 01:10:00</td>
+      <td>996.50</td>
+      <td>-7.62</td>
+      <td>265.81</td>
+      <td>-8.30</td>
+      <td>94.8</td>
+      <td>3.44</td>
+      <td>3.26</td>
+      <td>0.18</td>
+      <td>2.04</td>
+      <td>3.27</td>
+      <td>1305.68</td>
+      <td>0.18</td>
+      <td>0.63</td>
+      <td>166.5</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>01.01.2009 01:20:00</td>
+      <td>996.50</td>
+      <td>-7.62</td>
+      <td>265.81</td>
+      <td>-8.36</td>
+      <td>94.4</td>
+      <td>3.44</td>
+      <td>3.25</td>
+      <td>0.19</td>
+      <td>2.03</td>
+      <td>3.26</td>
+      <td>1305.69</td>
+      <td>0.19</td>
+      <td>0.50</td>
+      <td>118.6</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>01.01.2009 01:30:00</td>
+      <td>996.50</td>
+      <td>-7.91</td>
+      <td>265.52</td>
+      <td>-8.73</td>
+      <td>93.8</td>
+      <td>3.36</td>
+      <td>3.15</td>
+      <td>0.21</td>
+      <td>1.97</td>
+      <td>3.16</td>
+      <td>1307.17</td>
+      <td>0.28</td>
+      <td>0.75</td>
+      <td>188.5</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>01.01.2009 01:40:00</td>
+      <td>996.53</td>
+      <td>-8.43</td>
+      <td>264.99</td>
+      <td>-9.34</td>
+      <td>93.1</td>
+      <td>3.23</td>
+      <td>3.00</td>
+      <td>0.22</td>
+      <td>1.88</td>
+      <td>3.02</td>
+      <td>1309.85</td>
+      <td>0.59</td>
+      <td>0.88</td>
+      <td>185.0</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">series</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;T (degC)&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">5</span><span class="p">:]</span>
+
+<span class="n">series</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">series</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/82c68d4d8c2f8d648c74a7b6a24e4f2ed3240eb81205870e7875f39f51cf17b3.png" src="../_images/82c68d4d8c2f8d648c74a7b6a24e4f2ed3240eb81205870e7875f39f51cf17b3.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(420546,)
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">series</span> <span class="o">=</span> <span class="n">series</span><span class="o">.</span><span class="n">iloc</span><span class="p">[::</span><span class="mi">6</span><span class="p">]</span>
+
+<span class="n">series</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">series</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/826e26efdbc9d6412404dd7c422fcc4ff1fbb1666a11a4587b882757fa74b220.png" src="../_images/826e26efdbc9d6412404dd7c422fcc4ff1fbb1666a11a4587b882757fa74b220.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(70091,)
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">series</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[::</span><span class="mi">6</span><span class="p">,</span> <span class="mi">1</span><span class="p">:]</span>
+<span class="n">series</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>p (mbar)</th>
+      <th>T (degC)</th>
+      <th>Tpot (K)</th>
+      <th>Tdew (degC)</th>
+      <th>rh (%)</th>
+      <th>VPmax (mbar)</th>
+      <th>VPact (mbar)</th>
+      <th>VPdef (mbar)</th>
+      <th>sh (g/kg)</th>
+      <th>H2OC (mmol/mol)</th>
+      <th>rho (g/m**3)</th>
+      <th>wv (m/s)</th>
+      <th>max. wv (m/s)</th>
+      <th>wd (deg)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>996.52</td>
+      <td>-8.02</td>
+      <td>265.40</td>
+      <td>-8.90</td>
+      <td>93.30</td>
+      <td>3.33</td>
+      <td>3.11</td>
+      <td>0.22</td>
+      <td>1.94</td>
+      <td>3.12</td>
+      <td>1307.75</td>
+      <td>1.03</td>
+      <td>1.75</td>
+      <td>152.3</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>996.50</td>
+      <td>-7.62</td>
+      <td>265.81</td>
+      <td>-8.30</td>
+      <td>94.80</td>
+      <td>3.44</td>
+      <td>3.26</td>
+      <td>0.18</td>
+      <td>2.04</td>
+      <td>3.27</td>
+      <td>1305.68</td>
+      <td>0.18</td>
+      <td>0.63</td>
+      <td>166.5</td>
+    </tr>
+    <tr>
+      <th>12</th>
+      <td>996.63</td>
+      <td>-8.85</td>
+      <td>264.57</td>
+      <td>-9.70</td>
+      <td>93.50</td>
+      <td>3.12</td>
+      <td>2.92</td>
+      <td>0.20</td>
+      <td>1.82</td>
+      <td>2.93</td>
+      <td>1312.11</td>
+      <td>0.16</td>
+      <td>0.50</td>
+      <td>158.3</td>
+    </tr>
+    <tr>
+      <th>18</th>
+      <td>996.87</td>
+      <td>-8.84</td>
+      <td>264.56</td>
+      <td>-9.69</td>
+      <td>93.50</td>
+      <td>3.13</td>
+      <td>2.92</td>
+      <td>0.20</td>
+      <td>1.83</td>
+      <td>2.93</td>
+      <td>1312.37</td>
+      <td>0.07</td>
+      <td>0.25</td>
+      <td>129.3</td>
+    </tr>
+    <tr>
+      <th>24</th>
+      <td>997.05</td>
+      <td>-9.23</td>
+      <td>264.15</td>
+      <td>-10.25</td>
+      <td>92.20</td>
+      <td>3.03</td>
+      <td>2.79</td>
+      <td>0.24</td>
+      <td>1.74</td>
+      <td>2.80</td>
+      <td>1314.62</td>
+      <td>0.10</td>
+      <td>0.38</td>
+      <td>203.9</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>420522</th>
+      <td>1002.08</td>
+      <td>-1.40</td>
+      <td>271.59</td>
+      <td>-6.10</td>
+      <td>70.20</td>
+      <td>5.51</td>
+      <td>3.87</td>
+      <td>1.64</td>
+      <td>2.40</td>
+      <td>3.86</td>
+      <td>1282.68</td>
+      <td>1.08</td>
+      <td>1.68</td>
+      <td>207.5</td>
+    </tr>
+    <tr>
+      <th>420528</th>
+      <td>1001.42</td>
+      <td>-2.15</td>
+      <td>270.90</td>
+      <td>-7.08</td>
+      <td>68.77</td>
+      <td>5.21</td>
+      <td>3.59</td>
+      <td>1.63</td>
+      <td>2.23</td>
+      <td>3.58</td>
+      <td>1285.50</td>
+      <td>0.79</td>
+      <td>1.24</td>
+      <td>184.3</td>
+    </tr>
+    <tr>
+      <th>420534</th>
+      <td>1001.05</td>
+      <td>-2.61</td>
+      <td>270.47</td>
+      <td>-6.97</td>
+      <td>71.80</td>
+      <td>5.04</td>
+      <td>3.62</td>
+      <td>1.42</td>
+      <td>2.25</td>
+      <td>3.61</td>
+      <td>1287.20</td>
+      <td>0.77</td>
+      <td>1.64</td>
+      <td>129.1</td>
+    </tr>
+    <tr>
+      <th>420540</th>
+      <td>1000.51</td>
+      <td>-3.22</td>
+      <td>269.90</td>
+      <td>-7.63</td>
+      <td>71.40</td>
+      <td>4.81</td>
+      <td>3.44</td>
+      <td>1.38</td>
+      <td>2.14</td>
+      <td>3.44</td>
+      <td>1289.50</td>
+      <td>0.85</td>
+      <td>1.54</td>
+      <td>207.8</td>
+    </tr>
+    <tr>
+      <th>420546</th>
+      <td>1000.07</td>
+      <td>-4.05</td>
+      <td>269.10</td>
+      <td>-8.13</td>
+      <td>73.10</td>
+      <td>4.52</td>
+      <td>3.30</td>
+      <td>1.22</td>
+      <td>2.06</td>
+      <td>3.30</td>
+      <td>1292.98</td>
+      <td>0.67</td>
+      <td>1.52</td>
+      <td>240.0</td>
+    </tr>
+  </tbody>
+</table>
+<p>70092 rows × 14 columns</p>
+</div></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">### HYPERPARAMETERS ###</span>
+<span class="n">window_size</span> <span class="o">=</span> <span class="mi">240</span>
+<span class="n">prediction_horizon</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="c1">### TRAIN TEST VAL SPLIT ###</span>
+<span class="n">train_series</span> <span class="o">=</span> <span class="n">series</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:</span><span class="mi">35045</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+<span class="n">val_series</span> <span class="o">=</span> <span class="n">series</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">35045</span><span class="p">:</span><span class="mi">52569</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+<span class="n">test_series</span> <span class="o">=</span> <span class="n">series</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">52569</span><span class="p">:,</span> <span class="mi">1</span><span class="p">]</span>
+
+<span class="n">train_x</span><span class="p">,</span> <span class="n">train_y</span> <span class="o">=</span> <span class="n">create_xy</span><span class="p">(</span><span class="n">train_series</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">(),</span> <span class="n">window_size</span><span class="p">,</span> <span class="n">prediction_horizon</span><span class="p">)</span>
+<span class="n">val_x</span><span class="p">,</span> <span class="n">val_y</span> <span class="o">=</span> <span class="n">create_xy</span><span class="p">(</span><span class="n">val_series</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">(),</span> <span class="n">window_size</span><span class="p">,</span> <span class="n">prediction_horizon</span><span class="p">)</span>
+<span class="n">test_x</span><span class="p">,</span> <span class="n">test_y</span> <span class="o">=</span> <span class="n">create_xy</span><span class="p">(</span><span class="n">test_series</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">(),</span> <span class="n">window_size</span><span class="p">,</span> <span class="n">prediction_horizon</span><span class="p">)</span>
+
+<span class="n">train_y</span> <span class="o">=</span> <span class="n">train_y</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+<span class="n">val_y</span> <span class="o">=</span> <span class="n">val_y</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+<span class="n">test_y</span> <span class="o">=</span> <span class="n">test_y</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">train_x</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">train_y</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">val_x</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">val_y</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">test_x</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">test_y</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(34805, 240)
+(34805,)
+(17284, 240)
+(17284,)
+(17283, 240)
+(17283,)
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">test_series</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/f2d32b9a021135aa3bbc1277dedd90cd8261197ede43a78095423cc9bf56a3c6.png" src="../_images/f2d32b9a021135aa3bbc1277dedd90cd8261197ede43a78095423cc9bf56a3c6.png" />
+</div>
+</div>
+<section id="lightgbm">
+<h3>LightGBM<a class="headerlink" href="#lightgbm" title="Permalink to this heading">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">lightgbm</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">lgb</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">lgb</span><span class="o">.</span><span class="n">LGBMRegressor</span><span class="p">()</span>
+
+<span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">train_x</span><span class="p">,</span> <span class="n">train_y</span><span class="p">,</span>
+          <span class="n">eval_metric</span> <span class="o">=</span> <span class="s1">&#39;l1&#39;</span><span class="p">,</span> 
+          <span class="n">eval_set</span> <span class="o">=</span> <span class="p">[(</span><span class="n">val_x</span><span class="p">,</span> <span class="n">val_y</span><span class="p">)],</span>
+          <span class="n">early_stopping_rounds</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
+          <span class="n">verbose</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>LGBMRegressor()
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">forecast</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">test_x</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;  LightGBM MAE: </span><span class="si">%.4f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">forecast</span> <span class="o">-</span> <span class="n">test_y</span><span class="p">))))</span>
+
+<span class="c1">#series[-test_size:].plot(marker = &#39;o&#39;, linestyle = &#39;--&#39;)</span>
+<span class="c1">#plt.plot(forecast, marker = &#39;o&#39;, linestyle = &#39;--&#39;)</span>
+<span class="c1">#plt.show()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  LightGBM MAE: 0.5319
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">### HYPERPARAMETERS ###</span>
+<span class="n">window_size</span> <span class="o">=</span> <span class="mi">240</span>
+<span class="n">prediction_horizon</span> <span class="o">=</span> <span class="mi">24</span>
+
+<span class="c1">### TRAIN TEST VAL SPLIT ###</span>
+<span class="n">train_series</span> <span class="o">=</span> <span class="n">series</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:</span><span class="mi">35045</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+<span class="n">val_series</span> <span class="o">=</span> <span class="n">series</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">35045</span><span class="p">:</span><span class="mi">52569</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+<span class="n">test_series</span> <span class="o">=</span> <span class="n">series</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">52569</span><span class="p">:,</span> <span class="mi">1</span><span class="p">]</span>
+
+<span class="n">train_x</span><span class="p">,</span> <span class="n">train_y</span> <span class="o">=</span> <span class="n">create_xy</span><span class="p">(</span><span class="n">train_series</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">(),</span> <span class="n">window_size</span><span class="p">,</span> <span class="n">prediction_horizon</span><span class="p">)</span>
+<span class="n">val_x</span><span class="p">,</span> <span class="n">val_y</span> <span class="o">=</span> <span class="n">create_xy</span><span class="p">(</span><span class="n">val_series</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">(),</span> <span class="n">window_size</span><span class="p">,</span> <span class="n">prediction_horizon</span><span class="p">)</span>
+<span class="n">test_x</span><span class="p">,</span> <span class="n">test_y</span> <span class="o">=</span> <span class="n">create_xy</span><span class="p">(</span><span class="n">test_series</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">(),</span> <span class="n">window_size</span><span class="p">,</span> <span class="n">prediction_horizon</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">train_x</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">train_y</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">val_x</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">val_y</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">test_x</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">test_y</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(34782, 240)
+(34782, 24)
+(17261, 240)
+(17261, 24)
+(17260, 240)
+(17260, 24)
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">### LightGBM</span>
+
+<span class="n">recursive_x</span> <span class="o">=</span> <span class="n">test_x</span>
+<span class="n">forecast_ms</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">prediction_horizon</span><span class="p">):</span>
+    <span class="n">pred</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">recursive_x</span><span class="p">)</span>
+    <span class="n">recursive_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">recursive_x</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">:],</span> <span class="n">pred</span><span class="p">[:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]))</span>
+    <span class="n">forecast_ms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pred</span><span class="p">)</span>
+<span class="n">forecast_ms</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">forecast_ms</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;LightGBM&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;MAE:&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">test_y</span> <span class="o">-</span> <span class="n">forecast_ms</span><span class="p">)))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;RMSE:&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">((</span><span class="n">test_y</span> <span class="o">-</span> <span class="n">forecast_ms</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+
+<span class="c1">### Naive</span>
+
+<span class="n">tmp</span> <span class="o">=</span> <span class="n">test_y</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">n_forecast</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">tmp</span><span class="p">:</span>
+    <span class="n">n_forecast</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="mi">24</span><span class="p">))</span>
+<span class="n">n_forecast</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">n_forecast</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Naive&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;MAE:&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">test_y</span><span class="p">[</span><span class="mi">1</span><span class="p">:,</span> <span class="p">:]</span> <span class="o">-</span> <span class="n">n_forecast</span><span class="p">)))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;RMSE:&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">((</span><span class="n">test_y</span><span class="p">[</span><span class="mi">1</span><span class="p">:,</span> <span class="p">:]</span> <span class="o">-</span> <span class="n">n_forecast</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+
+
+<span class="c1">### S.Naive</span>
+
+<span class="n">new_test</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array_split</span><span class="p">(</span><span class="n">test_series</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()[</span><span class="mi">3</span><span class="p">:],</span> <span class="mi">730</span><span class="p">))</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Seasonal Naive&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;MAE:&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">new_test</span><span class="p">[</span><span class="mi">1</span><span class="p">:,</span> <span class="p">:]</span> <span class="o">-</span> <span class="n">new_test</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:])))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;RMSE:&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">((</span><span class="n">new_test</span><span class="p">[</span><span class="mi">1</span><span class="p">:,</span> <span class="p">:]</span> <span class="o">-</span> <span class="n">new_test</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:])</span><span class="o">**</span><span class="mi">2</span><span class="p">)))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>LightGBM
+MAE: 2.083323119819872
+RMSE: 2.7826767013777443
+
+Naive
+MAE: 3.184767754022055
+RMSE: 4.457663461439199
+
+Seasonal Naive
+MAE: 2.613232738911751
+RMSE: 3.4171095400347133
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="summary">
+<h2>Summary<a class="headerlink" href="#summary" title="Permalink to this heading">#</a></h2>
+<p>Using LightGBM with a recursive forecasting strategy demonstrates that we can achieve an MAE of about 2.08°C without hyperparameter tuning.</p>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./08_WinningestMethods"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#jena-climate-dataset">1. Jena Climate Dataset</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#lightgbm">LightGBM</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#summary">Summary</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By By AI Department - TLU
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2022.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

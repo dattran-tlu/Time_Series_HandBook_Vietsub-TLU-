@@ -1,0 +1,1809 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Chương 7: Tương quan chéo, Biến đổi Fourier và Biến đổi Wavelet (Cross-Correlations, Fourier Transform, and Wavelet Transform) &#8212; Bản dịch Time Series Analysis Handbook</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" href="../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../_static/sphinx-thebe.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '07_CrosscorrelationsFourierTransformandWaveletTransform/07_CrosscorrelationsFourierTransformandWaveletTransform';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Chapter 8: Winningest Methods in Time Series Forecasting" href="../08_WinningestMethods/lightgbm_m5_forecasting.html" />
+    <link rel="prev" title="Chương 6: Ánh xạ chéo hội tụ (Convergent Cross Mapping)" href="../06_ConvergentCrossMappingandSugiharaCausality/ccm_sugihara.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../Preface/Preface.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">Bản dịch Time Series Analysis Handbook</p>
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../Preface/Preface.html">
+                    Lời nói đầu: Giới thiệu về Phân tích Chuỗi Thời Gian (Time Series Analysis)
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../00_Introduction/00_Introduction.html">Chương 0: Phân tích Chuỗi Thời gian Nâng cao (Advanced Time Series Analysis)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../01_AutoRegressiveIntegratedMovingAverage/01_AutoRegressiveIntegratedMovingAverage.html">Chương 1: Trung bình trượt tích hợp tự hồi quy (ARIMA)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../02_LinearForecastingTrendandMomentumForecasting/02_LinearTrendandMomentumForecasting.html">Chương 2: Dự báo Tuyến tính, Xu hướng và Động lượng</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../03_VectorAutoregressiveModels/03_VectorAutoregressiveMethods.html">Chương 3: Các phương pháp Vectơ tự hồi quy (Vector Autoregressive Methods)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../04_GrangerCausality/04_GrangerCausality.html">Chương 4: Kiểm định nhân quả Granger (Granger Causality)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../05_SimplexandSmapProjections/05_Empirical%20Dynamic%20Modelling%20%28Simplex%20and%20SMap_Projections%29.html">Chương 5: Các phương pháp dự báo động lực (Simplex và SMap Projections)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../06_ConvergentCrossMappingandSugiharaCausality/ccm_sugihara.html">Chương 6: Ánh xạ chéo hội tụ (Convergent Cross Mapping)</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Chương 7: Tương quan chéo, Biến đổi Fourier và Biến đổi Wavelet (Cross-Correlations, Fourier Transform, and Wavelet Transform)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../08_WinningestMethods/lightgbm_m5_forecasting.html">Chapter 8: Winningest Methods in Time Series Forecasting</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/07_CrosscorrelationsFourierTransformandWaveletTransform/07_CrosscorrelationsFourierTransformandWaveletTransform.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Chương 7: Tương quan chéo, Biến đổi Fourier và Biến đổi Wavelet (Cross-Correlations, Fourier Transform, and Wavelet Transform)</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tuong-quan-cheo-cross-correlation-giua-hai-tin-hieu">Tương quan chéo (Cross-correlation) giữa hai tín hiệu</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tin-hieu-co-nhieu">Tín hiệu có nhiễu</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#vi-du-1-tuong-quan-cheo-trong-du-lieu-khi-hau-jena">Ví dụ 1: Tương quan chéo trong dữ liệu khí hậu Jena</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#vi-du-2-tuong-quan-cheo-giua-luong-mua-va-luu-luong-dong-chay-tren-song-sudbury">Ví dụ 2: Tương quan chéo giữa lượng mưa và lưu lượng dòng chảy trên sông Sudbury</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#chuoi-fourier">Chuỗi Fourier:</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bien-doi-fourier">Biến đổi Fourier:</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ft-cua-mot-tin-hieu-thuan-pure-signal">FT của một tín hiệu thuần (Pure Signal)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ft-tren-cac-tin-hieu-tron-mixed-signals">FT trên các tín hiệu trộn (Mixed Signals)</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#loc-nhieu">Lọc nhiễu</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#loc-theo-muc-nang-luong">Lọc theo mức năng lượng</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#loc-theo-tan-so">Lọc theo tần số</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#vi-du-3-loc-bang-ft-trong-bo-du-lieu-khi-hau-jena">Ví dụ 3: Lọc bằng FT trong bộ dữ liệu khí hậu Jena</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#wavelet-transform">Wavelet Transform</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#vi-du-4-su-dung-du-lieu-gia-toc-ke-va-con-quay-hoi-chuyen">Ví dụ 4: Sử dụng dữ liệu gia tốc kế và con quay hồi chuyển</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tom-tat">Tóm tắt</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tai-lieu-tham-khao">Tài liệu tham khảo</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="chuong-7-tuong-quan-cheo-bien-doi-fourier-va-bien-doi-wavelet-cross-correlations-fourier-transform-and-wavelet-transform">
+<h1>Chương 7: Tương quan chéo, Biến đổi Fourier và Biến đổi Wavelet (Cross-Correlations, Fourier Transform, and Wavelet Transform)<a class="headerlink" href="#chuong-7-tuong-quan-cheo-bien-doi-fourier-va-bien-doi-wavelet-cross-correlations-fourier-transform-and-wavelet-transform" title="Permalink to this heading">#</a></h1>
+<p>Biên soạn bởi: Gilbert Chua</p>
+<p>Để đạt được sự hiểu biết sâu hơn về động lực học của chuỗi thời gian và phân loại chúng, chúng ta xem xét bài toán dự báo chuỗi thời gian dưới một góc nhìn khác.</p>
+<p>Trong chương này, chúng ta sẽ tiếp cận việc phân tích chuỗi thời gian theo một cách khác, mang tính bổ trợ cho dự báo. Trước đó, các phương pháp giải thích như Granger Causality, Simplex Mapping và Convergent Cross Mapping tập trung vào miền thời gian (time domain) — tức là các giá trị của chuỗi thời gian khi được đo theo thời gian hoặc trong không gian pha (phase space) của nó. Mặc dù cả hai cách tiếp cận này đều hữu ích cho nhiều bài toán, nhưng trong nhiều trường hợp, việc biến đổi các phép đo trong miền thời gian có thể giúp làm lộ ra những cấu trúc và mẫu hình vốn khó phát hiện trực tiếp. Cụ thể, chúng ta muốn xem xét miền tần số (frequency domain) nhằm vừa phân tích động lực của hệ, vừa thực hiện các kỹ thuật tiền xử lý có thể được sử dụng để biến đổi các tập dữ liệu trong thế giới thực.</p>
+<p>Chúng ta sẽ phân tích động lực học của chuỗi thời gian không hoàn toàn nhằm mục đích dự báo, mà để hiểu chuỗi thời gian dưới góc độ các thành phần tần số của nó, như một sự bổ sung cho các phương pháp nhân quả và khả năng giải thích đã được trình bày trước đó.</p>
+<p>Chúng tôi giới thiệu ba kỹ thuật sau:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>1) Cross-correlations (tương quan chéo)
+
+2) Fourier Transform (biến đổi Fourier)
+
+3) Wavelet Transform (biến đổi Wavelet)
+</pre></div>
+</div>
+<p>và kiểm nghiệm việc áp dụng chúng trên bộ dữ liệu khí hậu Jena (2009–2016) cùng với một số bộ dữ liệu khác.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">mpl</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.dates</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">mdates</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">date</span><span class="p">,</span> <span class="n">timedelta</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">scipy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">scp</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">random</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">statsmodels.tsa.stattools</span><span class="w"> </span><span class="kn">import</span> <span class="n">acf</span><span class="p">,</span> <span class="n">adfuller</span><span class="p">,</span> <span class="n">ccf</span><span class="p">,</span> <span class="n">ccovf</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">itertools</span><span class="w"> </span><span class="kn">import</span> <span class="n">repeat</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pywt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<section id="tuong-quan-cheo-cross-correlation-giua-hai-tin-hieu">
+<h2>Tương quan chéo (Cross-correlation) giữa hai tín hiệu<a class="headerlink" href="#tuong-quan-cheo-cross-correlation-giua-hai-tin-hieu" title="Permalink to this heading">#</a></h2>
+<p>Hiện tượng được ghi nhận bởi các chuỗi thời gian có thể không xảy ra đồng thời, mà có một độ trễ <span class="math notranslate nohighlight">\(h\)</span> giữa chúng. Một ví dụ đơn giản cho điều này là công nghệ Sonar. Chuỗi thời gian tương ứng với tín hiệu phản hồi từ các sóng âm bị phản xạ xuất hiện trễ hơn so với chuỗi thời gian của thiết bị phát ra sóng âm ban đầu. Chính độ trễ này là thứ mà chúng ta muốn đo lường khi sử dụng hàm tương quan chéo (Cross-Correlation Function – CCF). Hàm này đã được thảo luận trước đó trong Chương 3 – Các phương pháp Vector Autoregressive. Trong chương này, chúng ta sẽ tiếp tục khai thác khái niệm này và sử dụng cùng một định nghĩa.</p>
+<p>Gọi <span class="math notranslate nohighlight">\(\mathbf\Gamma_h\)</span> là ma trận hiệp phương sai tại độ trễ <span class="math notranslate nohighlight">\(h\)</span>, và <span class="math notranslate nohighlight">\(\mathbf D\)</span> là một ma trận đường chéo kích thước <span class="math notranslate nohighlight">\(N \times N\)</span> chứa độ lệch chuẩn của <span class="math notranslate nohighlight">\(y_{i,t}\)</span> với <span class="math notranslate nohighlight">\(i = 1, \ldots, N\)</span>. Khi đó, ma trận tương quan trễ của <span class="math notranslate nohighlight">\(\mathbf{y}_t\)</span> được định nghĩa là:</p>
+<div class="math notranslate nohighlight">
+\[\boldsymbol\rho_h = \mathbf D^{-1}\mathbf\Gamma_h\mathbf D^{-1}\]</div>
+<p>Phần tử hàng <span class="math notranslate nohighlight">\(i\)</span>, cột <span class="math notranslate nohighlight">\(j\)</span> của <span class="math notranslate nohighlight">\(\boldsymbol\rho_h\)</span> là hệ số tương quan giữa <span class="math notranslate nohighlight">\(y_{i,t}\)</span> và <span class="math notranslate nohighlight">\(y_{j,t-h}\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[\rho_{i,j}(h) = \dfrac{Cov\left[y_{i,t}, y_{j,t-h} \right]}{\sigma_{i,t} \sigma_{j,t}}\]</div>
+<p>trong đó <span class="math notranslate nohighlight">\(Cov[y_{i,t}, y_{j,t-h}]\)</span> là hiệp phương sai giữa hai chuỗi thời gian <span class="math notranslate nohighlight">\(y_{i,t}\)</span> và <span class="math notranslate nohighlight">\(y_{j,t-h}\)</span> tại thời điểm <span class="math notranslate nohighlight">\(t\)</span> với độ trễ <span class="math notranslate nohighlight">\(h\)</span>.</p>
+<p>Các giá trị của hệ số tương quan thu được từ hàm tương quan chéo (cross-correlation function) được diễn giải như sau:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head text-left"><p>Hệ số tương quan</p></th>
+<th class="head text-left"><p>Diễn giải</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-left"><p><span class="math notranslate nohighlight">\(\rho_{i,j}(0)\neq0\)</span></p></td>
+<td class="text-left"><p><span class="math notranslate nohighlight">\(y_{i,t}\)</span> and <span class="math notranslate nohighlight">\(y_{j,t}\)</span> có <em>tương quan tuyến tính đồng thời (contemporaneously linearly correlated)</em></p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p><span class="math notranslate nohighlight">\(\rho_{i,j}(h)=\rho_{j,i}(h)=0\)</span> với mọi <span class="math notranslate nohighlight">\(h\geq0\)</span></p></td>
+<td class="text-left"><p><span class="math notranslate nohighlight">\(y_{i,t}\)</span> và <span class="math notranslate nohighlight">\(y_{j,t}\)</span> chia sẻ <em>mối quan hệ không tuyến tính (no linear relationship)</em></p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p><span class="math notranslate nohighlight">\(\rho_{i,j}(h)=0\)</span> và <span class="math notranslate nohighlight">\(\rho_{j,i}(h)=0\)</span> với mọi <span class="math notranslate nohighlight">\(h&gt;0\)</span></p></td>
+<td class="text-left"><p><span class="math notranslate nohighlight">\(y_{i,t}\)</span> and <span class="math notranslate nohighlight">\(y_{j,t}\)</span> được xem là <em>không liên kết tuyến tính (linearly uncoupled)</em></p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p><span class="math notranslate nohighlight">\(\rho_{i,j}(h)=0\)</span> với mọi <span class="math notranslate nohighlight">\(h&gt;0\)</span>, nhưng <span class="math notranslate nohighlight">\(\rho_{j,i}(q)\neq0\)</span> với ít nhất một số <span class="math notranslate nohighlight">\(q&gt;0\)</span></p></td>
+<td class="text-left"><p>Tồn tại <em>mối quan hệ tuyến tính một chiều (unidirectional (linear) relationship)</em> giữa <span class="math notranslate nohighlight">\(y_{i,t}\)</span> và <span class="math notranslate nohighlight">\(y_{j,t}\)</span>, trong đó <span class="math notranslate nohighlight">\(y_{i,t}\)</span> không phụ thuộc vào <span class="math notranslate nohighlight">\(y_{j,t}\)</span>, nhưng <span class="math notranslate nohighlight">\(y_{j,t}\)</span> phụ thuộc vào (một số) giá trị trễ của <span class="math notranslate nohighlight">\(y_{i,t}\)</span></p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p><span class="math notranslate nohighlight">\(\rho_{i,j}(h)\neq0\)</span> với ít nhất một số <span class="math notranslate nohighlight">\(h&gt;0\)</span> và <span class="math notranslate nohighlight">\(\rho_{j,i}(q)\neq0\)</span> với ít nhất một số <span class="math notranslate nohighlight">\(q&gt;0\)</span></p></td>
+<td class="text-left"><p>Tồn tại <em>mối quan hệ tuyến tính hai chiều (phản hồi) (bi-directional (feedback) linear relationship)</em> giữa <span class="math notranslate nohighlight">\(y_{i,t}\)</span> và <span class="math notranslate nohighlight">\(y_{j,t}\)</span></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<section id="tin-hieu-co-nhieu">
+<h3>Tín hiệu có nhiễu<a class="headerlink" href="#tin-hieu-co-nhieu" title="Permalink to this heading">#</a></h3>
+<p>Để minh họa điều này, chúng ta xét trường hợp của hai chuỗi thời gian đơn giản nhưng có nhiễu.</p>
+<p>Chúng ta muốn đo độ dịch (shift) giữa hai tín hiệu tuần hoàn. Hai sóng sin được tạo ra giống hệt nhau về biên độ và tần số, nhưng một sóng bị dịch lên phía trước theo thời gian.
+Bằng cách lấy giá trị cực đại của hàm tương quan chéo (cross-correlation), chúng ta có thể xác định được mức độ mà một chuỗi thời gian đi trước (lead) hoặc đi sau (lag) so với chuỗi còn lại.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">sine_wave</span><span class="p">(</span><span class="n">amp</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">freq</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">sample_rate</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+              <span class="n">plot</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">shift</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">noise</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">duration</span><span class="p">,</span> <span class="n">sample_rate</span><span class="o">*</span><span class="n">duration</span><span class="p">)</span>
+    <span class="n">frequencies</span> <span class="o">=</span> <span class="n">x</span> <span class="o">*</span> <span class="n">freq</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">amp</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">((</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">frequencies</span><span class="p">)</span> <span class="o">+</span> <span class="n">shift</span><span class="p">)</span> <span class="o">+</span> <span class="n">noise</span>
+    <span class="k">if</span> <span class="n">plot</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">samp_rate</span> <span class="o">=</span> <span class="mi">500</span>  <span class="c1"># Sampling Frequency in Hertz</span>
+<span class="n">dur</span> <span class="o">=</span> <span class="mi">5</span>  <span class="c1"># Duration in Seconds</span>
+
+<span class="n">amp1</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1"># Amplitude of Sine Wave 1</span>
+<span class="n">freq1</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1"># Frequency of Sine Wave 1</span>
+
+<span class="n">amp2</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1"># Amplitude of Sine Wave 2</span>
+<span class="n">freq2</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1"># Frequency of Sine Wave 2</span>
+
+<span class="n">phase_shift</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">2</span>  <span class="c1"># Phase shift</span>
+<span class="n">noise</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">samp_rate</span><span class="o">*</span><span class="n">dur</span><span class="p">)</span>
+<span class="n">x1</span><span class="p">,</span> <span class="n">y1</span> <span class="o">=</span> <span class="n">sine_wave</span><span class="p">(</span><span class="n">amp1</span><span class="p">,</span> <span class="n">freq1</span><span class="p">,</span> <span class="n">samp_rate</span><span class="p">,</span> <span class="n">dur</span><span class="p">,</span> <span class="n">noise</span><span class="o">=</span><span class="n">noise</span><span class="p">,</span>
+                   <span class="n">plot</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">noise</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="o">-</span><span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="n">samp_rate</span><span class="o">*</span><span class="n">dur</span><span class="p">)</span>
+<span class="n">x2</span><span class="p">,</span> <span class="n">y2</span> <span class="o">=</span> <span class="n">sine_wave</span><span class="p">(</span><span class="n">amp2</span><span class="p">,</span> <span class="n">freq2</span><span class="p">,</span> <span class="n">samp_rate</span><span class="p">,</span> <span class="n">dur</span><span class="p">,</span> <span class="n">noise</span><span class="o">=</span><span class="n">noise</span><span class="p">,</span>
+                   <span class="n">shift</span><span class="o">=</span><span class="n">phase_shift</span><span class="p">,</span> <span class="n">plot</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">dur</span><span class="p">,</span> <span class="n">samp_rate</span><span class="o">*</span><span class="n">dur</span><span class="p">),</span> <span class="n">y1</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;$y1$&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">dur</span><span class="p">,</span> <span class="n">samp_rate</span><span class="o">*</span><span class="n">dur</span><span class="p">),</span> <span class="n">y2</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;$y2$&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Value&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time (in $s$)&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/af40b4506541e92aef1bb92bff29c6abfc51fd30aabd05be31b8e8516014169b.png" src="../_images/af40b4506541e92aef1bb92bff29c6abfc51fd30aabd05be31b8e8516014169b.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+
+<span class="n">ccf_12</span> <span class="o">=</span> <span class="n">ccf</span><span class="p">(</span><span class="n">y1</span><span class="p">,</span> <span class="n">y2</span><span class="p">,</span> <span class="n">unbiased</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Correlation Coefficient&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Lag $h$&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">stem</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">dur</span><span class="p">,</span> <span class="n">samp_rate</span><span class="o">*</span><span class="n">dur</span><span class="p">),</span> <span class="n">ccf_12</span><span class="p">)</span>
+<span class="n">peak</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">ccf_12</span><span class="p">)</span><span class="o">/</span><span class="n">samp_rate</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">peak</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s1">&#39;orange&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Maximum at:&#39;</span><span class="p">,</span> <span class="n">peak</span><span class="p">,</span> <span class="s1">&#39;(in $s$)&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Maximum at: 0.23 (in $s$)
+</pre></div>
+</div>
+<img alt="../_images/dee5b26b32b18a2ae6fec3b4aca90318e35860ef6dc9a8b72e47491e8f3ee225.png" src="../_images/dee5b26b32b18a2ae6fec3b4aca90318e35860ef6dc9a8b72e47491e8f3ee225.png" />
+</div>
+</div>
+<p>Chúng tôi nhận thấy rằng giá trị tương quan cực đại giữa <span class="math notranslate nohighlight">\(y_2\)</span> và <span class="math notranslate nohighlight">\(y_1\)</span> xảy ra tại khoảng ~0.247 giây, xấp xỉ 1/4 chu kỳ. Giá trị này rất gần với giá trị lý thuyết 0.25 giây, tương ứng với độ lệch pha <span class="math notranslate nohighlight">\(\frac{\pi}{2}\)</span>. Chỉ bằng cách sử dụng các phép đo trực tiếp từ dữ liệu, mặc dù là dữ liệu tổng hợp, chúng tôi vẫn có thể ước lượng hợp lý độ trễ (lag) và độ chậm (delay) giữa hai chuỗi thời gian.</p>
+<p>ByBằng cách đo tương quan chéo giữa hai tín hiệu, ta có thể xác định khoảng dịch thời gian cần thiết để tối đa hóa tương quan tuyến tính giữa chúng. Cần lưu ý rằng, khác với các thước đo nhân quả như Granger Causality hay Convergent Cross Mapping (CCM), tương quan chéo không cung cấp thông tin về quan hệ nhân quả, mà chỉ phản ánh mối tương quan giữa các chuỗi.</p>
+</section>
+<section id="vi-du-1-tuong-quan-cheo-trong-du-lieu-khi-hau-jena">
+<h3>Ví dụ 1: Tương quan chéo trong dữ liệu khí hậu Jena<a class="headerlink" href="#vi-du-1-tuong-quan-cheo-trong-du-lieu-khi-hau-jena" title="Permalink to this heading">#</a></h3>
+<p>Chúng ta sẽ xem xét cách tương quan chéo (cross-correlation) có thể được sử dụng để khai phá các mối quan hệ trong dữ liệu thực tế. Một lần nữa, chúng ta sử dụng bộ dữ liệu khí hậu Jena để phân tích nhiệt độ trung bình.</p>
+<p>Trong ví dụ này, chúng ta sẽ tập trung vào mối quan hệ giữa nhiệt độ hằng ngày và tốc độ gió hằng ngày.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;../data/jena_climate_2009_2016.csv&#39;</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">())</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">:]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
+<span class="n">temp</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">][::</span><span class="mi">144</span><span class="p">]</span>  <span class="c1"># Temperature (in degrees Celsius) at one sample/day</span>
+<span class="n">wind</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:,</span> <span class="mi">10</span><span class="p">][::</span><span class="mi">144</span><span class="p">]</span>  <span class="c1"># Wind Speed (in m/s) at one sample/day</span>
+<span class="n">dur</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">temp</span><span class="p">)</span>
+<span class="n">samp_rate</span> <span class="o">=</span> <span class="mi">1</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Date Time</th>
+      <th>p (mbar)</th>
+      <th>T (degC)</th>
+      <th>Tpot (K)</th>
+      <th>Tdew (degC)</th>
+      <th>rh (%)</th>
+      <th>VPmax (mbar)</th>
+      <th>VPact (mbar)</th>
+      <th>VPdef (mbar)</th>
+      <th>sh (g/kg)</th>
+      <th>H2OC (mmol/mol)</th>
+      <th>rho (g/m**3)</th>
+      <th>wv (m/s)</th>
+      <th>max. wv (m/s)</th>
+      <th>wd (deg)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>01.01.2009 00:10:00</td>
+      <td>996.52</td>
+      <td>-8.02</td>
+      <td>265.40</td>
+      <td>-8.90</td>
+      <td>93.3</td>
+      <td>3.33</td>
+      <td>3.11</td>
+      <td>0.22</td>
+      <td>1.94</td>
+      <td>3.12</td>
+      <td>1307.75</td>
+      <td>1.03</td>
+      <td>1.75</td>
+      <td>152.3</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>01.01.2009 00:20:00</td>
+      <td>996.57</td>
+      <td>-8.41</td>
+      <td>265.01</td>
+      <td>-9.28</td>
+      <td>93.4</td>
+      <td>3.23</td>
+      <td>3.02</td>
+      <td>0.21</td>
+      <td>1.89</td>
+      <td>3.03</td>
+      <td>1309.80</td>
+      <td>0.72</td>
+      <td>1.50</td>
+      <td>136.1</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>01.01.2009 00:30:00</td>
+      <td>996.53</td>
+      <td>-8.51</td>
+      <td>264.91</td>
+      <td>-9.31</td>
+      <td>93.9</td>
+      <td>3.21</td>
+      <td>3.01</td>
+      <td>0.20</td>
+      <td>1.88</td>
+      <td>3.02</td>
+      <td>1310.24</td>
+      <td>0.19</td>
+      <td>0.63</td>
+      <td>171.6</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>01.01.2009 00:40:00</td>
+      <td>996.51</td>
+      <td>-8.31</td>
+      <td>265.12</td>
+      <td>-9.07</td>
+      <td>94.2</td>
+      <td>3.26</td>
+      <td>3.07</td>
+      <td>0.19</td>
+      <td>1.92</td>
+      <td>3.08</td>
+      <td>1309.19</td>
+      <td>0.34</td>
+      <td>0.50</td>
+      <td>198.0</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>01.01.2009 00:50:00</td>
+      <td>996.51</td>
+      <td>-8.27</td>
+      <td>265.15</td>
+      <td>-9.04</td>
+      <td>94.1</td>
+      <td>3.27</td>
+      <td>3.08</td>
+      <td>0.19</td>
+      <td>1.92</td>
+      <td>3.09</td>
+      <td>1309.00</td>
+      <td>0.32</td>
+      <td>0.63</td>
+      <td>214.3</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">temp</span><span class="p">)),</span> <span class="n">temp</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Temperature&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">wind</span><span class="p">)),</span> <span class="n">wind</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Wind Velocity&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/ef8b9fef2952bd77f46268d4df8124a9c2574d08b72bdfd8cabbe3327d611e90.png" src="../_images/ef8b9fef2952bd77f46268d4df8124a9c2574d08b72bdfd8cabbe3327d611e90.png" />
+</div>
+</div>
+<p>Chúng tôi chuẩn hóa (rescale) các đồ thị để có thể dễ dàng quan sát và trực quan hóa chúng.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">temp</span><span class="p">)),</span> <span class="p">(</span><span class="n">temp</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">temp</span><span class="p">))</span> <span class="o">/</span>
+         <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">temp</span><span class="p">),</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Temperature&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">wind</span><span class="p">)),</span> <span class="p">(</span><span class="n">wind</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">wind</span><span class="p">))</span> <span class="o">/</span>
+         <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">wind</span><span class="p">),</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Wind Velocity&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Value&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time (in days)&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/33fc5558fcd41719dab1393063dcae38f996054f55c7432c00e0d3d475ceeb00.png" src="../_images/33fc5558fcd41719dab1393063dcae38f996054f55c7432c00e0d3d475ceeb00.png" />
+</div>
+</div>
+<p>Dựa trên các chương trước, các chuỗi thời gian này đã được xác định là dừng. Do đó, chúng ta có thể tiến hành áp dụng hàm tương quan chéo (CCF) cho hai chuỗi này.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+
+<span class="n">ccf_12</span> <span class="o">=</span> <span class="n">ccf</span><span class="p">(</span><span class="n">temp</span><span class="p">,</span> <span class="n">wind</span><span class="p">,</span> <span class="n">unbiased</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Correlation Coefficient&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Lag $h$&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">stem</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">dur</span><span class="p">,</span> <span class="n">samp_rate</span><span class="o">*</span><span class="n">dur</span><span class="p">),</span> <span class="n">ccf_12</span><span class="p">)</span>
+<span class="n">peak</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">ccf_12</span><span class="p">)</span><span class="o">/</span><span class="n">samp_rate</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">peak</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Maximum at:&#39;</span><span class="p">,</span> <span class="n">peak</span><span class="p">,</span> <span class="s1">&#39;(in $s$)&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Maximum at: 178.0 (in $s$)
+</pre></div>
+</div>
+<img alt="../_images/5656f33bb1a2dd5ceb4bdb8a297e0508a145c826041b930c3757b356c2956b2c.png" src="../_images/5656f33bb1a2dd5ceb4bdb8a297e0508a145c826041b930c3757b356c2956b2c.png" />
+</div>
+</div>
+<p>Chúng tôi nhận thấy rằng độ dịch (shift) làm cực đại hệ số tương quan giữa các giá trị hằng ngày của nhiệt độ và tốc độ gió là 178 mẫu. Một kết quả đáng chú ý là hệ số tương quan tại <span class="math notranslate nohighlight">\(s = 0\)</span> đạt giá trị nhỏ nhất. Cả hai điều này cho thấy rằng nhiệt độ và tốc độ gió là các hàm tuần hoàn phản chiếu lẫn nhau, theo nghĩa là khi một đại lượng đạt cực đại thì đại lượng kia đạt cực tiểu. Từ đó, chúng tôi ước lượng rằng tốc độ gió đi trước (lead) các giá trị nhiệt độ khoảng 178 ngày.</p>
+<p>Cần lưu ý rằng, không giống như Nhân quả Granger – vốn cũng thiết lập mối quan hệ giữa nhiều chuỗi thời gian – tương quan chéo không cung cấp cho chúng ta thông tin về quan hệ nhân quả giữa hai chuỗi. Ở mức tối đa, tương quan chéo chỉ cho thấy tính đồng bộ (synchronocity) giữa hai chuỗi thời gian.</p>
+</section>
+<section id="vi-du-2-tuong-quan-cheo-giua-luong-mua-va-luu-luong-dong-chay-tren-song-sudbury">
+<h3>Ví dụ 2: Tương quan chéo giữa lượng mưa và lưu lượng dòng chảy trên sông Sudbury<a class="headerlink" href="#vi-du-2-tuong-quan-cheo-giua-luong-mua-va-luu-luong-dong-chay-tren-song-sudbury" title="Permalink to this heading">#</a></h3>
+<p>Chúng tôi áp dụng phân tích tương quan chéo cho lưu lượng dòng chảy hằng ngày của một con sông và lượng mưa tại khu vực xung quanh. Dữ liệu được lấy từ bộ dữ liệu Nước Thời gian Thực của Cơ quan Khảo sát Địa chất Hoa Kỳ (USGS) và bao gồm sông Sudbury tại Saxonville, bang Massachusetts, trong năm 2000. Bộ dữ liệu bao gồm lưu lượng nước trung bình hằng ngày được đo tại trạm của USGS. Việc hiểu rõ nguyên nhân và động lực của dòng chảy tại con sông này có ý nghĩa quan trọng đối với việc quản lý tính toàn vẹn và đa dạng của hệ sinh thái của nó.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">flow_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;../data/cc/flowsud_2000.txt&#39;</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="n">flow_df</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;USGS&#39;</span><span class="p">,</span> <span class="s1">&#39;site_no&#39;</span><span class="p">,</span> <span class="s1">&#39;datetime&#39;</span><span class="p">,</span> <span class="s1">&#39;flow&#39;</span><span class="p">,</span> <span class="s1">&#39;-&#39;</span><span class="p">]</span>
+
+<span class="n">flow</span> <span class="o">=</span> <span class="n">flow_df</span><span class="p">[</span><span class="s1">&#39;flow&#39;</span><span class="p">]</span>
+
+<span class="n">rain_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;../data/cc/weather_2000.txt&#39;</span><span class="p">)</span>
+<span class="n">rain_df</span><span class="p">[</span><span class="s1">&#39;Prcp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">rain_df</span><span class="p">[</span><span class="s1">&#39;Prcp&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;T&#39;</span><span class="p">,</span> <span class="mf">0.0005</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+
+<span class="n">rain</span> <span class="o">=</span> <span class="n">rain_df</span><span class="p">[</span><span class="s1">&#39;Prcp&#39;</span><span class="p">]</span>
+
+<span class="n">dur</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">rain</span><span class="p">)</span>
+<span class="n">samp_rate</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">flow</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Stream Flow&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rain</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Precipitation&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/5e36089e1330f9674a71699e417a8de8558a589a1fb911508fa0815ab9e86402.png" src="../_images/5e36089e1330f9674a71699e417a8de8558a589a1fb911508fa0815ab9e86402.png" />
+</div>
+</div>
+<p>Một lần nữa, chúng tôi chuẩn hóa (rescale) các đồ thị để có thể dễ dàng quan sát chúng.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">((</span><span class="n">rain</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">rain</span><span class="p">))</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">rain</span><span class="p">),</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Preciptation (exaggerated)&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">((</span><span class="n">flow</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">flow</span><span class="p">))</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">flow</span><span class="p">),</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Stream Flow&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Day of the Year&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/9a3101a47f6cd60fa0d797c22bb77ee3fb1980b96b2c983e75c98f5d4054cdf0.png" src="../_images/9a3101a47f6cd60fa0d797c22bb77ee3fb1980b96b2c983e75c98f5d4054cdf0.png" />
+</div>
+</div>
+<p>Chúng tôi thực hiện kiểm định Augmented Dickey–Fuller (ADF) trên hai chuỗi thời gian nhằm xác định xem chúng có tính dừng (stationary) hay không. Nếu chúng thực sự là các chuỗi dừng, chúng ta có thể tiếp tục thực hiện phân tích tương quan chéo (cross-correlation).</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">result</span> <span class="o">=</span> <span class="n">adfuller</span><span class="p">(</span><span class="n">flow</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;ADF Statistic: </span><span class="si">%f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;p-value: </span><span class="si">%f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">result</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Critical Values:&#39;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">result</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t</span><span class="si">%s</span><span class="s1">: </span><span class="si">%.3f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>ADF Statistic: -3.878838
+p-value: 0.002196
+Critical Values:
+	1%: -3.448
+	5%: -2.870
+	10%: -2.571
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">result</span> <span class="o">=</span> <span class="n">adfuller</span><span class="p">(</span><span class="n">rain</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;ADF Statistic: </span><span class="si">%f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;p-value: </span><span class="si">%f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">result</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Critical Values:&#39;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">result</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t</span><span class="si">%s</span><span class="s1">: </span><span class="si">%.3f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>ADF Statistic: -18.494992
+p-value: 0.000000
+Critical Values:
+	1%: -3.448
+	5%: -2.869
+	10%: -2.571
+</pre></div>
+</div>
+</div>
+</div>
+<p>Cả hai chuỗi thời gian đều là chuỗi dừng và chúng tôi tiến hành áp dụng hàm tương quan chéo (CCF).</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+
+<span class="n">ccf_12</span> <span class="o">=</span> <span class="n">ccf</span><span class="p">(</span><span class="n">flow</span><span class="p">,</span> <span class="n">rain</span><span class="p">,</span> <span class="n">unbiased</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Correlation Coefficient&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Lag $h$&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">stem</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">dur</span><span class="p">,</span> <span class="n">samp_rate</span><span class="o">*</span><span class="n">dur</span><span class="p">),</span> <span class="n">ccf_12</span><span class="p">)</span>
+<span class="n">peak</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">ccf_12</span><span class="p">)</span><span class="o">/</span><span class="n">samp_rate</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">peak</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Maximum at:&#39;</span><span class="p">,</span> <span class="n">peak</span><span class="p">,</span> <span class="s1">&#39;(in $days$)&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Maximum at: 1.0 (in $days$)
+</pre></div>
+</div>
+<img alt="../_images/f39f3280eb8917046bbb8e86c9453ee11a1e326a841dcf0b8da6ccf896d33f65.png" src="../_images/f39f3280eb8917046bbb8e86c9453ee11a1e326a841dcf0b8da6ccf896d33f65.png" />
+</div>
+</div>
+<p>Chúng tôi nhận thấy rằng tương quan lớn nhất xảy ra khi lượng mưa dẫn dòng chảy sông trước 1 ngày. Mặc dù bản thân tương quan chéo không thể trực tiếp cung cấp mối quan hệ nhân quả, nhưng việc hiểu rõ bản chất của các phép đo liên quan cho phép chúng ta lập luận về điều này. Trong trường hợp lượng mưa và dòng chảy sông, đã có sự hiểu biết rộng rãi rằng mưa sẽ dẫn đến sự gia tăng lưu lượng nước của sông. Do đó, chúng tôi có thể kết luận với mức độ tin cậy nhất định rằng lượng mưa gây ra sự gia tăng dòng chảy sông sau khoảng 1 ngày.</p>
+<p>Để bổ trợ cho phân tích, chúng tôi chuyển sang miền tần số bằng cách sử dụng Biến đổi Fourier, bắt đầu bằng việc tìm hiểu Chuỗi Fourier.</p>
+</section>
+</section>
+<section id="chuoi-fourier">
+<h2>Chuỗi Fourier:<a class="headerlink" href="#chuoi-fourier" title="Permalink to this heading">#</a></h2>
+<p>Bất kỳ tín hiệu tuần hoàn nào cũng có thể được phân rã thành tổng của các sóng sin và cos. Một chuỗi thời gian tuần hoàn <span class="math notranslate nohighlight">\(X(t)\)</span> có thể được biểu diễn thông qua các tần số cơ bản bằng Chuỗi Fourier:</p>
+<p><span class="math notranslate nohighlight">\(\begin{align} y(t) = \frac{a_0}{2}  + \sum_{n=1}^{\infty}{a_n cos(nt)) + b_n sin(nt)} \end{align}\)</span></p>
+<p>Lấy tích phân hai vế với <span class="math notranslate nohighlight">\(\int+{-\pi}^{\pi} cos(mt)dt\)</span> trong đó <span class="math notranslate nohighlight">\(m\)</span> là một số nguyên:</p>
+<p><span class="math notranslate nohighlight">\(\begin{align} \int_{-\pi}^{\pi}{y(t)cos(mt)dt} = \frac{1}{2} a_0 + \sum_{n=1}^{\infty}{\int_{-\pi}^{\pi}a_n cos(nt)cos(mt)dt + \sum_{n=1}^{\infty}\int_{-\pi}^{\pi}b_n sin(nt) cos(mt)dt} \end{align}\)</span></p>
+<p>Dựa vào tính trực giao giữa các hàm <span class="math notranslate nohighlight">\(cos\)</span> và <span class="math notranslate nohighlight">\(sin\)</span> trên khoảng <span class="math notranslate nohighlight">\([-\pi,\pi]\)</span>:</p>
+<p><span class="math notranslate nohighlight">\(\begin{align} \int_{-\pi}^{\pi}{cos(nt)cos(mt)dt} = 0,   m\neq n \end{align}\)</span>
+<span class="math notranslate nohighlight">\(\begin{align} \int_{-\pi}^{\pi}{sin(nt)cos(mt)dt} = 0,   all m,n \end{align}\)</span>
+<span class="math notranslate nohighlight">\(\begin{align} \int_{-\pi}^{\pi}{cos(nt)sin(mt)dt} = 0,   m\neq n \end{align}\)</span></p>
+<p>Phương trình (4) được rút gọn thành:</p>
+<p><span class="math notranslate nohighlight">\(\begin{align} \int_{-\pi}^{\pi}{y(t)cos(mt)dt} = a_m \int_{-\pi}^{\pi}cos^{2}(mt)dt \end{align}\)</span></p>
+<p>Giải theo a_m, ta được:</p>
+<p><span class="math notranslate nohighlight">\(\begin{align} a_m = \frac{1}{\pi}\int_{-\pi}^{\pi}{y(t) cos(mt)dt} \end{align}\)</span></p>
+<p>Làm tương tự cho b_m, ta thu được hệ số tương tự:</p>
+<p><span class="math notranslate nohighlight">\(\begin{align} b_m = \frac{1}{\pi}\int_{-\pi}^{\pi}{y(t) sin(mt)dt} \end{align}\)</span></p>
+<p>với <span class="math notranslate nohighlight">\(n =0,1,2...,\)</span> trong đó:</p>
+<p><span class="math notranslate nohighlight">\(n = 0\)</span> is là thành phần hằng của tín hiệu</p>
+<p><span class="math notranslate nohighlight">\(n = 1\)</span> là \textit{thành phần cơ bản} , tương ứng với một sóng sin/cos có chu kỳ trùng khớp chính xác với chu kỳ của <span class="math notranslate nohighlight">\(y(t)\)</span>’s</p>
+<p><span class="math notranslate nohighlight">\(n = 2\)</span> là họa âm thứ nhất, tương ứng với một sóng sin/cos có chu kỳ bằng <span class="math notranslate nohighlight">\(\frac{1}{2}\)</span> của chu kỳ <span class="math notranslate nohighlight">\(y(t)\)</span>’s</p>
+<p><span class="math notranslate nohighlight">\(n = 3\)</span> là họa âm thứ hai, tương ứng với một sóng sin/cos có chu kỳ bằng <span class="math notranslate nohighlight">\(\frac{1}{3}\)</span> của chu kỳ <span class="math notranslate nohighlight">\(y(t)\)</span>’s</p>
+<p>OMột đại lượng hữu ích để xem xét là năng lượng của tín hiệu, vì nó cho chúng ta biết “mức độ” của tín hiệu. Chúng tôi định nghĩa một hệ số duy nhất <span class="math notranslate nohighlight">\(c_n^{2}\)</span> để mô tả “năng lượng” của tín hiệu tại một tần số cụ thể, trong đó <span class="math notranslate nohighlight">\(c_n\)</span> được cho bởi:</p>
+<p><span class="math notranslate nohighlight">\(\begin{align}c_n = \left[\frac{1}{2}(a^2_n + b^2_n)\right]^{\frac{1}{2}}\end{align}\)</span></p>
+<p>Bình phương của các hệ số này (<span class="math notranslate nohighlight">\(c_n^{2}\)</span>) tương ứng với năng lượng của một tần số <span class="math notranslate nohighlight">\(n\)</span> nhất định.</p>
+</section>
+<section id="bien-doi-fourier">
+<h2>Biến đổi Fourier:<a class="headerlink" href="#bien-doi-fourier" title="Permalink to this heading">#</a></h2>
+<p>Việc biến đổi một tín hiệu từ miền thời gian sang miền tần số (<span class="math notranslate nohighlight">\(\omega\)</span>) bằng phương pháp này được gọi là \textbf{Fourier Transform (FT)}. FT được cho bởi:</p>
+<div class="amsmath math notranslate nohighlight" id="equation-81bf969e-f1f8-47e3-93a3-7637e3c942c1">
+<span class="eqno">(12)<a class="headerlink" href="#equation-81bf969e-f1f8-47e3-93a3-7637e3c942c1" title="Permalink to this equation">#</a></span>\[\begin{align} \hat{y}(\omega) = \int_{-\infty}^{\infty}{y(t)e^{-2\pi i \omega t}d\omega} \end{align}\]</div>
+<p>Để hiểu rõ hơn về FT, chúng ta hãy xem xét một số ứng dụng của nó.</p>
+<section id="ft-cua-mot-tin-hieu-thuan-pure-signal">
+<h3>FT của một tín hiệu thuần (Pure Signal)<a class="headerlink" href="#ft-cua-mot-tin-hieu-thuan-pure-signal" title="Permalink to this heading">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">samp_rate</span> <span class="o">=</span> <span class="mi">500</span>  <span class="c1"># Sampling Frequency in Hertz</span>
+<span class="n">dur</span> <span class="o">=</span> <span class="mi">5</span>  <span class="c1"># Duration in Seconds</span>
+<span class="n">amp</span> <span class="o">=</span> <span class="mi">10</span>  <span class="c1"># Amplitude of Sine Wave</span>
+<span class="n">freq</span> <span class="o">=</span> <span class="mi">5</span>  <span class="c1"># Frequency of Sine Wave</span>
+<span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">sine_wave</span><span class="p">(</span><span class="n">amp</span><span class="p">,</span> <span class="n">freq</span><span class="p">,</span> <span class="n">samp_rate</span><span class="p">,</span> <span class="n">dur</span><span class="p">,</span> <span class="n">plot</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/6b93f922e23799914bfa345839b0c66b24968f848cd5c7ce9df29946d0bad88b.png" src="../_images/6b93f922e23799914bfa345839b0c66b24968f848cd5c7ce9df29946d0bad88b.png" />
+</div>
+</div>
+<p>Hãy làm việc với các điều kiện lý tưởng trước. Hãy áp dụng Biến đổi Fourier lên một sóng sin đơn có tần số 5 Hz.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">y_ft</span> <span class="o">=</span> <span class="n">scp</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">fft</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+<span class="n">freqs</span> <span class="o">=</span> <span class="n">scp</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">fftfreq</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">*</span><span class="n">samp_rate</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">freqs</span><span class="p">,</span> <span class="n">y_ft</span><span class="o">.</span><span class="n">real</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Energy&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Frequency (in Hz)&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Peak at:&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">y_ft</span><span class="o">.</span><span class="n">real</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="n">dur</span><span class="p">,</span> <span class="s1">&#39;Hz&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Peak at: 5.0 Hz
+</pre></div>
+</div>
+<img alt="../_images/075e986c5af75cfe9b8a88255f4a1ca4cd5b4794b06baa56fea8d1c8464096da.png" src="../_images/075e986c5af75cfe9b8a88255f4a1ca4cd5b4794b06baa56fea8d1c8464096da.png" />
+</div>
+</div>
+<p>Ta thấy hai đỉnh khi tần số là 5 và −5.</p>
+<p>Phía bên trái tương ứng với các tần số âm. Về mặt vật lý, các tần số âm không mang nhiều ý nghĩa, nhưng sự tồn tại của chúng là quan trọng trong việc tính toán Biến đổi Fourier. Bằng cách xác định vị trí mà năng lượng đạt đỉnh, ta có thể tìm ra những tần số mô tả chuỗi thời gian tốt nhất.</p>
+<p>Ngoài ra, FT là một quá trình có thể đảo ngược hoàn toàn (tới độ chính xác số). Bằng cách biết năng lượng của từng tần số, ta có thể khôi phục lại tín hiệu ban đầu bằng cách thực hiện Inverse Fourier Transform (IFT).</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">scp</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">ifft</span><span class="p">(</span><span class="n">y_ft</span><span class="p">)</span><span class="o">.</span><span class="n">real</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Frequency&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Is close:&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">scp</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">ifft</span><span class="p">(</span><span class="n">y_ft</span><span class="p">),</span> <span class="n">y</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Is close: True
+</pre></div>
+</div>
+<img alt="../_images/0f4f378816312924439be2167583e76ef2beeaf48ad87bed9f64b2e46438344a.png" src="../_images/0f4f378816312924439be2167583e76ef2beeaf48ad87bed9f64b2e46438344a.png" />
+</div>
+</div>
+</section>
+<section id="ft-tren-cac-tin-hieu-tron-mixed-signals">
+<h3>FT trên các tín hiệu trộn (Mixed Signals)<a class="headerlink" href="#ft-tren-cac-tin-hieu-tron-mixed-signals" title="Permalink to this heading">#</a></h3>
+<p>Một ứng dụng quan trọng của FT là phân tích các tín hiệu có nhiều tần số trộn lẫn. Ta có thể thực hiện lại bài toán ở trên với 2 sóng được kết hợp (hoặc thậm chí là một số lượng bất kỳ các sóng với các tần số khác nhau!) để tìm ra những tần số nào đang tồn tại trong tín hiệu của chúng ta.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">samp_rate</span> <span class="o">=</span> <span class="mi">500</span>  <span class="c1"># Sampling Frequency in Hertz</span>
+<span class="n">dur</span> <span class="o">=</span> <span class="mi">5</span>  <span class="c1"># Duration in Seconds</span>
+
+<span class="n">amp1</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1"># Amplitude of Sine Wave 1</span>
+<span class="n">freq1</span> <span class="o">=</span> <span class="mi">5</span>  <span class="c1"># Frequency of Sine Wave 1</span>
+
+<span class="n">amp2</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1"># Amplitude of Sine Wave 2</span>
+<span class="n">freq2</span> <span class="o">=</span> <span class="mi">17</span>  <span class="c1"># Frequency of Sine Wave 2</span>
+
+<span class="n">x1</span><span class="p">,</span> <span class="n">y1</span> <span class="o">=</span> <span class="n">sine_wave</span><span class="p">(</span><span class="n">amp1</span><span class="p">,</span> <span class="n">freq1</span><span class="p">,</span> <span class="n">samp_rate</span><span class="p">,</span> <span class="n">dur</span><span class="p">,</span> <span class="n">plot</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">x2</span><span class="p">,</span> <span class="n">y2</span> <span class="o">=</span> <span class="n">sine_wave</span><span class="p">(</span><span class="n">amp2</span><span class="p">,</span> <span class="n">freq2</span><span class="p">,</span> <span class="n">samp_rate</span><span class="p">,</span> <span class="n">dur</span><span class="p">,</span> <span class="n">plot</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">y1</span> <span class="o">+</span> <span class="n">y2</span>  <span class="c1"># Simply overlapping the two signals</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">y</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/10a388b75c00f0ab1172c78a5e0fcd13445855b1755d4626cba913d211d299e8.png" src="../_images/10a388b75c00f0ab1172c78a5e0fcd13445855b1755d4626cba913d211d299e8.png" />
+</div>
+</div>
+<p>Nhìn bằng mắt thường vào đồ thị, thật khó để xác định chính xác các thành phần tần số cấu tạo nên nó.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">y_ft</span> <span class="o">=</span> <span class="n">scp</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">fft</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+<span class="n">freqs</span> <span class="o">=</span> <span class="n">scp</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">fftfreq</span><span class="p">(</span><span class="n">x1</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">*</span><span class="n">samp_rate</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">freqs</span><span class="p">,</span> <span class="n">y_ft</span><span class="o">.</span><span class="n">real</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Frequency (in Hz)&#39;</span><span class="p">)</span>
+<span class="n">peaks</span> <span class="o">=</span> <span class="n">scp</span><span class="o">.</span><span class="n">signal</span><span class="o">.</span><span class="n">find_peaks</span><span class="p">(</span><span class="n">y_ft</span><span class="o">.</span><span class="n">real</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">peak_vals</span> <span class="o">=</span> <span class="n">peaks</span><span class="p">[</span><span class="mi">0</span><span class="p">][:</span><span class="nb">len</span><span class="p">(</span><span class="n">peaks</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">//</span><span class="mi">2</span><span class="p">]</span><span class="o">/</span><span class="n">dur</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Peaks at:&#39;</span><span class="p">,</span> <span class="n">peak_vals</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Peaks at: [ 5. 17.]
+</pre></div>
+</div>
+<img alt="../_images/915a522d0ad457b01aacdcc092dbb7c050f09788a92492cb25e2c7eb5e5fef3f.png" src="../_images/915a522d0ad457b01aacdcc092dbb7c050f09788a92492cb25e2c7eb5e5fef3f.png" />
+</div>
+</div>
+<p>Phép biến đổi Fourier (FT) giúp việc xác định các tần số của tín hiệu trở nên rất dễ dàng, ngay cả khi các tần số đó bị trộn lẫn với nhau.</p>
+</section>
+</section>
+<section id="loc-nhieu">
+<h2>Lọc nhiễu<a class="headerlink" href="#loc-nhieu" title="Permalink to this heading">#</a></h2>
+<p>Dữ liệu chuỗi thời gian trong thực tế không bao giờ hoàn toàn không có nhiễu, điều này khiến việc xác định động lực thực sự của đại lượng được đo trở nên khó khăn. Chúng ta có thể vô tình đi mô hình hóa nhiễu và bỏ qua hành vi thực sự của chuỗi thời gian.</p>
+<p>Rất may, chúng ta có thể thao tác dữ liệu chuỗi thời gian trong miền tần số để loại bỏ một trong những loại nhiễu phổ biến nhất – nhiễu trắng. Nhiễu trắng xuất hiện phổ biến trong dữ liệu chuỗi thời gian và theo định nghĩa, nó có các thành phần ở mọi tần số. Thông thường, một chuỗi thời gian có nhiễu trắng được biểu diễn như sau:</p>
+<div class="amsmath math notranslate nohighlight" id="equation-06adfb71-0281-48c6-91e6-9b3ff4253ffa">
+<span class="eqno">(13)<a class="headerlink" href="#equation-06adfb71-0281-48c6-91e6-9b3ff4253ffa" title="Permalink to this equation">#</a></span>\[\begin{align} y(t) = s(t) + v(t) \end{align}\]</div>
+<p>trong đó <span class="math notranslate nohighlight">\(s(t)\)</span> là tín hiệu thực mà ta muốn khôi phục từ <span class="math notranslate nohighlight">\(y(t)\)</span> và <span class="math notranslate nohighlight">\(v(t)\)</span> là nhiễu trắng mà ta muốn loại bỏ. Chúng tôi mô phỏng điều này bên dưới bằng cách thêm nhiễu trắng vào tín hiệu.</p>
+<section id="loc-theo-muc-nang-luong">
+<h3>Lọc theo mức năng lượng<a class="headerlink" href="#loc-theo-muc-nang-luong" title="Permalink to this heading">#</a></h3>
+<p>Nhiễu trắng được đặc trưng bởi việc có mức năng lượng gần như bằng nhau ở tất cả các tần số. Một tín hiệu như vậy có thể được tạo ra đơn giản bằng cách sử dụng một bộ sinh số ngẫu nhiên.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">noise</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">noise</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/37552e37d50d86ea3e63942cb94aa22b4538db0820679d8e923de5d63b04e9a0.png" src="../_images/37552e37d50d86ea3e63942cb94aa22b4538db0820679d8e923de5d63b04e9a0.png" />
+</div>
+</div>
+<p>Khi thực hiện biến đổi Fourier (FT) đối với nhiễu trắng, ta nhận thấy rằng, thực sự, ở hầu như tất cả các tần số đều tồn tại các giá trị năng lượng dương. Điều này có nghĩa là tại mọi tần số, nhiễu trắng đều có một mức đóng góp nhất định, và mức đóng góp này có thể ảnh hưởng đến việc phân tích chuỗi thời gian của chúng ta.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">noise_ft</span> <span class="o">=</span> <span class="n">scp</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">fft</span><span class="p">(</span><span class="n">noise</span><span class="p">)</span>
+<span class="n">freqs</span> <span class="o">=</span> <span class="n">scp</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">fftfreq</span><span class="p">(</span><span class="n">x1</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">*</span><span class="n">samp_rate</span>
+<span class="n">peaks</span> <span class="o">=</span> <span class="n">scp</span><span class="o">.</span><span class="n">signal</span><span class="o">.</span><span class="n">find_peaks</span><span class="p">(</span><span class="n">noise_ft</span><span class="o">.</span><span class="n">real</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">freqs</span><span class="p">,</span> <span class="n">noise_ft</span><span class="o">.</span><span class="n">real</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Energy&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Frequency&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/e8edeb45138d6cea58fd04098e5f434200ae6a9d093d8c074d1f2589a4a8fce1.png" src="../_images/e8edeb45138d6cea58fd04098e5f434200ae6a9d093d8c074d1f2589a4a8fce1.png" />
+</div>
+</div>
+<p>Việc thêm nhiễu trắng vào tín hiệu có tần số hỗn hợp làm cho hành vi thực sự của nó trở nên khó quan sát hơn. Nhiễu trắng đã “làm hỏng” tín hiệu và tạo ra một thách thức mà chúng ta thường gặp khi thực hiện bất kỳ phép đo nào. Làm thế nào chúng ta có thể lọc ra tín hiệu hỗn hợp ban đầu khi dữ liệu nhận được là dữ liệu nhiễu?</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">y_noisy</span> <span class="o">=</span> <span class="n">y</span><span class="o">+</span><span class="n">noise</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">y_noisy</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/be5109793f52e65d48975c879595b119b826fc0773e0f044009bb17eb1b4799d.png" src="../_images/be5109793f52e65d48975c879595b119b826fc0773e0f044009bb17eb1b4799d.png" />
+</div>
+</div>
+<p>Biến đổi Fourier (FT) thu được của tín hiệu nhiễu dẫn đến việc xuất hiện nhiều đỉnh. Điều này gây ra vấn đề nếu chúng ta đang cố gắng tìm các xu hướng tuần hoàn phù hợp trong dữ liệu. May mắn thay, nhiễu dường như chỉ xuất hiện ở các mức năng lượng thấp. Nếu các phép đo được thực hiện đủ tốt trong quá trình thu thập dữ liệu, nhiễu có thể được kiểm soát vì chúng chỉ có mức năng lượng thấp.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">y_ft</span> <span class="o">=</span> <span class="n">scp</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">fft</span><span class="p">(</span><span class="n">y_noisy</span><span class="p">)</span>
+<span class="n">freqs</span> <span class="o">=</span> <span class="n">scp</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">fftfreq</span><span class="p">(</span><span class="n">x1</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">*</span><span class="n">samp_rate</span>
+<span class="n">peaks</span> <span class="o">=</span> <span class="n">scp</span><span class="o">.</span><span class="n">signal</span><span class="o">.</span><span class="n">find_peaks</span><span class="p">(</span><span class="n">y_ft</span><span class="o">.</span><span class="n">real</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">peak_vals</span> <span class="o">=</span> <span class="n">peaks</span><span class="p">[</span><span class="mi">0</span><span class="p">][:</span><span class="nb">len</span><span class="p">(</span><span class="n">peaks</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">//</span><span class="mi">2</span><span class="p">]</span><span class="o">/</span><span class="n">dur</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Peaks at:&#39;</span><span class="p">,</span> <span class="n">peak_vals</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">freqs</span><span class="p">,</span> <span class="n">y_ft</span><span class="o">.</span><span class="n">real</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Energy&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Frequency&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Peaks at: [  0.6   1.2   1.6   2.8   4.    5.    5.4   6.    6.6   7.4   8.    8.4
+   9.2  10.   10.6  11.   11.6  12.6  13.2  13.8  14.4  15.2  16.   16.4
+  17.   17.4  17.8  18.4  19.   19.6  20.   20.4  21.2  21.6  22.   22.4
+  23.   23.8  24.8  25.2  25.6  26.   26.6  27.2  27.8  28.2  28.8  29.6
+  30.   30.8  31.2  31.8  33.   34.2  34.6  35.   35.4  35.8  36.4  37.
+  37.8  38.4  39.2  39.8  40.2  40.6  41.2  41.8  42.2  43.   43.6  44.
+  44.8  45.4  46.2  46.6  47.2  47.6  48.   48.6  49.2  49.8  50.2  50.6
+  51.   51.4  52.   52.6  53.   53.6  54.   54.4  54.8  55.2  55.8  56.4
+  57.   57.6  58.6  59.   59.4  60.   60.8  61.6  62.2  62.6  63.2  63.8
+  64.4  65.   65.4  65.8  66.2  66.8  67.6  68.   68.4  69.2  69.6  70.
+  71.2  71.6  72.6  73.   73.4  73.8  74.6  75.2  76.   76.6  77.2  77.6
+  78.2  78.6  79.4  79.8  80.2  80.6  81.2  81.8  82.2  82.6  83.   84.
+  84.8  85.2  85.6  86.4  86.8  87.2  88.2  88.6  89.4  90.2  91.   91.4
+  91.8  92.2  93.   93.8  94.4  94.8  95.8  96.6  97.   98.   98.4  99.
+  99.6 100.4 101.  101.4 102.  102.8 103.2 104.  104.6 105.2 105.6 106.2
+ 106.8 107.2 107.6 108.2 109.  109.6 110.2 110.8 111.4 111.8 113.  113.8
+ 114.2 114.6 115.2 115.6 116.2 116.6 117.  117.8 118.4 118.8 119.4 120.
+ 120.4 121.  121.4 122.  122.6 123.4 123.8 124.4 125.4 126.4 127.2 127.6
+ 128.  128.4 128.8 129.2 129.6 130.2 130.6 131.2 131.6 132.  132.4 133.4
+ 133.8 134.6 135.4 136.  136.6 137.2 137.6 138.8 139.6 140.6 141.2 141.6
+ 142.4 143.  143.6 144.  144.4 145.  145.4 145.8 147.  147.4 147.8 148.2
+ 148.8 149.4 150.  150.4 150.8 151.6 152.2 152.6 153.2 153.6 154.4 154.8
+ 155.4 156.2 157.2 157.6 158.  158.4 159.4 160.6 161.  161.6 162.2 163.
+ 163.4 163.8 164.4 164.8 165.2 166.  166.6 167.2 168.  169.  169.8 170.2
+ 170.6 171.  171.8 172.2 172.8 173.6 174.2 174.6 175.4 176.  176.8 177.2
+ 177.6 178.  178.6 179.  179.6 180.6 181.  181.4 182.2 183.  183.6 184.
+ 184.6 185.2 186.2 186.6 187.2 187.6 188.  188.8 189.4 190.  190.4 191.2
+ 191.6 192.2 192.8 193.4 194.2 195.  195.6 196.4 197.  197.4 198.  198.8
+ 199.4 199.8 200.2 200.8 201.2 202.8 203.4 204.2 205.  205.6 206.  207.
+ 207.6 208.4 209.4 209.8 210.2 210.6 211.4 211.8 212.8 213.2 213.6 214.
+ 214.6 215.  215.4 216.  216.4 217.  217.4 217.8 218.6 219.  219.6 220.
+ 220.6 221.4 221.8 222.2 222.8 223.4 224.2 224.6 225.  225.6 226.4 226.8
+ 227.2 227.8 228.2 228.8 229.4 230.4 231.  231.8 232.6 233.2 233.8 234.2
+ 234.6 235.6 236.2 237.  237.6 238.2 238.6 239.2 239.8 240.6 241.4 242.2
+ 242.8 243.2 243.6 244.2 244.6 245.  245.6 246.  246.6 247.  247.4 248.2
+ 248.8 249.2 249.8]
+</pre></div>
+</div>
+<img alt="../_images/638f6d3e9321b6261e29b7a435732464a18fa0246bc9e5006a8ea8277558abc1.png" src="../_images/638f6d3e9321b6261e29b7a435732464a18fa0246bc9e5006a8ea8277558abc1.png" />
+</div>
+</div>
+<p>Theo cách làm thô sơ, chúng ta có thể đặt một ngưỡng cứng để loại bỏ các hệ số của những tần số có mức năng lượng thấp hơn một ngưỡng nhất định. Một cách để thực hiện điều này là đặt ngưỡng cắt (cut-off) bằng một bội số của độ lệch chuẩn. Biến đổi Fourier cho phép chúng ta thực hiện điều này.</p>
+<p><em>Ngược lại, chúng ta cũng có thể áp dụng cùng một phương pháp để loại bỏ các tín hiệu có năng lượng cao hoặc thậm chí chỉ chọn những tín hiệu nằm trong một dải tần nhất định.</em></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">threshold</span> <span class="o">=</span> <span class="mi">3</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">y_ft</span><span class="o">.</span><span class="n">real</span><span class="p">)</span>
+<span class="n">peaks</span> <span class="o">=</span> <span class="n">scp</span><span class="o">.</span><span class="n">signal</span><span class="o">.</span><span class="n">find_peaks</span><span class="p">(</span><span class="n">y_ft</span><span class="o">.</span><span class="n">real</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="n">threshold</span><span class="p">)</span>
+<span class="n">peak_vals</span> <span class="o">=</span> <span class="n">peaks</span><span class="p">[</span><span class="mi">0</span><span class="p">][:</span><span class="nb">len</span><span class="p">(</span><span class="n">peaks</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">//</span><span class="mi">2</span><span class="p">]</span><span class="o">/</span><span class="n">dur</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Peaks at:&#39;</span><span class="p">,</span> <span class="n">peak_vals</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Peaks at: [ 17.  149.4 202.8 207. ]
+</pre></div>
+</div>
+</div>
+</div>
+<p>Bằng cách quan sát trực quan và đặt một ngưỡng tùy ý bằng 3 lần độ lệch chuẩn, chúng ta có thể thu được một tín hiệu rõ ràng hơn của các tần số chi phối, mặc dù có khả năng vẫn xuất hiện thêm một số tần số lẻ. Việc thu được chính xác tín hiệu ban đầu từ một tín hiệu nhiễu có thể rất khó, nhưng với việc áp dụng một cách thận trọng và hiểu biết về hệ thống nền tảng, lọc theo mức năng lượng có thể là một cách nhanh chóng và hiệu quả để điều chỉnh chuỗi thời gian của bạn.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">y_ft_denoised</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span> <span class="k">if</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="n">threshold</span> <span class="k">else</span> <span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">y_ft</span><span class="p">]</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="n">y_denoised</span> <span class="o">=</span> <span class="n">scp</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">ifft</span><span class="p">(</span><span class="n">y_ft_denoised</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">y_denoised</span><span class="o">.</span><span class="n">real</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/534412c9191142d9c7e1adc5a6e926a0e9c73206b7afd291a8ba649774df6505.png" src="../_images/534412c9191142d9c7e1adc5a6e926a0e9c73206b7afd291a8ba649774df6505.png" />
+</div>
+</div>
+</section>
+<section id="loc-theo-tan-so">
+<h3>Lọc theo tần số<a class="headerlink" href="#loc-theo-tan-so" title="Permalink to this heading">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">hf_noise</span> <span class="o">=</span> <span class="n">sine_wave</span><span class="p">(</span><span class="n">amp</span><span class="p">,</span> <span class="mi">70</span><span class="p">,</span> <span class="n">samp_rate</span><span class="p">,</span> <span class="n">dur</span><span class="p">,</span> <span class="n">plot</span><span class="o">=</span><span class="kc">False</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+
+<span class="n">y_hf_noisy</span> <span class="o">=</span> <span class="n">y</span><span class="o">+</span><span class="n">hf_noise</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y_hf_noisy</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/916a6b5b99917d30c528a05d4fdf933f161f5c3e6430b69540c236b7befbe796.png" src="../_images/916a6b5b99917d30c528a05d4fdf933f161f5c3e6430b69540c236b7befbe796.png" />
+</div>
+</div>
+<p>Quan sát biến đổi Fourier (FT) của một tín hiệu có nhiễu tần số cao, ta thấy nhiễu chiếm ưu thế trong phổ năng lượng và che khuất tín hiệu nền bên dưới.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">y_ft_hf</span> <span class="o">=</span> <span class="n">scp</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">fft</span><span class="p">(</span><span class="n">y_hf_noisy</span><span class="p">)</span>
+<span class="n">freqs</span> <span class="o">=</span> <span class="n">scp</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">fftfreq</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">*</span><span class="n">samp_rate</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">freqs</span><span class="p">,</span> <span class="n">y_ft_hf</span><span class="o">.</span><span class="n">real</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">peaks</span> <span class="o">=</span> <span class="n">scp</span><span class="o">.</span><span class="n">signal</span><span class="o">.</span><span class="n">find_peaks</span><span class="p">(</span><span class="n">y_ft_hf</span><span class="o">.</span><span class="n">real</span><span class="p">)</span>
+<span class="n">peak_vals</span> <span class="o">=</span> <span class="n">peaks</span><span class="p">[</span><span class="mi">0</span><span class="p">][:</span><span class="nb">len</span><span class="p">(</span><span class="n">peaks</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">//</span><span class="mi">2</span><span class="p">]</span><span class="o">/</span><span class="n">dur</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Energy&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Frequency&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Peaks at:&#39;</span><span class="p">,</span> <span class="n">peak_vals</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Peaks at: [ 5. 17. 70.]
+</pre></div>
+</div>
+<img alt="../_images/a9207c66b56bf6db6af8b7f2e00d405d85d70e8ba55624bbb33ce5fe1a9b58e7.png" src="../_images/a9207c66b56bf6db6af8b7f2e00d405d85d70e8ba55624bbb33ce5fe1a9b58e7.png" />
+</div>
+</div>
+<p>Trong khi các đỉnh tần số thấp hơn của tín hiệu vẫn có thể được khôi phục, nhiễu quá mạnh sẽ khiến tín hiệu không còn khả thi cho hầu hết các mục đích dự báo. Các tần số cao này* có thể được loại bỏ để thu lại tín hiệu ban đầu. Dựa trên mục tiêu quan sát các tín hiệu có tần số thấp hơn, ta có thể ép năng lượng của tất cả các tần số vượt quá một ngưỡng mong muốn về 0 và thực hiện phép biến đổi Fourier ngược (IFT) để thu được tín hiệu.</p>
+<ul class="simple">
+<li><p><em>Ta cũng có thể làm điều tương tự đối với các tần số thấp hoặc các tần số nằm trong một “dải” (band).</em></p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">freqs</span> <span class="o">=</span> <span class="n">scp</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">fftfreq</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">*</span><span class="n">samp_rate</span>
+<span class="n">freqs</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([ 0. ,  0.2,  0.4, ..., -0.6, -0.4, -0.2])
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">f_thresh</span> <span class="o">=</span> <span class="mi">20</span>
+
+<span class="n">freqs</span> <span class="o">=</span> <span class="n">scp</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">fftfreq</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">*</span><span class="n">samp_rate</span>
+<span class="n">y_ft_hf_filtered</span> <span class="o">=</span> <span class="n">y_ft_hf</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="n">y_ft_hf_filtered</span><span class="p">[(</span><span class="nb">abs</span><span class="p">(</span><span class="n">freqs</span><span class="o">.</span><span class="n">real</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">f_thresh</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">0</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">freqs</span><span class="p">,</span> <span class="n">y_ft_hf_filtered</span><span class="o">.</span><span class="n">real</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Energy&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Frequency&#39;</span><span class="p">);</span>
+<span class="n">peaks</span> <span class="o">=</span> <span class="n">scp</span><span class="o">.</span><span class="n">signal</span><span class="o">.</span><span class="n">find_peaks</span><span class="p">(</span><span class="n">y_ft_hf_filtered</span><span class="o">.</span><span class="n">real</span><span class="p">)</span>
+<span class="n">peak_vals</span> <span class="o">=</span> <span class="n">peaks</span><span class="p">[</span><span class="mi">0</span><span class="p">][:</span><span class="nb">len</span><span class="p">(</span><span class="n">peaks</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">//</span><span class="mi">2</span><span class="p">]</span><span class="o">/</span><span class="n">dur</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Peaks at:&#39;</span><span class="p">,</span> <span class="n">peak_vals</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Peaks at: [ 5. 17.]
+</pre></div>
+</div>
+<img alt="../_images/689a5168a4458772ae1ff9956047cc3807756c404e1d17b48fee8790f86c4ca1.png" src="../_images/689a5168a4458772ae1ff9956047cc3807756c404e1d17b48fee8790f86c4ca1.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="n">y_lf</span> <span class="o">=</span> <span class="n">scp</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">ifft</span><span class="p">(</span><span class="n">y_ft_hf_filtered</span><span class="p">)</span><span class="o">.</span><span class="n">real</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">y_lf</span><span class="o">.</span><span class="n">real</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/24bbb7751085f0bb6f4308f806238baf124abfec30eee9bb251679eb61ea2e0a.png" src="../_images/24bbb7751085f0bb6f4308f806238baf124abfec30eee9bb251679eb61ea2e0a.png" />
+</div>
+</div>
+</section>
+<section id="vi-du-3-loc-bang-ft-trong-bo-du-lieu-khi-hau-jena">
+<h3>Ví dụ 3: Lọc bằng FT trong bộ dữ liệu khí hậu Jena<a class="headerlink" href="#vi-du-3-loc-bang-ft-trong-bo-du-lieu-khi-hau-jena" title="Permalink to this heading">#</a></h3>
+<p>Khi xem xét thông tin khí hậu, chúng ta có thể rút ra những hiểu biết về tính mùa vụ của các mô hình khí hậu. Hãy xem xét nhiệt độ trung bình hằng ngày của bộ dữ liệu khí hậu Jena và áp dụng FT để phân tích tính mùa vụ của nó.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;../data/jena_climate_2009_2016.csv&#39;</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">())</span>
+<span class="n">df</span><span class="p">[</span><span class="s1">&#39;Date Time&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span>
+    <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Date Time&#39;</span><span class="p">],</span> <span class="n">dayfirst</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%d</span><span class="s2">.%m.%Y %H:%M:%S&quot;</span><span class="p">)</span>
+<span class="n">df</span><span class="p">[</span><span class="s1">&#39;Date&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Date Time&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">date</span>
+<span class="n">mean_temps</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;Date&#39;</span><span class="p">)[</span><span class="s1">&#39;T (degC)&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">.</span><span class="n">values</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">temp</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Date Time</th>
+      <th>p (mbar)</th>
+      <th>T (degC)</th>
+      <th>Tpot (K)</th>
+      <th>Tdew (degC)</th>
+      <th>rh (%)</th>
+      <th>VPmax (mbar)</th>
+      <th>VPact (mbar)</th>
+      <th>VPdef (mbar)</th>
+      <th>sh (g/kg)</th>
+      <th>H2OC (mmol/mol)</th>
+      <th>rho (g/m**3)</th>
+      <th>wv (m/s)</th>
+      <th>max. wv (m/s)</th>
+      <th>wd (deg)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>01.01.2009 00:10:00</td>
+      <td>996.52</td>
+      <td>-8.02</td>
+      <td>265.40</td>
+      <td>-8.90</td>
+      <td>93.3</td>
+      <td>3.33</td>
+      <td>3.11</td>
+      <td>0.22</td>
+      <td>1.94</td>
+      <td>3.12</td>
+      <td>1307.75</td>
+      <td>1.03</td>
+      <td>1.75</td>
+      <td>152.3</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>01.01.2009 00:20:00</td>
+      <td>996.57</td>
+      <td>-8.41</td>
+      <td>265.01</td>
+      <td>-9.28</td>
+      <td>93.4</td>
+      <td>3.23</td>
+      <td>3.02</td>
+      <td>0.21</td>
+      <td>1.89</td>
+      <td>3.03</td>
+      <td>1309.80</td>
+      <td>0.72</td>
+      <td>1.50</td>
+      <td>136.1</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>01.01.2009 00:30:00</td>
+      <td>996.53</td>
+      <td>-8.51</td>
+      <td>264.91</td>
+      <td>-9.31</td>
+      <td>93.9</td>
+      <td>3.21</td>
+      <td>3.01</td>
+      <td>0.20</td>
+      <td>1.88</td>
+      <td>3.02</td>
+      <td>1310.24</td>
+      <td>0.19</td>
+      <td>0.63</td>
+      <td>171.6</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>01.01.2009 00:40:00</td>
+      <td>996.51</td>
+      <td>-8.31</td>
+      <td>265.12</td>
+      <td>-9.07</td>
+      <td>94.2</td>
+      <td>3.26</td>
+      <td>3.07</td>
+      <td>0.19</td>
+      <td>1.92</td>
+      <td>3.08</td>
+      <td>1309.19</td>
+      <td>0.34</td>
+      <td>0.50</td>
+      <td>198.0</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>01.01.2009 00:50:00</td>
+      <td>996.51</td>
+      <td>-8.27</td>
+      <td>265.15</td>
+      <td>-9.04</td>
+      <td>94.1</td>
+      <td>3.27</td>
+      <td>3.08</td>
+      <td>0.19</td>
+      <td>1.92</td>
+      <td>3.09</td>
+      <td>1309.00</td>
+      <td>0.32</td>
+      <td>0.63</td>
+      <td>214.3</td>
+    </tr>
+  </tbody>
+</table>
+</div></div><div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&lt;matplotlib.lines.Line2D at 0x7f82c5588210&gt;]
+</pre></div>
+</div>
+<img alt="../_images/26b4c4701df9d97cf987778a7cfcbf9bfa4748999694b1ff6d395b44bb28daad.png" src="../_images/26b4c4701df9d97cf987778a7cfcbf9bfa4748999694b1ff6d395b44bb28daad.png" />
+</div>
+</div>
+<p>Có một xu hướng rất mạnh có thể quan sát được lặp lại hằng năm. Giả sử chúng ta chỉ muốn xem xét riêng xu hướng này vì chúng ta quan tâm đến động lực tổng quát của hệ thống. Để làm nổi bật khía cạnh đó của chuỗi thời gian, chúng ta lọc bỏ các tần số tương ứng với chu kỳ nhỏ hơn 1 năm bằng cách đặt năng lượng của chúng về 0.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">y_ft</span> <span class="o">=</span> <span class="n">scp</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">fft</span><span class="p">(</span><span class="n">temp</span><span class="p">)</span>
+<span class="n">y_ft_copy</span> <span class="o">=</span> <span class="n">y_ft</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="n">freqs</span> <span class="o">=</span> <span class="n">scp</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">fftfreq</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">temp</span><span class="p">),</span> <span class="n">d</span><span class="o">=</span><span class="mi">1</span><span class="o">/</span><span class="mi">365</span><span class="p">)</span>
+<span class="n">y_ft_copy</span><span class="p">[(</span><span class="nb">abs</span><span class="p">(</span><span class="n">freqs</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">freqs</span><span class="p">,</span> <span class="nb">abs</span><span class="p">(</span><span class="n">y_ft_copy</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&lt;matplotlib.lines.Line2D at 0x7f82c6027a50&gt;]
+</pre></div>
+</div>
+<img alt="../_images/eaf39f49b9082a1598c4bfc2ca9d56558a02f62cfddbf5d59ddbce56944d9654.png" src="../_images/eaf39f49b9082a1598c4bfc2ca9d56558a02f62cfddbf5d59ddbce56944d9654.png" />
+</div>
+</div>
+<p>Bằng cách loại bỏ tất cả các tần số có chu kỳ nhỏ hơn 1 năm, chúng ta chỉ giữ lại các giá trị tần số thấp. Với các giá trị này, chúng ta có thể quan sát rõ hơn động lực theo năm của nhiệt độ hằng ngày mà không bị nhiễu bởi các động lực giữa các năm. Nếu cần thực hiện dự báo các giá trị nhiệt độ thực tế, các giá trị của những tần số đã bị loại bỏ có thể đơn giản được cộng trở lại.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">y_hf</span> <span class="o">=</span> <span class="n">scp</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">ifft</span><span class="p">(</span><span class="n">y_ft_copy</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="c1"># plt.title(&#39;Removing Yearly Cycle&#39;)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">temp</span><span class="p">)),</span> <span class="n">y_hf</span><span class="o">.</span><span class="n">real</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&lt;matplotlib.lines.Line2D at 0x7f82c6055750&gt;]
+</pre></div>
+</div>
+<img alt="../_images/9a53570f9cb85c8c8012dea4bb80e246c651a6107e2fab3710ceee4d402c1386.png" src="../_images/9a53570f9cb85c8c8012dea4bb80e246c651a6107e2fab3710ceee4d402c1386.png" />
+</div>
+</div>
+</section>
+</section>
+<section id="wavelet-transform">
+<h2>Wavelet Transform<a class="headerlink" href="#wavelet-transform" title="Permalink to this heading">#</a></h2>
+<p>Biến đổi wavelet (Wavelet Transform – WT) cho phép bạn đo lường “mức độ” tồn tại của một loại wavelet nhất định trong một tín hiệu cho trước. Mặc dù cả FT và WT đều biến đổi một chuỗi thời gian sang miền tần số, nhưng một khác biệt then chốt là WT còn cung cấp thông tin về miền thời gian.</p>
+<p>Phép biến đổi này đạt được bằng cách hình dung một wavelet được chỉ định trượt dọc theo toàn bộ tín hiệu theo thời gian. Wavelet dùng để quét này được gọi là “mother wavelet” (wavelet mẹ). Bên cạnh việc trượt wavelet mẹ dọc theo chiều dài của chuỗi thời gian, kích thước của nó — phụ thuộc vào một hệ số tỷ lệ (scale factor) — cũng được thay đổi trong quá trình quét. Phép biến đổi tỷ lệ áp dụng lên wavelet mẹ có thể được hiểu là việc “kéo giãn” nó mà không làm thay đổi tần số của nó.</p>
+<p>Biến đổi wavelet của một chuỗi thời gian <span class="math notranslate nohighlight">\(y(t)\)</span> được cho bởi:</p>
+<p><span class="math notranslate nohighlight">\(\begin{align} WT(y(t)) = \frac{1}{\sqrt{|\sigma|}}\int_{-\infty}^{\infty}y(t)\psi \left( \frac{t-h}{\sigma} \right)dt \end{align}\)</span></p>
+<p>trong đó <span class="math notranslate nohighlight">\(\sigma\)</span> là thang đo (scale), <span class="math notranslate nohighlight">\(h\)</span> là độ trễ/tham số tịnh tiến theo thời gian, và <span class="math notranslate nohighlight">\(\psi\)</span> là wavelet mẹ.</p>
+<p>Từ WT, chúng ta thu được các tập hệ số tương ứng với những độ trễ thời gian và các thang đo khác nhau. Độ lớn của các hệ số càng lớn thì mức độ chồng lấp giữa wavelet mẹ đã được thay đổi tỷ lệ, dịch theo thời gian và chuỗi thời gian càng lớn.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">rescale</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">scale</span><span class="o">*</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n</span><span class="p">),</span> <span class="n">arr</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="n">wav1</span> <span class="o">=</span> <span class="n">pywt</span><span class="o">.</span><span class="n">ContinuousWavelet</span><span class="p">(</span><span class="s1">&#39;gaus1&#39;</span><span class="p">)</span>
+<span class="n">int_psi1</span><span class="p">,</span> <span class="n">x</span> <span class="o">=</span> <span class="n">pywt</span><span class="o">.</span><span class="n">integrate_wavelet</span><span class="p">(</span><span class="n">wav1</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rescale</span><span class="p">(</span><span class="n">int_psi1</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">s</span><span class="p">),</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Scale: &#39;</span><span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">s</span><span class="p">))</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Gaussian Mother Wavelet&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/542d4bada90c33e7b2daeaca7e6ab87dd0f29320f6f8f8744a1d00f8e87e2395.png" src="../_images/542d4bada90c33e7b2daeaca7e6ab87dd0f29320f6f8f8744a1d00f8e87e2395.png" />
+</div>
+</div>
+<p>Giả sử chúng ta có một tín hiệu gồm các sóng Gaussian lặp lại. Khi áp dụng WT lên tín hiệu này bằng cách sử dụng một mother wavelet tương ứng với một wavelet Gaussian, ta có thể xác định chính xác những vị trí mà chuỗi thời gian thể hiện các mẫu có dạng giống Gaussian.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">s1</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">scp</span><span class="o">.</span><span class="n">signal</span><span class="o">.</span><span class="n">gaussian</span><span class="p">(</span><span class="mi">250</span><span class="p">,</span> <span class="n">std</span><span class="o">=</span><span class="mi">20</span><span class="p">))</span>
+<span class="n">s1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">s1</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="n">left</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">right</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Value&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time (t)&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">s1</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/54cbf7f1885f62539841a9e17d022ebe68942e51f2a43c9ef56001ef31d0ff28.png" src="../_images/54cbf7f1885f62539841a9e17d022ebe68942e51f2a43c9ef56001ef31d0ff28.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">coeffs</span><span class="p">,</span> <span class="n">freqs</span> <span class="o">=</span> <span class="n">pywt</span><span class="o">.</span><span class="n">cwt</span><span class="p">(</span><span class="n">s1</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">250</span><span class="p">),</span> <span class="n">wavelet</span><span class="o">=</span><span class="s1">&#39;gaus1&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mf">18.75</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="n">left</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">right</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Scale (s)&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time (t)&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">coeffs</span><span class="p">,</span> <span class="n">aspect</span><span class="o">=</span><span class="s1">&#39;auto&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/aaa09ba6bb5fb222b947fa6b11ccecd62efefcc8cbebf5bb6b84cfc2e9bc141d.png" src="../_images/aaa09ba6bb5fb222b947fa6b11ccecd62efefcc8cbebf5bb6b84cfc2e9bc141d.png" />
+</div>
+</div>
+<p>Bằng cách quan sát những vị trí mà độ lớn của WT là lớn nhất, chúng ta có thể xác định chính xác thời điểm và thang đo (scale) tại đó tồn tại hành vi giống Gaussian trong chuỗi thời gian của chúng ta. WT cũng hữu ích trong việc tách tín hiệu ra khỏi nhiễu. Chúng ta một lần nữa thêm nhiễu trắng vào các xung Gaussian và quan sát kết quả của WT.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">s1</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">scp</span><span class="o">.</span><span class="n">signal</span><span class="o">.</span><span class="n">gaussian</span><span class="p">(</span><span class="mi">250</span><span class="p">,</span> <span class="n">std</span><span class="o">=</span><span class="mi">20</span><span class="p">))</span>
+<span class="n">noise</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="o">-</span><span class="mf">1.5</span><span class="p">,</span><span class="mf">1.5</span><span class="p">,</span><span class="mi">4</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">s1</span><span class="p">))</span>
+<span class="n">s1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">s1</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span> <span class="o">+</span> <span class="n">noise</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="n">left</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">right</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Scale (s)&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time (t)&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">s1</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/b25d75d81e1c512cb38895676e4d836335ce5136d33f139b7803dc8c9e6dd393.png" src="../_images/b25d75d81e1c512cb38895676e4d836335ce5136d33f139b7803dc8c9e6dd393.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">coeffs</span><span class="p">,</span> <span class="n">freqs</span> <span class="o">=</span> <span class="n">pywt</span><span class="o">.</span><span class="n">cwt</span><span class="p">(</span><span class="n">s1</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">300</span><span class="p">),</span> <span class="n">wavelet</span><span class="o">=</span><span class="s1">&#39;gaus1&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mf">18.75</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="n">left</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">right</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Scale (s)&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time (t)&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">coeffs</span><span class="p">,</span> <span class="n">aspect</span><span class="o">=</span><span class="s1">&#39;auto&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/c4facae62b1cf5686a4058847865118ad41547d46b74f1cfea19cca685e246ce.png" src="../_images/c4facae62b1cf5686a4058847865118ad41547d46b74f1cfea19cca685e246ce.png" />
+</div>
+</div>
+<p>Các vùng có độ lớn cao của các hệ số WT vẫn hiện rõ ràng, mặc dù có một chút nhiễu nhỏ từ nhiễu trắng ở các thang đo nhỏ hơn.</p>
+<p>Nói chung, việc lựa chọn wavelet mẹ phụ thuộc vào loại hành vi mà bạn muốn hoặc kỳ vọng xuất hiện trong chuỗi thời gian. Một wavelet mẹ phổ biến khác được dùng để nhận diện sóng sin trong chuỗi thời gian là wavelet “Morlet”. Wavelet này là một sóng sin được làm suy giảm (tapered) bởi một sóng Gaussian.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="n">wav2</span> <span class="o">=</span> <span class="n">pywt</span><span class="o">.</span><span class="n">ContinuousWavelet</span><span class="p">(</span><span class="s1">&#39;morl&#39;</span><span class="p">)</span>
+<span class="n">int_psi2</span><span class="p">,</span> <span class="n">x</span> <span class="o">=</span> <span class="n">pywt</span><span class="o">.</span><span class="n">integrate_wavelet</span><span class="p">(</span><span class="n">wav2</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rescale</span><span class="p">(</span><span class="n">int_psi2</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">s</span><span class="p">),</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Scale: &#39;</span><span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">s</span><span class="p">))</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Morlet Mother Wavelet&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/7bd6e386269268b30e59edeb2937b5721f5e660ccf407ac788848c0c9962c5d6.png" src="../_images/7bd6e386269268b30e59edeb2937b5721f5e660ccf407ac788848c0c9962c5d6.png" />
+</div>
+</div>
+<p>Khi áp dụng wavelet Morlet lên một tín hiệu sin có tần số trộn, ta có thể thấy rằng nó có khả năng phân biệt giữa hai tần số khi <span class="math notranslate nohighlight">\(s\)</span> được thay đổi.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sine5</span> <span class="o">=</span> <span class="n">sine_wave</span><span class="p">(</span><span class="n">freq</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">duration</span> <span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">plot</span><span class="o">=</span><span class="kc">False</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">sine10</span> <span class="o">=</span> <span class="n">sine_wave</span><span class="p">(</span><span class="n">freq</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">plot</span><span class="o">=</span><span class="kc">False</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">sine_5_10</span> <span class="o">=</span> <span class="n">sine5</span><span class="o">+</span><span class="n">sine10</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">sine_5_10</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mf">18.75</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="n">left</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">right</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Scale (s)&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time (t)&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">coeffs</span><span class="p">,</span> <span class="n">aspect</span><span class="o">=</span><span class="s1">&#39;auto&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/81c70c1f07e98b1056bfc5fe4ef538027ed5bd02b1b65e648d8d53ecef9e5c36.png" src="../_images/81c70c1f07e98b1056bfc5fe4ef538027ed5bd02b1b65e648d8d53ecef9e5c36.png" />
+<img alt="../_images/c4facae62b1cf5686a4058847865118ad41547d46b74f1cfea19cca685e246ce.png" src="../_images/c4facae62b1cf5686a4058847865118ad41547d46b74f1cfea19cca685e246ce.png" />
+</div>
+</div>
+<section id="vi-du-4-su-dung-du-lieu-gia-toc-ke-va-con-quay-hoi-chuyen">
+<h3>Ví dụ 4: Sử dụng dữ liệu gia tốc kế và con quay hồi chuyển<a class="headerlink" href="#vi-du-4-su-dung-du-lieu-gia-toc-ke-va-con-quay-hoi-chuyen" title="Permalink to this heading">#</a></h3>
+<p>Đoạn mã sau được lấy từ bài viết:</p>
+<p>https://towardsdatascience.com/multiple-time-series-classification-by-using-continuous-wavelet-transformation-d29df97c0442</p>
+<p>Dữ liệu sau đây chứa các tín hiệu theo thời gian từ gia tốc kế (accelerometer) và con quay hồi chuyển (gyroscopic) được gắn vào người thực hiện các hoạt động khác nhau. Trong suốt quá trình họ thực hiện hoạt động, các phép đo từ các thiết bị này được ghi lại dưới dạng chuỗi thời gian. Mỗi chuỗi thời gian mô tả một hoạt động khác nhau.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">load_y_data</span><span class="p">(</span><span class="n">y_path</span><span class="p">):</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="n">y_path</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="c1"># change labels range from 1-6 t 0-5, this enables a sparse_categorical_crossentropy loss function</span>
+    <span class="k">return</span> <span class="n">y</span> <span class="o">-</span> <span class="mi">1</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">load_X_data</span><span class="p">(</span><span class="n">X_path</span><span class="p">):</span>
+    <span class="n">X_signal_paths</span> <span class="o">=</span> <span class="p">[</span><span class="n">X_path</span> <span class="o">+</span> <span class="n">file</span> <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">X_path</span><span class="p">)]</span>
+    <span class="n">X_signals</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span> <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">X_signal_paths</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">X_signals</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+
+
+<span class="n">PATH</span> <span class="o">=</span> <span class="s1">&#39;../data/cwt/&#39;</span>
+<span class="n">LABEL_NAMES</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Walking&quot;</span><span class="p">,</span> <span class="s2">&quot;Walking upstairs&quot;</span><span class="p">,</span>
+               <span class="s2">&quot;Walking downstairs&quot;</span><span class="p">,</span> <span class="s2">&quot;Sitting&quot;</span><span class="p">,</span> <span class="s2">&quot;Standing&quot;</span><span class="p">,</span> <span class="s2">&quot;Laying&quot;</span><span class="p">]</span>
+
+<span class="c1"># load X data</span>
+<span class="n">X_train</span> <span class="o">=</span> <span class="n">load_X_data</span><span class="p">(</span><span class="n">PATH</span> <span class="o">+</span> <span class="s1">&#39;train/Inertial Signals/&#39;</span><span class="p">)</span>
+<span class="n">X_test</span> <span class="o">=</span> <span class="n">load_X_data</span><span class="p">(</span><span class="n">PATH</span> <span class="o">+</span> <span class="s1">&#39;test/Inertial Signals/&#39;</span><span class="p">)</span>
+<span class="c1"># load y label</span>
+<span class="n">y_train</span> <span class="o">=</span> <span class="n">load_y_data</span><span class="p">(</span><span class="n">PATH</span> <span class="o">+</span> <span class="s1">&#39;train/y_train.txt&#39;</span><span class="p">)</span>
+<span class="n">y_test</span> <span class="o">=</span> <span class="n">load_y_data</span><span class="p">(</span><span class="n">PATH</span> <span class="o">+</span> <span class="s1">&#39;test/y_test.txt&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Rõ ràng, chúng ta nhận thấy rằng đi bộ (walking) có một “diện mạo” khác so với chỉ nằm xuống (laying down). Con người có thể dễ dàng nhận ra điều này chỉ bằng cách quan sát thoáng qua, nhưng đối với máy móc thì việc phân biệt hai tín hiệu này có thể rất khó khăn. Wavelet Transform (WT) cho phép tạo ra các hình ảnh chứa cả thông tin theo thời gian và theo tần số, từ đó cung cấp một biểu diễn gọn gàng và có ý nghĩa cho các chuỗi thời gian này.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">ncols</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">X_train</span><span class="p">[</span><span class="mi">79</span><span class="p">])</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Walking&#39;</span><span class="p">)</span>
+<span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">X_train</span><span class="p">[</span><span class="mi">51</span><span class="p">])</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Laying&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/716f49ddea7714ce486bf56fb8852dd2ab4c2ffe29c3894f10c98a30b5d51bd7.png" src="../_images/716f49ddea7714ce486bf56fb8852dd2ab4c2ffe29c3894f10c98a30b5d51bd7.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">split_indices_per_label</span><span class="p">(</span><span class="n">y</span><span class="p">):</span>
+    <span class="n">indicies_per_label</span> <span class="o">=</span> <span class="p">[[]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">6</span><span class="p">)]</span>
+    <span class="c1"># loop over the six labels</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">6</span><span class="p">):</span>
+        <span class="n">indicies_per_label</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">y</span> <span class="o">==</span> <span class="n">i</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">indicies_per_label</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_cwt_coeffs_per_label</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">label_indicies</span><span class="p">,</span> <span class="n">label_names</span><span class="p">,</span> <span class="n">signal</span><span class="p">,</span> <span class="n">sample</span><span class="p">,</span> <span class="n">scales</span><span class="p">,</span> <span class="n">wavelet</span><span class="p">):</span>
+
+    <span class="n">fig</span><span class="p">,</span> <span class="n">axs</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">nrows</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                            <span class="n">sharey</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+
+    <span class="k">for</span> <span class="n">ax</span><span class="p">,</span> <span class="n">indices</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">axs</span><span class="o">.</span><span class="n">flat</span><span class="p">,</span> <span class="n">label_indicies</span><span class="p">,</span> <span class="n">label_names</span><span class="p">):</span>
+        <span class="n">coeffs</span><span class="p">,</span> <span class="n">freqs</span> <span class="o">=</span> <span class="n">pywt</span><span class="o">.</span><span class="n">cwt</span><span class="p">(</span>
+            <span class="n">X</span><span class="p">[</span><span class="n">indices</span><span class="p">[</span><span class="n">sample</span><span class="p">],</span> <span class="p">:,</span> <span class="n">signal</span><span class="p">],</span> <span class="n">scales</span><span class="p">,</span> <span class="n">wavelet</span><span class="o">=</span><span class="n">wavelet</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">coeffs</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;coolwarm&#39;</span><span class="p">,</span> <span class="n">aspect</span><span class="o">=</span><span class="s1">&#39;auto&#39;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s1">&#39;right&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s1">&#39;top&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Scale&#39;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Time&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+
+
+<span class="n">train_labels_indicies</span> <span class="o">=</span> <span class="n">split_indices_per_label</span><span class="p">(</span><span class="n">y_train</span><span class="p">)</span>
+
+<span class="c1"># signal indicies: 0 = body acc x, 1 = body acc y, 2 = body acc z, 3 = body gyro x, 4 = body gyro y, 5 = body gyro z, 6 = total acc x, 7 = total acc y, 8 = total acc z</span>
+<span class="n">signal</span> <span class="o">=</span> <span class="mi">3</span>  <span class="c1"># signal index</span>
+<span class="n">sample</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1"># sample index of each label indicies list</span>
+<span class="n">scales</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">65</span><span class="p">)</span>  <span class="c1"># range of scales</span>
+<span class="n">wavelet</span> <span class="o">=</span> <span class="s1">&#39;morl&#39;</span>  <span class="c1"># mother wavelet</span>
+
+<span class="n">plot_cwt_coeffs_per_label</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">train_labels_indicies</span><span class="p">,</span> <span class="n">LABEL_NAMES</span><span class="p">,</span> <span class="n">signal</span><span class="p">,</span>
+                          <span class="n">sample</span><span class="p">,</span> <span class="n">scales</span><span class="p">,</span> <span class="n">wavelet</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/eee167a829afc22884caa453c7f967b514f69a82b22e89c8a9934469ebf97664.png" src="../_images/eee167a829afc22884caa453c7f967b514f69a82b22e89c8a9934469ebf97664.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">sample</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">7</span><span class="p">):</span>
+    <span class="n">plot_cwt_coeffs_per_label</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">train_labels_indicies</span><span class="p">,</span> <span class="n">LABEL_NAMES</span><span class="p">,</span>
+                              <span class="n">signal</span><span class="p">,</span> <span class="n">sample</span><span class="p">,</span> <span class="n">scales</span><span class="p">,</span> <span class="n">wavelet</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/212688a4f83c5286fdb39c42683d369a215f6397c225c43ded0c6dc88e2039d1.png" src="../_images/212688a4f83c5286fdb39c42683d369a215f6397c225c43ded0c6dc88e2039d1.png" />
+<img alt="../_images/ab71bf44ee2cfa62dd385b86e7d62e707140f9944756e603180aaae82dad360a.png" src="../_images/ab71bf44ee2cfa62dd385b86e7d62e707140f9944756e603180aaae82dad360a.png" />
+<img alt="../_images/e1ef138dea651f5bd47c5a9046cf98f2824b175751712bdeaec3f478608f350b.png" src="../_images/e1ef138dea651f5bd47c5a9046cf98f2824b175751712bdeaec3f478608f350b.png" />
+<img alt="../_images/f7ab941ef9a77107684d7df80423e9fdea4189bad951546e7970761aa67a4b14.png" src="../_images/f7ab941ef9a77107684d7df80423e9fdea4189bad951546e7970761aa67a4b14.png" />
+<img alt="../_images/9ae3656a65f20cb5133943734112f8811777067195b610578287e7f9434c1913.png" src="../_images/9ae3656a65f20cb5133943734112f8811777067195b610578287e7f9434c1913.png" />
+</div>
+</div>
+<p>Quan sát các biểu đồ cho từng hoạt động, chúng ta có thể thấy một số khuôn mẫu giữa các hình ảnh. Bằng cách đưa các kết quả này vào một mạng nơ-ron tích chập (convolutional neural network), chúng ta có thể tạo ra một bộ phân loại để phân loại các chuỗi thời gian theo các hoạt động.</p>
+</section>
+</section>
+<section id="tom-tat">
+<h2>Tóm tắt<a class="headerlink" href="#tom-tat" title="Permalink to this heading">#</a></h2>
+<p>Tóm lại, việc sử dụng các kỹ thuật này có thể trích xuất những thông tin có giá trị từ chuỗi thời gian mà không dễ dàng quan sát được một cách trực tiếp.</p>
+<p>Tương quan chéo (cross-correlations) có thể cung cấp hiểu biết về tính đồng bộ (synchronicity) của dữ liệu. Với phân tích cẩn thận, chúng thậm chí có thể được sử dụng như một bước hướng tới cái nhìn toàn diện hơn về quan hệ nhân quả khi kết hợp với Nhân quả Granger (Granger Causality) và Convergent Cross Mapping.</p>
+<p>Biến đổi Fourier (Fourier Transformation) cho phép chúng ta quan sát chuỗi thời gian trong miền tần số, từ đó cho phép thực hiện các thao tác mà trước đây không khả thi trong miền thời gian. Lọc (filtering) là một tác vụ phổ biến mà FT tỏ ra hữu ích vì nó cho phép chúng ta dễ dàng thao tác dữ liệu để loại bỏ nhiễu hoặc làm nổi bật các khía cạnh quan tâm trong chuỗi thời gian.</p>
+<p>Biến đổi Wavelet (Wavelet Transformation) cho phép chúng ta phân rã chuỗi thời gian một cách tinh vi hơn so với FT vì chúng ta có thể định nghĩa wavelet “mẹ” (mother wavelet) chính là dạng sóng mà chúng ta quan tâm. Bằng cách đặc trưng hóa chuỗi thời gian, theo nghĩa đen chúng ta có thể “vẽ nên một bức tranh” của chuỗi thời gian, có thể được dùng để nhận diện các dạng sóng cụ thể trong chuỗi thời gian.</p>
+<p>Trong bối cảnh dự báo (forecasting), cả ba kỹ thuật đều có thể được sử dụng để cung cấp thông tin cho người xây dựng mô hình về cách chuẩn bị dữ liệu. Với tương quan chéo, các chuỗi thời gian trễ tối ưu có thể được sử dụng để cung cấp thông tin tốt hơn về biến mục tiêu. Biến đổi Fourier có thể được áp dụng để khử nhiễu dữ liệu và loại bỏ một số xu hướng nhất định. Biến đổi Wavelet có thể được sử dụng để phân loại chuỗi thời gian, cho phép người xây dựng mô hình đưa kết quả phân loại này vào như một đặc trưng cho dự báo hoặc tạo các mô hình riêng cho từng lớp chuỗi thời gian. Một lần nữa, các kỹ thuật này đóng vai trò bổ trợ cho các phương pháp dự báo và có thể được sử dụng như các kỹ thuật xây dựng đặc trưng (feature engineering) nhằm cải thiện việc dự báo chuỗi thời gian.</p>
+<p>Chương tiếp theo đại diện cho sự tổng hợp của tất cả các khái niệm dự báo đã được trình bày trong các phần trước. Không có cách nào tốt hơn để kiểm tra năng lực về chuỗi thời gian của bạn ngoài việc tham gia một cuộc thi. Chương sau sẽ thảo luận về những kỹ thuật tốt nhất đã được sử dụng trong cuộc thi M5 vừa kết thúc. Trong đó, các mô hình tốt nhất, dưới một số ràng buộc nhất định, được đẩy tới giới hạn để thực hiện dự báo chuỗi thời gian.</p>
+</section>
+<section id="tai-lieu-tham-khao">
+<h2>Tài liệu tham khảo<a class="headerlink" href="#tai-lieu-tham-khao" title="Permalink to this heading">#</a></h2>
+<p>Nội dung của notebook này được tổng hợp từ các tài liệu tham khảo sau:</p>
+<ul class="simple">
+<li><p>Chương 1-3 của Priestley, M.B. (1981). Spectral Analysis and Time Series, Vols. 1 and 2, Academic Press, New York.</p></li>
+<li><p><a href='https://towardsdatascience.com/multiple-time-series-classification-by-using-continuous-wavelet-transformation-d29df97c0442'>Multiple Time Series Classification by Using Continuous Wavelet Transformation</a></p></li>
+<li><p><a href='https://pywavelets.readthedocs.io/en/latest/'>PyWavelets Documentation</a></p></li>
+<li><p><a href='https://www.mathworks.com/help/wavelet/gs/interpreting-continuous-wavelet-coefficients.html'>Interpreting Continuous Wavelet Coefficients</a></p></li>
+<li></li>
+</ul>
+<p>Ngui, W. K., Leong, M. S., Hee, L. M., &amp; Abdelrhman, A. M. (2013). Wavelet Analysis: Mother Wavelet Selection Methods. Applied Mechanics and Materials, 393, 953–958. https://doi.org/10.4028/www.scientific.net/amm.393.953</p>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./07_CrosscorrelationsFourierTransformandWaveletTransform"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../06_ConvergentCrossMappingandSugiharaCausality/ccm_sugihara.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Chương 6: Ánh xạ chéo hội tụ (Convergent Cross Mapping)</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../08_WinningestMethods/lightgbm_m5_forecasting.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Chapter 8: Winningest Methods in Time Series Forecasting</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tuong-quan-cheo-cross-correlation-giua-hai-tin-hieu">Tương quan chéo (Cross-correlation) giữa hai tín hiệu</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tin-hieu-co-nhieu">Tín hiệu có nhiễu</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#vi-du-1-tuong-quan-cheo-trong-du-lieu-khi-hau-jena">Ví dụ 1: Tương quan chéo trong dữ liệu khí hậu Jena</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#vi-du-2-tuong-quan-cheo-giua-luong-mua-va-luu-luong-dong-chay-tren-song-sudbury">Ví dụ 2: Tương quan chéo giữa lượng mưa và lưu lượng dòng chảy trên sông Sudbury</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#chuoi-fourier">Chuỗi Fourier:</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bien-doi-fourier">Biến đổi Fourier:</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ft-cua-mot-tin-hieu-thuan-pure-signal">FT của một tín hiệu thuần (Pure Signal)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ft-tren-cac-tin-hieu-tron-mixed-signals">FT trên các tín hiệu trộn (Mixed Signals)</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#loc-nhieu">Lọc nhiễu</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#loc-theo-muc-nang-luong">Lọc theo mức năng lượng</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#loc-theo-tan-so">Lọc theo tần số</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#vi-du-3-loc-bang-ft-trong-bo-du-lieu-khi-hau-jena">Ví dụ 3: Lọc bằng FT trong bộ dữ liệu khí hậu Jena</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#wavelet-transform">Wavelet Transform</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#vi-du-4-su-dung-du-lieu-gia-toc-ke-va-con-quay-hoi-chuyen">Ví dụ 4: Sử dụng dữ liệu gia tốc kế và con quay hồi chuyển</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tom-tat">Tóm tắt</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tai-lieu-tham-khao">Tài liệu tham khảo</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By By AI Department - TLU
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2022.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

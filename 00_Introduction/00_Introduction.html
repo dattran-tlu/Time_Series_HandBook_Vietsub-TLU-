@@ -1,0 +1,969 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Chương 0: Phân tích Chuỗi Thời gian Nâng cao (Advanced Time Series Analysis) &#8212; Bản dịch Time Series Analysis Handbook</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" href="../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../_static/sphinx-thebe.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '00_Introduction/00_Introduction';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Chương 1: Trung bình trượt tích hợp tự hồi quy (ARIMA)" href="../01_AutoRegressiveIntegratedMovingAverage/01_AutoRegressiveIntegratedMovingAverage.html" />
+    <link rel="prev" title="Lời nói đầu: Giới thiệu về Phân tích Chuỗi Thời Gian (Time Series Analysis)" href="../Preface/Preface.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../Preface/Preface.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">Bản dịch Time Series Analysis Handbook</p>
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../Preface/Preface.html">
+                    Lời nói đầu: Giới thiệu về Phân tích Chuỗi Thời Gian (Time Series Analysis)
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Chương 0: Phân tích Chuỗi Thời gian Nâng cao (Advanced Time Series Analysis)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../01_AutoRegressiveIntegratedMovingAverage/01_AutoRegressiveIntegratedMovingAverage.html">Chương 1: Trung bình trượt tích hợp tự hồi quy (ARIMA)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../02_LinearForecastingTrendandMomentumForecasting/02_LinearTrendandMomentumForecasting.html">Chương 2: Dự báo Tuyến tính, Xu hướng và Động lượng</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../03_VectorAutoregressiveModels/03_VectorAutoregressiveMethods.html">Chương 3: Các phương pháp Vectơ tự hồi quy (Vector Autoregressive Methods)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../04_GrangerCausality/04_GrangerCausality.html">Chương 4: Kiểm định nhân quả Granger (Granger Causality)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../05_SimplexandSmapProjections/05_Empirical%20Dynamic%20Modelling%20%28Simplex%20and%20SMap_Projections%29.html">Chương 5: Các phương pháp dự báo động lực (Simplex và SMap Projections)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../06_ConvergentCrossMappingandSugiharaCausality/ccm_sugihara.html">Chương 6: Ánh xạ chéo hội tụ (Convergent Cross Mapping)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../07_CrosscorrelationsFourierTransformandWaveletTransform/07_CrosscorrelationsFourierTransformandWaveletTransform.html">Chương 7: Tương quan chéo, Biến đổi Fourier và Biến đổi Wavelet (Cross-Correlations, Fourier Transform, and Wavelet Transform)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../08_WinningestMethods/lightgbm_m5_forecasting.html">Chapter 8: Winningest Methods in Time Series Forecasting</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/00_Introduction/00_Introduction.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Chương 0: Phân tích Chuỗi Thời gian Nâng cao (Advanced Time Series Analysis)</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gioi-thieu-chung">1. Giới thiệu chung</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#chuoi-thoi-gian-la-gi">Chuỗi thời gian là gì?</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#du-bao-chuoi-thoi-gian">2. Dự báo chuỗi thời gian</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#qua-trinh-ngau-nhien">3. Quá trình ngẫu nhiên</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tinh-dung">Tính dừng</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#hiep-phuong-sai-tu-dong-cua-mot-qua-trinh-dung">Hiệp phương sai tự động của một quá trình dừng</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#qua-trinh-trung-binh-truot">Quá trình Trung bình Trượt</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#qua-trinh-tu-hoi-quy">Quá trình Tự hồi quy</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#qua-trinh-tu-hoi-quy-trung-binh-truot">Quá trình Tự hồi quy Trung bình Trượt</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cac-phuong-phap-chuan-benchmark-methods">4. Các phương pháp chuẩn (Benchmark Methods)</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#phuong-phap-naive">Phương pháp Naïve</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#phuong-phap-naive-theo-mua">Phương pháp Naïve theo mùa</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cac-chi-so-danh-gia-do-chinh-xac-du-bao">5. Các Chỉ Số Đánh Giá Độ Chính Xác Dự Báo</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sai-so-tuyet-doi-trung-binh">Sai số tuyệt đối trung bình</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#can-bac-hai-cua-sai-so-binh-phuong-trung-binh">Căn bậc hai của sai số bình phương trung bình</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sai-so-phan-tram-tuyet-doi-trung-binh">Sai số phần trăm tuyệt đối trung bình</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sai-so-phan-tram-tuyet-doi-doi-xung-trung-binh">Sai số phần trăm tuyệt đối đối xứng trung bình</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tong-ket-do-chinh-xac-du-bao-cho-bo-du-lieu-khi-hau-jena">6. Tổng kết Độ Chính Xác Dự Báo cho Bộ Dữ Liệu Khí Hậu Jena</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="chuong-0-phan-tich-chuoi-thoi-gian-nang-cao-advanced-time-series-analysis">
+<h1>Chương 0: Phân tích Chuỗi Thời gian Nâng cao (Advanced Time Series Analysis)<a class="headerlink" href="#chuong-0-phan-tich-chuoi-thoi-gian-nang-cao-advanced-time-series-analysis" title="Permalink to this heading">#</a></h1>
+<p>Biên soạn bởi: Benjur Emmanuel L. Borja, Sebastian C. Ibañez và Maria Eloisa M. Ventura</p>
+<p>Notebook này giới thiệu cho chúng ta về khái niệm chuỗi thời gian, dự báo và các kiến thức nền tảng khác nhau mà chúng ta sẽ sử dụng xuyên suốt các chương tiếp theo của thảo luận. Cụ thể, notebook này sẽ đề cập đến:</p>
+<ol class="arabic simple">
+<li><p>Chuỗi thời gian</p></li>
+<li><p>Dự báo</p></li>
+<li><p>Quá trình ngẫu nhiên</p></li>
+</ol>
+<p>Nội dung của notebook này được tổng hợp từ các tài liệu tham khảo sau:</p>
+<ul class="simple">
+<li><p>C.Monterola, <em>“Notebook 10 Time Series Forecasting Method — ARIMA MSDS2021”</em></p></li>
+<li><p>C.Monterola, <em>“Advanced Time Series Analysis - Recurrent Neural Networks — PhDinDS2023”</em></p></li>
+<li><p>J.Valenzuela, <em>“Advanced Time Series Analysis — PhDinDS2023”</em></p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Required Libraries</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy.random</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">rng</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">scipy.stats</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">st</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">statsmodels.graphics.tsaplots</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">tg</span>
+<span class="o">%</span><span class="k">matplotlib</span> inline
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;figure.figsize&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">15</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<section id="gioi-thieu-chung">
+<h2>1. Giới thiệu chung<a class="headerlink" href="#gioi-thieu-chung" title="Permalink to this heading">#</a></h2>
+<p>Hầu hết chúng ta đều đã nghe về xu hướng mới trên thị trường, đó là Tiền mã hóa (Cryptocurrency). Nhiều người trong chúng ta cũng đã đầu tư vào các đồng tiền này. Nhưng, liệu việc đầu tư vào một loại tiền tệ biến động mạnh như vậy có an toàn không? Làm sao chúng ta có thể chắc chắn rằng đầu tư vào các đồng tiền này bây giờ sẽ mang lại lợi nhuận tốt trong tương lai? Chúng ta không thể chắc chắn, nhưng chúng ta hoàn toàn có thể ước lượng giá trị dựa trên các mức giá trước đó. Mô hình chuỗi thời gian là một cách để dự đoán chúng.</p>
+<section id="chuoi-thoi-gian-la-gi">
+<h3>Chuỗi thời gian là gì?<a class="headerlink" href="#chuoi-thoi-gian-la-gi" title="Permalink to this heading">#</a></h3>
+<p>Chuỗi thời gian là một dãy các giá trị được đánh chỉ số, trong đó mỗi giá trị là <em>kết quả</em> của một biến ngẫu nhiên. Nói cách khác, một chuỗi thời gian là một hiện thực hóa của một quá trình tương ứng.</p>
+<p>Một ví dụ về chuỗi thời gian là bộ dữ liệu thời tiết được ghi lại tại Trạm Thời tiết của Viện Hóa sinh Max Planck ở Jena, Đức. Trong bộ dữ liệu này, 14 đại lượng khác nhau (như nhiệt độ không khí, áp suất khí quyển, độ ẩm, hướng gió, v.v.) được ghi lại mỗi 10 phút, trong nhiều năm. Dữ liệu gốc bắt đầu từ năm 2003, nhưng ví dụ này chỉ giới hạn trong dữ liệu từ 2009–2016. Bộ dữ liệu này rất phù hợp để học cách làm việc với chuỗi thời gian số. Chúng ta sẽ sử dụng bộ dữ liệu này để xây dựng các mô hình. Dưới đây là các biến thực tế trong dữ liệu:</p>
+<ul class="simple">
+<li><p>Date Time</p></li>
+<li><p>p (mbar) áp suất khí quyển</p></li>
+<li><p>T (degC) nhiệt độ</p></li>
+<li><p>Tpot (K) nhiệt độ tiềm năng</p></li>
+<li><p>Tdew (degC) nhiệt độ điểm sương</p></li>
+<li><p>rh (%) độ ẩm tương đối</p></li>
+<li><p>VPmax (mbar) áp suất hơi nước bão hòa</p></li>
+<li><p>VPact (mbar) áp suất hơi nước thực tế</p></li>
+<li><p>VPdef (mbar) độ thiếu hụt áp suất hơi nước</p></li>
+<li><p>sh (g/kg) độ ẩm riêng</p></li>
+<li><p>H2OC (mmol/mol) nồng độ hơi nước</p></li>
+<li><p>rho (g/<span class="math notranslate nohighlight">\(m^3\)</span>) mật độ không khí</p></li>
+<li><p>wv (m/s) vận tốc gió</p></li>
+<li><p>max. wv (m/s) vận tốc gió lớn nhất</p></li>
+<li><p>wd (deg) hướng gió</p></li>
+</ul>
+<p>Dưới đây là dữ liệu nhiệt độ từ bộ dữ liệu này mà chúng ta sẽ sử dụng thường xuyên trong các chương tiếp theo:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;../data/jena_climate_2009_2016.csv&#39;</span><span class="p">)</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">:]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
+<span class="n">temp</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span>  <span class="c1">#nhiệt độ (đơn vị độ C)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">temp</span><span class="p">)),</span> <span class="n">temp</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Nhiệt độ</span><span class="se">\n</span><span class="s1"> (độ C)&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Thời gian (mỗi 10 phút)&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/88a4ae47c52eee573500c6b369bce69069220367c9b54a0d63c31ef6054db3bb.png" src="../_images/88a4ae47c52eee573500c6b369bce69069220367c9b54a0d63c31ef6054db3bb.png" />
+</div>
+</div>
+<p>Chuỗi thời gian là bất kỳ thứ gì đã được ghi lại tuần tự theo thời gian – có thể đều đặn hoặc không đều đặn. Dù trong trường hợp nào, mục tiêu là xem liệu các mẫu quan sát được có thể giúp chúng ta <em><strong>dự báo</strong></em> một khoảng thời gian trong tương lai hay không.</p>
+</section>
+</section>
+<section id="du-bao-chuoi-thoi-gian">
+<h2>2. Dự báo chuỗi thời gian<a class="headerlink" href="#du-bao-chuoi-thoi-gian" title="Permalink to this heading">#</a></h2>
+<p>Dự báo là việc dự đoán các giá trị tương lai của chuỗi thời gian dựa trên tất cả thông tin sẵn có như dữ liệu lịch sử và bất kỳ biến số nào có thể ảnh hưởng đến dữ liệu. Ngoài tiền mã hóa, còn có nhiều lĩnh vực quan trọng khác sử dụng dự báo chuỗi thời gian, ví dụ: dự báo doanh số bán hàng, lưu lượng cuộc gọi tại trung tâm chăm sóc khách hàng, hoạt động của mặt trời, thủy triều đại dương, biến động thị trường chứng khoán, và nhiều lĩnh vực khác. Giả sử một quản lý khách sạn muốn dự đoán số lượng khách sẽ đến vào năm sau để điều chỉnh tồn kho của khách sạn và ước tính doanh thu hợp lý. Dựa trên dữ liệu của các năm/tháng/ngày trước đó, (cô/anh) ấy có thể sử dụng dự báo chuỗi thời gian để ước lượng số lượng khách. Giá trị dự báo này sẽ giúp khách sạn quản lý nguồn lực và lên kế hoạch phù hợp.</p>
+<p>Có rất nhiều yếu tố cần xem xét trước khi dự báo chuỗi thời gian:</p>
+<ol class="arabic simple">
+<li><p>Loại dữ liệu (Xu hướng, Tính mùa vụ, v.v.)</p></li>
+<li><p>Các yếu tố ảnh hưởng (Phân tích đa biến, Quan hệ nhân quả, v.v.)</p></li>
+<li><p>Lượng dữ liệu sẵn có</p></li>
+</ol>
+<p>Trong các chương tiếp theo, chúng ta sẽ thảo luận về các phương pháp dự báo khác nhau và cách chúng được sử dụng. Mỗi phương pháp đều có những giả định và giới hạn riêng, nhưng ý tưởng chung là chúng ta giả định rằng có một quá trình toán học cơ bản xác định chuỗi thời gian của mình. Hiểu được các quá trình toán học này sẽ giúp chúng ta tìm ra phương pháp hoặc thuật toán phù hợp nhất (và các siêu tham số tương ứng) để dự báo chuỗi thời gian tốt hơn.</p>
+<p>Ở phần tiếp theo, chúng ta sẽ thảo luận về cách xây dựng bộ dữ liệu chuỗi thời gian đầu tiên, đó là <em><strong>Quá trình ngẫu nhiên (Stochastic Processes)</strong></em>.</p>
+</section>
+<section id="qua-trinh-ngau-nhien">
+<h2>3. Quá trình ngẫu nhiên<a class="headerlink" href="#qua-trinh-ngau-nhien" title="Permalink to this heading">#</a></h2>
+<p>Một quá trình ngẫu nhiên, hay còn gọi là quá trình xác suất (sau đây gọi là quá trình), là một dãy các biến ngẫu nhiên được đánh chỉ số. Trong bối cảnh phân tích chuỗi thời gian, chúng ta sẽ sử dụng <span class="math notranslate nohighlight">\(t = 0, 1, 2, ...\)</span> (thời gian rời rạc) làm chỉ số.</p>
+<p><span class="math notranslate nohighlight">\(\lbrace \mathbf{X_0}, \mathbf{X_1}, \mathbf{X_2}, ...\rbrace\)</span> biểu diễn một quá trình mà trong đó <span class="math notranslate nohighlight">\(\mathbf{X_0}, \mathbf{X_1}, \mathbf{X_2}, ...\)</span> là các biến ngẫu nhiên.</p>
+<p>Một chuỗi thời gian, trong bối cảnh này, là một dãy các giá trị được đánh chỉ số, trong đó mỗi giá trị là <em>kết quả</em> của một biến ngẫu nhiên. Nói cách khác, một chuỗi thời gian là một hiện thực hóa của một quá trình tương ứng.</p>
+<p><strong>Ví dụ 1: Thử nghiệm Bernoulli.</strong> Nhớ lại rằng một thử nghiệm Bernoulli có hai khả năng kết quả hoặc hiện thực. Ta lấy chúng là <span class="math notranslate nohighlight">\(\{-1, +1\}\)</span>. Hãy tạo ra một vài giá trị:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Kết quả có thể của Bernoulli</span>
+<span class="n">bern_outcomes</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">]</span>
+<span class="n">size</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="c1"># Sinh 100 phép thử Bernoulli</span>
+<span class="n">flips</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">bern_outcomes</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">size</span><span class="p">)</span>
+<span class="n">series</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">flips</span><span class="p">)</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="n">series</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span> <span class="c1"># ở đây chúng ta ngầm định đánh chỉ số; để chỉ số đại diện cho thời gian</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/d29e77d5b7ac2c50934a4c4810c98454f6a217621fc63438dcccd8021861d7a7.png" src="../_images/d29e77d5b7ac2c50934a4c4810c98454f6a217621fc63438dcccd8021861d7a7.png" />
+</div>
+</div>
+<p><strong>Ví dụ 2: Nhiễu trắng Gauss.</strong> Một quá trình nhiễu trắng Gauss tạo ra một chuỗi thời gian mà mỗi giá trị được lấy mẫu từ một phân phối Gauss với kỳ vọng bằng 0 và phương sai bằng 1: <span class="math notranslate nohighlight">\(\bf{X_t} \sim Gaussian(0, 1)\)</span>:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">size</span> <span class="o">=</span> <span class="mi">1000</span>
+<span class="n">wn</span> <span class="o">=</span> <span class="n">st</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">rvs</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="n">size</span><span class="p">)</span>
+<span class="n">wn_series</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">wn</span><span class="p">)</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="n">wn_series</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/21c4325069c00d36949c22fe43b120636c45e8ae937429d9f8af564c9ccdf144.png" src="../_images/21c4325069c00d36949c22fe43b120636c45e8ae937429d9f8af564c9ccdf144.png" />
+</div>
+</div>
+<p>Nhiễu trắng Gauss có các tính chất <em>độc lập</em> và <em>phân phối đồng nhất</em>, điều này dẫn đến một số đặc điểm quan trọng cho các chuỗi thời gian tuyến tính, sẽ được đề cập bên dưới.</p>
+<p><strong>Ví dụ 3: Chuyển động Brown một chiều.</strong> Chuyển động Brown một chiều, hay còn gọi là quá trình Wiener, có thể được xem như tổng tích lũy của chuỗi thời gian nhiễu trắng. Giá trị của chuỗi tại thời điểm <span class="math notranslate nohighlight">\(t\)</span> là tổng của tất cả các giá trị trước đó, và có thể được hình dung như độ dịch chuyển của một người đi ngẫu nhiên tại thời điểm <span class="math notranslate nohighlight">\(t\)</span>: <span class="math notranslate nohighlight">\(X_t = X_{t_1} + X_{t-2}  + ... = \sum_{i=0}^{t}{X_i}\)</span>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">size</span> <span class="o">=</span> <span class="mi">100000</span>
+<span class="n">bms</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">bms_msq</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">):</span>
+    <span class="n">wn</span> <span class="o">=</span> <span class="n">st</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">rvs</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="n">size</span><span class="p">)</span>
+    <span class="n">bm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">wn</span><span class="p">)</span>
+    <span class="n">bms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bm</span><span class="p">)</span>
+    <span class="n">bms_msq</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">x</span><span class="o">**</span><span class="mi">2</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">bm</span><span class="p">])</span>
+<span class="n">bm_ave</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">bms</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">bm_msq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">bms_msq</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="n">bms_series</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">bm_ave</span><span class="p">)</span>
+<span class="n">bms_msq_series</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">bm_msq</span><span class="p">)</span>
+<span class="n">bms_series</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;Độ dịch chuyển&quot;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
+<span class="n">bms_msq_series</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;Độ lệch bình phương trung bình (MSD)&quot;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/c0b5da071e333627b830ebb5ca82145a91020e26d3ad0e4d773c75be972f4e51.png" src="../_images/c0b5da071e333627b830ebb5ca82145a91020e26d3ad0e4d773c75be972f4e51.png" />
+</div>
+</div>
+<p><strong>Ví dụ 4: Trung bình trượt.</strong> Với một quá trình nhiễu trắng (xem ở trên), một quá trình trung bình trượt bậc (<span class="math notranslate nohighlight">\(q\)</span>) có thể được tạo ra bằng cách lấy tổng có trọng số của giá trị hiện tại và <span class="math notranslate nohighlight">\(q\)</span> giá trị trước đó của nhiễu trắng tại mỗi thời điểm <span class="math notranslate nohighlight">\(t\)</span>:</p>
+<p><span class="math notranslate nohighlight">\(X_t = \epsilon_t + a_1\epsilon_{t-1} + ... + a_q\epsilon_{t-q}\)</span>,</p>
+<p>trong đó <span class="math notranslate nohighlight">\(\{\epsilon_t\} \sim WN(0, \sigma^2)\)</span>. Ta ký hiệu <span class="math notranslate nohighlight">\(\{X_t\} \sim MA(q)\)</span>. Quá trình <span class="math notranslate nohighlight">\(MA\)</span> là một ví dụ về <em>quá trình tuyến tính.</em></p>
+<p>Hãy xét một quá trình <span class="math notranslate nohighlight">\(MA(2)\)</span> với <span class="math notranslate nohighlight">\(a_1 = 0.5\)</span> và <span class="math notranslate nohighlight">\(a_2 = 0.25\)</span>. Khi đó</p>
+<p><span class="math notranslate nohighlight">\(X_t = \epsilon_t + 0.5\epsilon_{t-1} + 0.25\epsilon_{t-2}\)</span>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">ma2</span><span class="p">(</span><span class="n">wn</span><span class="p">):</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="c1"># First element is just epsilon_t</span>
+    <span class="n">x</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">wn</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="c1"># For the second element, let&#39;s take just the first coefficient (admittedly a judgment call)</span>
+    <span class="n">x</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mf">0.5</span><span class="o">*</span><span class="n">wn</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">wn</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="c1"># For the rest, use the full equation</span>
+    <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">wn</span><span class="p">)):</span>
+        <span class="n">x</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">wn</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">+</span> <span class="mf">0.5</span><span class="o">*</span><span class="n">wn</span><span class="p">[</span><span class="n">t</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mf">0.25</span><span class="o">*</span><span class="n">wn</span><span class="p">[</span><span class="n">t</span> <span class="o">-</span> <span class="mi">2</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+<span class="n">size</span> <span class="o">=</span> <span class="mi">1000</span>
+<span class="n">wn</span> <span class="o">=</span> <span class="n">st</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">rvs</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="n">size</span><span class="p">)</span>
+<span class="n">ma2_series</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span>
+    <span class="n">ma2</span><span class="p">(</span><span class="n">wn</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="n">wn_series</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">wn</span><span class="p">)</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="n">wn_series</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;WN(0,1)&quot;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
+<span class="n">ma2_series</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;MA(2)&quot;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">&quot;best&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/d5104ffc7b7f05b69829b42499bf7b53b9a26fea7ec0989fdcfb08e442f04a08.png" src="../_images/d5104ffc7b7f05b69829b42499bf7b53b9a26fea7ec0989fdcfb08e442f04a08.png" />
+</div>
+</div>
+<p><strong>Bài tập 1: Quá trình tự hồi quy.</strong> Cho một quá trình nhiễu trắng (xem ở trên), một chuỗi thời gian từ quá trình tự hồi quy bậc <span class="math notranslate nohighlight">\(p\)</span> có thể được tạo ra bằng cách lấy tổng có trọng số của <span class="math notranslate nohighlight">\(p\)</span> giá trị trước đó của chuỗi thời gian, cộng với nhiễu trắng tại mỗi thời điểm <span class="math notranslate nohighlight">\(t\)</span>:</p>
+<p><span class="math notranslate nohighlight">\(X_t = b_{1}X_{t-1} + ... + b_{p}X_{t-p} + \epsilon_{t}\)</span>,</p>
+<p>trong đó <span class="math notranslate nohighlight">\(\{\epsilon_t\} \sim WN(0, \sigma^2)\)</span>. Ta ký hiệu <span class="math notranslate nohighlight">\(\{X_t\} \sim MA(q)\)</span>.</p>
+<p>Cho một quá trình <span class="math notranslate nohighlight">\(AR(2)\)</span> với <span class="math notranslate nohighlight">\(b_1 = 0.6, b_2 = -0.2\)</span>, hãy sinh và vẽ đồ thị một chuỗi thời gian, tương tự ví dụ <span class="math notranslate nohighlight">\(MA(1)\)</span> ở trên.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">ar2</span><span class="p">(</span><span class="n">wn</span><span class="p">):</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="c1"># First element is just epsilon_t</span>
+    <span class="n">x</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">wn</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="c1"># For the second element, let&#39;s take just the first coefficient (admittedly a judgment call)</span>
+    <span class="n">x</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mf">0.6</span><span class="o">*</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">wn</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="c1"># For the rest, use the full equation</span>
+    <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">wn</span><span class="p">)):</span>
+        <span class="n">x</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">wn</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">+</span> <span class="mf">0.6</span><span class="o">*</span><span class="n">x</span><span class="p">[</span><span class="n">t</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="o">-</span><span class="mf">0.2</span><span class="o">*</span><span class="n">x</span><span class="p">[</span><span class="n">t</span> <span class="o">-</span> <span class="mi">2</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        
+<span class="n">size</span> <span class="o">=</span> <span class="mi">1000</span>
+<span class="n">wn</span> <span class="o">=</span> <span class="n">st</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">rvs</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="n">size</span><span class="p">)</span>
+<span class="n">ar2_series</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span>
+    <span class="n">ar2</span><span class="p">(</span><span class="n">wn</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="n">wn_series</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">wn</span><span class="p">)</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="n">wn_series</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;WN(0,1)&quot;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
+<span class="n">ar2_series</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;AR(2)&quot;</span><span class="p">,</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">&quot;best&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/964f144c963ce6de4fc86fe4a0c59fc73659e2d11cbc9e8a256955ba2afd90a1.png" src="../_images/964f144c963ce6de4fc86fe4a0c59fc73659e2d11cbc9e8a256955ba2afd90a1.png" />
+</div>
+</div>
+<section id="tinh-dung">
+<h3>Tính dừng<a class="headerlink" href="#tinh-dung" title="Permalink to this heading">#</a></h3>
+<p>Xét một quá trình <span class="math notranslate nohighlight">\(\{X_t\}\)</span>, với phân phối kết hợp tương ứng <span class="math notranslate nohighlight">\(P(X_{t_1 + \tau}, X_{t_2 + \tau}, ..., X_{t_n + \tau})\)</span> tại các thời điểm <span class="math notranslate nohighlight">\(t_1 + \tau, t_2 + \tau, ..., t_n + \tau\)</span>.</p>
+<p>Quá trình này là <em>dừng</em> nếu:</p>
+<p><span class="math notranslate nohighlight">\(P(X_{t_1 + \tau}, X_{t_2 + \tau}, ..., X_{t_n + \tau}) = P(X_{t_1}, X_{t_2}, ..., X_{t_n})\)</span> với mọi <span class="math notranslate nohighlight">\(\tau, t_1 ... t_n\)</span> và <span class="math notranslate nohighlight">\(n\)</span>.</p>
+<p>Về cơ bản, các thống kê của một quá trình dừng là bất biến theo phép tịnh tiến thời gian.</p>
+<p><span class="math notranslate nohighlight">\(\{X_t\}\)</span> là <em>dừng yếu</em> nếu:</p>
+<p>(i) <span class="math notranslate nohighlight">\(\mu(X_t) = \mu(X_{t + \tau}) = \mu\)</span> với mọi <span class="math notranslate nohighlight">\(\tau\)</span>,<br />
+(ii) <span class="math notranslate nohighlight">\(\Gamma(t_1, t_2) = \Gamma(t_1 - t_2)\)</span>, và<br />
+(iii) <span class="math notranslate nohighlight">\(E[|X_t|^2] &lt; \infty\)</span>.</p>
+<p>Ở trên, <span class="math notranslate nohighlight">\(\Gamma(t_1, t_2)\)</span> là <em>hiệp phương sai tự động</em> (autocovariance), được định nghĩa bởi:</p>
+<p><span class="math notranslate nohighlight">\(\Gamma(t_1, t_2) = cov~(t_1, t_2) = E\left[(X_{t_1} - \mu(X_{t_1}))(X_{t_2} - \mu(X_{t_2}))\right]\)</span></p>
+<p>Tính dừng yếu ngụ ý rằng độ trễ, <span class="math notranslate nohighlight">\(\tau\)</span>, có thể được sử dụng để tham số hóa hiệp phương sai tự động, dẫn đến:</p>
+<p><span class="math notranslate nohighlight">\(\Gamma(\tau)  = E\left[(X_t - \mu)(X_{t + \tau} - \mu)\right]\)</span>.</p>
+<p>Chuẩn hóa hiệp phương sai tự động theo độ lệch chuẩn tại <span class="math notranslate nohighlight">\(t_1\)</span> và <span class="math notranslate nohighlight">\(t_2\)</span> sẽ cho <em>tự tương quan</em> (autocorrelation):</p>
+<p><span class="math notranslate nohighlight">\(P(t_1, t_2) = \frac{cov~(t_1, t_2)}{\sigma_{t_1}\sigma_{t_2}} = \frac{E\left[(X_{t_1} - \mu(X_{t_1}))(X_{t_2} - \mu(X_{t_2}))\right]}{\sigma_{t_1}\sigma_{t_2}}\)</span></p>
+<p>Và với một quá trình dừng yếu:</p>
+<p><span class="math notranslate nohighlight">\(P(\tau) = \frac{E\left[(X_t - \mu)(X_{t + \tau} - \mu)\right]}{\sigma^2}\)</span></p>
+<p>Đối với nhiễu trắng Gauss, tính dừng yếu kéo theo tính dừng, điều này không phải lúc nào cũng đúng với các quá trình khác.</p>
+</section>
+<section id="hiep-phuong-sai-tu-dong-cua-mot-qua-trinh-dung">
+<h3>Hiệp phương sai tự động của một quá trình dừng<a class="headerlink" href="#hiep-phuong-sai-tu-dong-cua-mot-qua-trinh-dung" title="Permalink to this heading">#</a></h3>
+<p>Ma trận hiệp phương sai tự động của một quá trình dừng có một dạng đặc biệt. Đặt <span class="math notranslate nohighlight">\(\tau = |t_1 - t_2|\)</span> là <em>độ trễ</em>, với <span class="math notranslate nohighlight">\(n\)</span> quan sát liên tiếp từ chuỗi thời gian <span class="math notranslate nohighlight">\({X_t}\)</span>, ma trận hiệp phương sai tự động là ma trận đối xứng và xác định dương, được cho bởi:</p>
+<p><span class="math notranslate nohighlight">\(
+    \Gamma_n = \begin{pmatrix}
+                    \gamma_0 &amp; \gamma_1 &amp; \gamma_2 &amp; \cdots &amp; \gamma_{n-1} \\
+                    \gamma_1 &amp; \gamma_0 &amp; \gamma_1 &amp; \cdots &amp; \gamma_{n-2} \\
+                    \gamma_2 &amp; \gamma_1 &amp; \gamma_0 &amp; \cdots &amp; \gamma_{n-3} \\
+                    \vdots   &amp; \vdots   &amp;  \vdots  &amp; \ddots &amp;  \vdots \\
+                    \gamma_{n-1} &amp; \gamma_{n-2} &amp; \cdots &amp; \gamma_{n-3} &amp; \gamma_0
+                \end{pmatrix}
+\)</span></p>
+<p>Vì với một quá trình dừng, phương sai tại độ trễ bằng 0 là không đổi, nên <em>ma trận tự tương quan</em> được cho bởi:</p>
+<p><span class="math notranslate nohighlight">\(
+    P_n = \sigma^2\Gamma_n = \begin{pmatrix}
+                    1 &amp; \rho_1 &amp; \rho_2 &amp; \cdots &amp; \rho_{n-1} \\
+                    \rho_1 &amp; 1 &amp; \rho_1 &amp; \cdots &amp; \rho_{n-2} \\
+                    \rho_2 &amp; \rho_1 &amp; 1 &amp; \cdots &amp; \rho_{n-3} \\
+                    \vdots   &amp; \vdots   &amp;  \vdots  &amp; \ddots &amp;  \vdots \\
+                    \rho_{n-1} &amp; \rho_{n-2} &amp; \cdots &amp; \rho_{n-3} &amp; 1
+                \end{pmatrix}
+\)</span></p>
+<p><em>Hàm hiệp phương sai tự động</em>, <span class="math notranslate nohighlight">\(\Gamma(\tau)\)</span>, có thể được đọc trực tiếp từ các đường chéo của ma trận hiệp phương sai tự động; tương tự với <em>hàm tự tương quan</em>.</p>
+<p><strong>Hỏi.</strong> Hàm tự tương quan của quá trình nhiễu trắng Gauss với kỳ vọng bằng 0 và phương sai bằng 1 là gì?</p>
+<p><strong>Đáp.</strong> Vì các giá trị là độc lập và phân phối đồng nhất (iid), nên các giá trị không tương quan với nhau, do đó:</p>
+<p><span class="math notranslate nohighlight">\(P(\tau) = \delta_{\tau,0}\)</span></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#Plotting:</span>
+<span class="n">tg</span><span class="o">.</span><span class="n">plot_acf</span><span class="p">(</span><span class="n">wn_series</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/b6dd104710252bb642c1937bb3ff4597a1f39399ec9c757499ea90ec03beb19c.png" src="../_images/b6dd104710252bb642c1937bb3ff4597a1f39399ec9c757499ea90ec03beb19c.png" />
+<img alt="../_images/b6dd104710252bb642c1937bb3ff4597a1f39399ec9c757499ea90ec03beb19c.png" src="../_images/b6dd104710252bb642c1937bb3ff4597a1f39399ec9c757499ea90ec03beb19c.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#Plotting:</span>
+<span class="n">tg</span><span class="o">.</span><span class="n">plot_acf</span><span class="p">(</span><span class="n">wn</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/b6dd104710252bb642c1937bb3ff4597a1f39399ec9c757499ea90ec03beb19c.png" src="../_images/b6dd104710252bb642c1937bb3ff4597a1f39399ec9c757499ea90ec03beb19c.png" />
+<img alt="../_images/b6dd104710252bb642c1937bb3ff4597a1f39399ec9c757499ea90ec03beb19c.png" src="../_images/b6dd104710252bb642c1937bb3ff4597a1f39399ec9c757499ea90ec03beb19c.png" />
+</div>
+</div>
+<p>Tự tương quan cho các chuỗi thời gian khác ở trên:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tg</span><span class="o">.</span><span class="n">plot_acf</span><span class="p">(</span><span class="n">bm</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/49d6ae4cf20cb26bbdf3e732bf13ab8556aef827b3c6e36a7462ef848e15560c.png" src="../_images/49d6ae4cf20cb26bbdf3e732bf13ab8556aef827b3c6e36a7462ef848e15560c.png" />
+<img alt="../_images/49d6ae4cf20cb26bbdf3e732bf13ab8556aef827b3c6e36a7462ef848e15560c.png" src="../_images/49d6ae4cf20cb26bbdf3e732bf13ab8556aef827b3c6e36a7462ef848e15560c.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tg</span><span class="o">.</span><span class="n">plot_acf</span><span class="p">(</span><span class="n">ar2_series</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/6a69e3e7b586200d4386c1003ac1a85be1d82ff3bc526a510241eaad2ae67ae9.png" src="../_images/6a69e3e7b586200d4386c1003ac1a85be1d82ff3bc526a510241eaad2ae67ae9.png" />
+<img alt="../_images/6a69e3e7b586200d4386c1003ac1a85be1d82ff3bc526a510241eaad2ae67ae9.png" src="../_images/6a69e3e7b586200d4386c1003ac1a85be1d82ff3bc526a510241eaad2ae67ae9.png" />
+</div>
+</div>
+<p>Tự tương quan của quá trình <span class="math notranslate nohighlight">\(AR(2)\)</span> ở trên là gì?</p>
+</section>
+<section id="qua-trinh-trung-binh-truot">
+<h3>Quá trình Trung bình Trượt<a class="headerlink" href="#qua-trinh-trung-binh-truot" title="Permalink to this heading">#</a></h3>
+<p>Như đã trình bày ở trên, <span class="math notranslate nohighlight">\({X_t}\)</span> là một <em>quá trình trung bình trượt</em> bậc <span class="math notranslate nohighlight">\(q\)</span> nếu <span class="math notranslate nohighlight">\(X_t\)</span> tuân theo:</p>
+<p><span class="math notranslate nohighlight">\(X_t = \epsilon_t + a_1\epsilon_{t-1} + ... + a_q\epsilon_{t-q}\)</span>.</p>
+<p>Hãy sử dụng toán tử trễ, hay còn gọi là toán tử dịch lùi <span class="math notranslate nohighlight">\(\bf{B}\)</span>:</p>
+<p><span class="math notranslate nohighlight">\(\mathbf{B} X_t = X_{t-1}\)</span> <br />
+<span class="math notranslate nohighlight">\(\mathbf{B}^2 X_t = X_{t-2}\)</span></p>
+<p>và cứ như vậy. Ta có thể viết lại như sau:</p>
+<p><span class="math notranslate nohighlight">\(X_t = \epsilon_t + a_1\mathbf{B}\epsilon_t + ... + a_q\mathbf{B}^q\epsilon_{t}\)</span></p>
+<p><span class="math notranslate nohighlight">\(X_t = \theta(\mathbf{B})\epsilon_t\)</span>, trong đó</p>
+<p><span class="math notranslate nohighlight">\(\theta(\mathbf{B}) =  1 + a_1\mathbf{B} + ... + a_q\mathbf{B}^q\)</span>, với đa thức liên quan</p>
+<p><span class="math notranslate nohighlight">\(\theta(z) =  1 + a_1z + ... + a_qz^q = \sum_{j=0}^q{a_jz^j}\)</span>.</p>
+</section>
+<section id="qua-trinh-tu-hoi-quy">
+<h3>Quá trình Tự hồi quy<a class="headerlink" href="#qua-trinh-tu-hoi-quy" title="Permalink to this heading">#</a></h3>
+<p>Như đã trình bày ở trên, <span class="math notranslate nohighlight">\({X_t}\)</span> là một <em>quá trình tự hồi quy</em> bậc <span class="math notranslate nohighlight">\(p\)</span> nếu <span class="math notranslate nohighlight">\(X_t\)</span> tuân theo:</p>
+<p><span class="math notranslate nohighlight">\(X_t = b_{1}X_{t-1} + ... + b_{p}X_{t-p} + \epsilon_{t}\)</span>.</p>
+<p>Viết lại và sử dụng <span class="math notranslate nohighlight">\(\mathbf{B}\)</span>:</p>
+<p><span class="math notranslate nohighlight">\(X_t - b_{1}X_{t-1}~ - ...~ - b_{p}X_{t-p} = \epsilon_{t}\)</span></p>
+<p><span class="math notranslate nohighlight">\((1 - b_1\mathbf{B}~ - ...~ - b_p\mathbf{B}^p)X_t = \epsilon_{t}\)</span></p>
+<p><span class="math notranslate nohighlight">\(\phi(\mathbf{B})X_t = \epsilon_{t}\)</span>, trong đó</p>
+<p><span class="math notranslate nohighlight">\(\phi(\mathbf{B}) = 1 - b_1\mathbf{B}~ - ... - b_p\mathbf{B}^p\)</span>, và đa thức liên quan</p>
+<p><span class="math notranslate nohighlight">\(\phi(z) = 1 - b_1z~ - ... - b_pz^p = \sum_{j=0}^{p}{b_jz^j}\)</span>.</p>
+</section>
+<section id="qua-trinh-tu-hoi-quy-trung-binh-truot">
+<h3>Quá trình Tự hồi quy Trung bình Trượt<a class="headerlink" href="#qua-trinh-tu-hoi-quy-trung-binh-truot" title="Permalink to this heading">#</a></h3>
+<p>Kết hợp hai quá trình trên, ta thu được <em>quá trình tự hồi quy trung bình trượt</em> bậc <span class="math notranslate nohighlight">\((p, q)\)</span>:</p>
+<p><span class="math notranslate nohighlight">\(X_t = \epsilon_t + a_1\epsilon_{t-1} + ... + a_q\epsilon_{t-q} + b_{1}X_{t-1} + ... + b_{p}X_{t-p}\)</span></p>
+<p>Có thể viết lại như sau:</p>
+<p><span class="math notranslate nohighlight">\(\phi(\mathbf{B})X_t = \theta(\mathbf{B})\epsilon_t\)</span>,</p>
+<p>với các đa thức đặc trưng được định nghĩa như trên.</p>
+</section>
+</section>
+<section id="cac-phuong-phap-chuan-benchmark-methods">
+<h2>4. Các phương pháp chuẩn (Benchmark Methods)<a class="headerlink" href="#cac-phuong-phap-chuan-benchmark-methods" title="Permalink to this heading">#</a></h2>
+<p>Để đánh giá đúng hiệu quả của một mô hình dự báo, trước tiên chúng ta cần thiết lập một số phương pháp cơ bản làm chuẩn so sánh. Phần này giới thiệu một số phương pháp sẽ được sử dụng làm chuẩn. Rõ ràng, bất kỳ phương pháp dự báo nào mà chúng ta phát triển đều phải vượt qua các phương pháp chuẩn này. Nếu không, phương pháp mới không đáng để xem xét.</p>
+<p>Trong ký hiệu dưới đây, <span class="math notranslate nohighlight">\(T\)</span> là độ dài của chuỗi thời gian và <span class="math notranslate nohighlight">\(h\)</span> là khoảng dự báo.</p>
+<section id="phuong-phap-naive">
+<h3>Phương pháp Naïve<a class="headerlink" href="#phuong-phap-naive" title="Permalink to this heading">#</a></h3>
+<p>Dự báo tất cả các giá trị tương lai bằng đúng giá trị quan sát cuối cùng.</p>
+<div class="amsmath math notranslate nohighlight">
+\[\begin{align*}
+    \hat{y}_{T+h} &amp;= y_T
+\end{align*}\]</div>
+</section>
+<section id="phuong-phap-naive-theo-mua">
+<h3>Phương pháp Naïve theo mùa<a class="headerlink" href="#phuong-phap-naive-theo-mua" title="Permalink to this heading">#</a></h3>
+<p>Dự báo bằng giá trị quan sát cuối cùng của cùng mùa trong năm (ví dụ: cùng tháng của năm trước).</p>
+<div class="amsmath math notranslate nohighlight">
+\[\begin{align*}
+    \hat{y}_{T+h} &amp;= y_{T+h-m(k+1)}
+\end{align*}\]</div>
+<p>trong đó <span class="math notranslate nohighlight">\(m\)</span> là chu kỳ mùa vụ và <span class="math notranslate nohighlight">\(k\)</span> là phần nguyên của <span class="math notranslate nohighlight">\((h-1)/m\)</span> (tức là số năm đầy đủ trong giai đoạn dự báo trước thời điểm <span class="math notranslate nohighlight">\(T+h\)</span>).</p>
+<p>Ví dụ, nếu chúng ta dự báo chuỗi thời gian theo tháng, dự báo cho tất cả các giá trị tháng Hai trong tương lai sẽ bằng giá trị tháng Hai quan sát cuối cùng. Với dữ liệu theo tuần, dự báo cho tất cả các giá trị thứ Sáu trong tương lai sẽ bằng giá trị thứ Sáu quan sát cuối cùng. Và cứ như vậy.</p>
+</section>
+</section>
+<section id="cac-chi-so-danh-gia-do-chinh-xac-du-bao">
+<h2>5. Các Chỉ Số Đánh Giá Độ Chính Xác Dự Báo<a class="headerlink" href="#cac-chi-so-danh-gia-do-chinh-xac-du-bao" title="Permalink to this heading">#</a></h2>
+<p>Dự báo là một trong những nhiệm vụ suy luận phổ biến nhất trong phân tích chuỗi thời gian. Để đánh giá đúng hiệu quả của một mô hình chuỗi thời gian, thông thường người ta chia bộ dữ liệu thành hai phần: dữ liệu huấn luyện và dữ liệu kiểm tra. Các tham số mô hình được ước lượng bằng dữ liệu huấn luyện, sau đó mô hình được sử dụng để tạo ra các dự báo và so sánh với dữ liệu kiểm tra.</p>
+<p>Các thống kê sai số có nhiều dạng khác nhau, mỗi loại đều có ưu và nhược điểm riêng.</p>
+<section id="sai-so-tuyet-doi-trung-binh">
+<h3>Sai số tuyệt đối trung bình<a class="headerlink" href="#sai-so-tuyet-doi-trung-binh" title="Permalink to this heading">#</a></h3>
+<p>Chỉ số được sử dụng phổ biến nhất là <b><i>sai số tuyệt đối trung bình</i></b> hay <b>MAE</b>. Ưu điểm chính của chỉ số này là dễ hiểu và dễ tính toán. Tuy nhiên, chỉ số này phụ thuộc vào đơn vị đo, nghĩa là không thể so sánh giữa các chuỗi thời gian có đơn vị khác nhau. Ngoài ra, các phương pháp tối thiểu hóa MAE sẽ tạo ra dự báo hướng tới giá trị trung vị.</p>
+<div class="amsmath math notranslate nohighlight">
+\[\begin{align*}
+    \text{MAE} &amp;= \frac{1}{n}\sum_{t=1}^{n} |y_t - \hat{y}_t|
+\end{align*}\]</div>
+</section>
+<section id="can-bac-hai-cua-sai-so-binh-phuong-trung-binh">
+<h3>Căn bậc hai của sai số bình phương trung bình<a class="headerlink" href="#can-bac-hai-cua-sai-so-binh-phuong-trung-binh" title="Permalink to this heading">#</a></h3>
+<p>Một chỉ số phổ biến khác là <b><i>căn bậc hai của sai số bình phương trung bình</i></b> hay <b>RMSE</b>, mặc dù khó diễn giải hơn. Các phương pháp tối thiểu hóa RMSE sẽ tạo ra dự báo hướng tới giá trị trung bình và, tương tự như MAE, RMSE cũng phụ thuộc vào đơn vị đo.</p>
+<div class="amsmath math notranslate nohighlight">
+\[\begin{align*}
+    \text{RMSE} &amp;= \sqrt{\frac{1}{n}\sum_{t=1}^{n} (y_t - \hat{y}_t)^2}
+\end{align*}\]</div>
+</section>
+<section id="sai-so-phan-tram-tuyet-doi-trung-binh">
+<h3>Sai số phần trăm tuyệt đối trung bình<a class="headerlink" href="#sai-so-phan-tram-tuyet-doi-trung-binh" title="Permalink to this heading">#</a></h3>
+<p>Để so sánh giữa các chuỗi thời gian có đơn vị khác nhau, người ta có thể sử dụng các chỉ số dựa trên phần trăm. Một chỉ số thường dùng là <b><i>sai số phần trăm tuyệt đối trung bình</i></b> hay <b>MAPE</b>. Tuy nhiên, nhược điểm lớn nhất của các chỉ số phần trăm là có thể vô hạn hoặc không xác định khi <span class="math notranslate nohighlight">\(y_t\)</span> bằng 0 hoặc gần 0.</p>
+<div class="amsmath math notranslate nohighlight">
+\[\begin{align*}
+    \text{MAPE} &amp;= \frac{1}{n}\sum_{t=1}^{n} \bigg|\frac{y_t - \hat{y}_t}{y_t}\bigg|
+\end{align*}\]</div>
+</section>
+<section id="sai-so-phan-tram-tuyet-doi-doi-xung-trung-binh">
+<h3>Sai số phần trăm tuyệt đối đối xứng trung bình<a class="headerlink" href="#sai-so-phan-tram-tuyet-doi-doi-xung-trung-binh" title="Permalink to this heading">#</a></h3>
+<p>Một nhược điểm của MAPE là phạt nặng hơn với sai số âm so với sai số dương. Điều này dẫn đến một chỉ số thay thế dựa trên phần trăm gọi là <b><i>sai số phần trăm tuyệt đối đối xứng trung bình</i></b> hay <b>SMAPE</b>. Tuy nhiên, việc tính toán chỉ số này vẫn có thể không ổn định nếu cả <span class="math notranslate nohighlight">\(y_t\)</span> và <span class="math notranslate nohighlight">\(\hat{y}_t\)</span> đều gần 0.</p>
+<div class="amsmath math notranslate nohighlight">
+\[\begin{align*}
+    \text{SMAPE} &amp;= \frac{1}{n}\sum_{t=1}^{n} \frac{|\hat{y}_t - y_t|}{|y_t| + |\hat{y}_t|}
+\end{align*}\]</div>
+</section>
+</section>
+<section id="tong-ket-do-chinh-xac-du-bao-cho-bo-du-lieu-khi-hau-jena">
+<h2>6. Tổng kết Độ Chính Xác Dự Báo cho Bộ Dữ Liệu Khí Hậu Jena<a class="headerlink" href="#tong-ket-do-chinh-xac-du-bao-cho-bo-du-lieu-khi-hau-jena" title="Permalink to this heading">#</a></h2>
+<p>Tài liệu này trình bày nhiều phương pháp dự báo chuỗi thời gian và so sánh hiệu quả của các mô hình này trên bộ dữ liệu Khí hậu Jena. Cụ thể, mỗi phương pháp đều cố gắng dự báo biến nhiệt độ (đơn vị: độ C). Bảng dưới đây tóm tắt độ chính xác dự báo của từng mô hình.</p>
+<table>
+  <thead>
+    <tr>
+      <th>Phương pháp</th>
+      <th>MAE trung bình (độ C)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Naive</td>
+      <td>3.18</td>
+    </tr>
+    <tr>
+      <td>Naive theo mùa</td>
+      <td>2.61</td>
+    </tr>
+      <tr>
+      <td>Hồi quy tuyến tính</td>
+      <td>2.86</td>
+    </tr>
+      <tr>
+      <td>ARIMA</td>
+      <td>3.19</td>
+    </tr>
+      <tr>
+      <td>VAR</td>
+      <td>2.54</td>
+    </tr>
+      <tr>
+      <td>Phương pháp Simplex (đang chờ xác thực)</td>
+      <td>1.53</td>
+    </tr>
+    <tr>
+      <td>LightGBM</td>
+      <td>2.08</td>
+    </tr>
+  </tbody>
+</table></section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./00_Introduction"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../Preface/Preface.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Lời nói đầu: Giới thiệu về Phân tích Chuỗi Thời Gian (Time Series Analysis)</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../01_AutoRegressiveIntegratedMovingAverage/01_AutoRegressiveIntegratedMovingAverage.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Chương 1: Trung bình trượt tích hợp tự hồi quy (ARIMA)</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gioi-thieu-chung">1. Giới thiệu chung</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#chuoi-thoi-gian-la-gi">Chuỗi thời gian là gì?</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#du-bao-chuoi-thoi-gian">2. Dự báo chuỗi thời gian</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#qua-trinh-ngau-nhien">3. Quá trình ngẫu nhiên</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tinh-dung">Tính dừng</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#hiep-phuong-sai-tu-dong-cua-mot-qua-trinh-dung">Hiệp phương sai tự động của một quá trình dừng</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#qua-trinh-trung-binh-truot">Quá trình Trung bình Trượt</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#qua-trinh-tu-hoi-quy">Quá trình Tự hồi quy</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#qua-trinh-tu-hoi-quy-trung-binh-truot">Quá trình Tự hồi quy Trung bình Trượt</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cac-phuong-phap-chuan-benchmark-methods">4. Các phương pháp chuẩn (Benchmark Methods)</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#phuong-phap-naive">Phương pháp Naïve</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#phuong-phap-naive-theo-mua">Phương pháp Naïve theo mùa</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cac-chi-so-danh-gia-do-chinh-xac-du-bao">5. Các Chỉ Số Đánh Giá Độ Chính Xác Dự Báo</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sai-so-tuyet-doi-trung-binh">Sai số tuyệt đối trung bình</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#can-bac-hai-cua-sai-so-binh-phuong-trung-binh">Căn bậc hai của sai số bình phương trung bình</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sai-so-phan-tram-tuyet-doi-trung-binh">Sai số phần trăm tuyệt đối trung bình</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sai-so-phan-tram-tuyet-doi-doi-xung-trung-binh">Sai số phần trăm tuyệt đối đối xứng trung bình</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tong-ket-do-chinh-xac-du-bao-cho-bo-du-lieu-khi-hau-jena">6. Tổng kết Độ Chính Xác Dự Báo cho Bộ Dữ Liệu Khí Hậu Jena</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By By AI Department - TLU
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2022.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

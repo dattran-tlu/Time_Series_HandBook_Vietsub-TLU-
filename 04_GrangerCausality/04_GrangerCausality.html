@@ -1,0 +1,3236 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Chương 4: Kiểm định nhân quả Granger (Granger Causality) &#8212; Bản dịch Time Series Analysis Handbook</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" href="../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../_static/sphinx-thebe.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '04_GrangerCausality/04_GrangerCausality';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Chương 5: Các phương pháp dự báo động lực (Simplex và SMap Projections)" href="../05_SimplexandSmapProjections/05_Empirical%20Dynamic%20Modelling%20%28Simplex%20and%20SMap_Projections%29.html" />
+    <link rel="prev" title="Chương 3: Các phương pháp Vectơ tự hồi quy (Vector Autoregressive Methods)" href="../03_VectorAutoregressiveModels/03_VectorAutoregressiveMethods.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../Preface/Preface.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">Bản dịch Time Series Analysis Handbook</p>
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../Preface/Preface.html">
+                    Lời nói đầu: Giới thiệu về Phân tích Chuỗi Thời Gian (Time Series Analysis)
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../00_Introduction/00_Introduction.html">Chương 0: Phân tích Chuỗi Thời gian Nâng cao (Advanced Time Series Analysis)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../01_AutoRegressiveIntegratedMovingAverage/01_AutoRegressiveIntegratedMovingAverage.html">Chương 1: Trung bình trượt tích hợp tự hồi quy (ARIMA)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../02_LinearForecastingTrendandMomentumForecasting/02_LinearTrendandMomentumForecasting.html">Chương 2: Dự báo Tuyến tính, Xu hướng và Động lượng</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../03_VectorAutoregressiveModels/03_VectorAutoregressiveMethods.html">Chương 3: Các phương pháp Vectơ tự hồi quy (Vector Autoregressive Methods)</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Chương 4: Kiểm định nhân quả Granger (Granger Causality)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../05_SimplexandSmapProjections/05_Empirical%20Dynamic%20Modelling%20%28Simplex%20and%20SMap_Projections%29.html">Chương 5: Các phương pháp dự báo động lực (Simplex và SMap Projections)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../06_ConvergentCrossMappingandSugiharaCausality/ccm_sugihara.html">Chương 6: Ánh xạ chéo hội tụ (Convergent Cross Mapping)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../07_CrosscorrelationsFourierTransformandWaveletTransform/07_CrosscorrelationsFourierTransformandWaveletTransform.html">Chương 7: Tương quan chéo, Biến đổi Fourier và Biến đổi Wavelet (Cross-Correlations, Fourier Transform, and Wavelet Transform)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../08_WinningestMethods/lightgbm_m5_forecasting.html">Chapter 8: Winningest Methods in Time Series Forecasting</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/04_GrangerCausality/04_GrangerCausality.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Chương 4: Kiểm định nhân quả Granger (Granger Causality)</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ky-hieu">Ký hiệu</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dinh-nghia">Định nghĩa</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nhan-qua">Nhân quả</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#phan-hoi">Phản hồi</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nhan-qua-tuc-thoi">Nhân quả tức thời</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#do-tre-nhan-qua">Độ trễ nhân quả</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gia-dinh">Giả định</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#kiem-dinh-nhan-qua-granger">Kiểm định nhân quả Granger</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#vi-du-1-bo-du-lieu-dap-ipo">Ví dụ 1: Bộ dữ liệu đập Ipo</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#nhan-qua-giua-luong-mua-va-muc-nuoc-dap-ipo">Nhân quả giữa lượng mưa và mực nước đập Ipo</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#nhan-qua-giua-luu-luong-xa-nia-va-muc-nuoc-dap-ipo">Nhân quả giữa lưu lượng xả NIA và mực nước đập Ipo</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#vi-du-2-nhan-qua-doi-voi-dap-la-mesa">Ví dụ 2: Nhân quả đối với đập La Mesa</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#nhan-qua-giua-luong-mua-va-muc-nuoc-dap-la-mesa">Nhân quả giữa lượng mưa và mực nước đập La Mesa</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#nhan-qua-giua-luu-luong-xa-nia-va-muc-nuoc-dap-la-mesa">Nhân quả giữa lưu lượng xả NIA và mực nước đập La Mesa</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bai-tap">Bài tập</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#nhan-qua-giua-ap-suat-va-nhiet-do">Nhân quả giữa áp suất và nhiệt độ</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tom-tat">Tóm tắt</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tai-lieu-tham-khao">Tài liệu tham khảo</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="chuong-4-kiem-dinh-nhan-qua-granger-granger-causality">
+<h1>Chương 4: Kiểm định nhân quả Granger (Granger Causality)<a class="headerlink" href="#chuong-4-kiem-dinh-nhan-qua-granger-granger-causality" title="Permalink to this heading">#</a></h1>
+<p>Trong ba chương đầu, chúng ta đã thảo luận các phương pháp cổ điển cho dự báo chuỗi thời gian đơn biến và đa biến. Giờ đây, chúng ta giới thiệu khái niệm nhân quả và những hàm ý của nó đối với phân tích chuỗi thời gian nói chung. Chúng ta cũng trình bày một phép kiểm định dành cho mô hình VAR tuyến tính đã được thảo luận trong chương trước.</p>
+<p>Biên soạn bởi: Carlo Vincienzo G. Dajac</p>
+<section id="ky-hieu">
+<h2>Ký hiệu<a class="headerlink" href="#ky-hieu" title="Permalink to this heading">#</a></h2>
+<p>Nếu <span class="math notranslate nohighlight">\(A_t\)</span> là một quá trình ngẫu nhiên dừng, ký hiệu <span class="math notranslate nohighlight">\(\overline A_t\)</span> biểu diễn tập các giá trị trong <em>quá khứ</em> <span class="math notranslate nohighlight">\({A_{t-j}, \; j=1,2,\ldots,\infty}\)</span> và <span class="math notranslate nohighlight">\(\overline{\overline A}_t\)</span> biểu diễn tập các giá trị <em>quá khứ và hiện tại</em> <span class="math notranslate nohighlight">\({A_{t-j}, \; j=0,1,\ldots,\infty}\)</span>. Ngoài ra, ký hiệu <span class="math notranslate nohighlight">\(\overline A(k)\)</span> biểu diễn tập <span class="math notranslate nohighlight">\({A_{t-j}, \; j=k,k+1,\ldots,\infty}\)</span>.</p>
+<p>Ký hiệu <span class="math notranslate nohighlight">\(P_t (A|B)\)</span> là bộ dự báo tối ưu, không chệch, theo phương pháp bình phương tối thiểu của <span class="math notranslate nohighlight">\(A_t\)</span> khi sử dụng tập các giá trị <span class="math notranslate nohighlight">\(B_t\)</span> . Do đó, chẳng hạn, <span class="math notranslate nohighlight">\(P_t (X|\overline X)\)</span> sẽ là bộ dự báo tối ưu của <span class="math notranslate nohighlight">\(X_t\)</span> chỉ sử dụng các giá trị quá khứ của <span class="math notranslate nohighlight">\(X_t\)</span>. Chuỗi sai số dự báo được ký hiệu là <span class="math notranslate nohighlight">\(\varepsilon_t(A|B) = A_t - P_t(A|B)\)</span>. Gọi <span class="math notranslate nohighlight">\(\sigma^2 (A|B)\)</span> là phương sai của <span class="math notranslate nohighlight">\(\varepsilon_t(A|B)\)</span>.</p>
+<p>Gọi <span class="math notranslate nohighlight">\(U_t\)</span> là toàn bộ thông tin trong vũ trụ được tích lũy kể từ thời điểm <span class="math notranslate nohighlight">\(t-1\)</span> và ký hiệu <span class="math notranslate nohighlight">\(U_t - Y_t\)</span> là toàn bộ thông tin này <em>ngoại trừ</em> chuỗi đã được chỉ định <span class="math notranslate nohighlight">\(Y_t\)</span>, trong đó <span class="math notranslate nohighlight">\(Y_t\)</span> là một chuỗi thời gian dừng khác với <span class="math notranslate nohighlight">\(X_t\)</span>.</p>
+</section>
+<section id="dinh-nghia">
+<h2>Định nghĩa<a class="headerlink" href="#dinh-nghia" title="Permalink to this heading">#</a></h2>
+<section id="nhan-qua">
+<h3>Nhân quả<a class="headerlink" href="#nhan-qua" title="Permalink to this heading">#</a></h3>
+<p>Nếu <span class="math notranslate nohighlight">\(\sigma^2 (X|U) &lt; \sigma^2 (X| \overline{U-Y})\)</span>, ta nói rằng <span class="math notranslate nohighlight">\(Y\)</span> gây ra <span class="math notranslate nohighlight">\(X\)</span>, ký hiệu là <span class="math notranslate nohighlight">\(Y_t \implies X_t\)</span>. Ta nói rằng <span class="math notranslate nohighlight">\(Y_t\)</span> gây ra <span class="math notranslate nohighlight">\(X_t\)</span> nếu chúng ta <strong>có thể dự báo</strong> <span class="math notranslate nohighlight">\(X_t\)</span> tốt hơn khi sử dụng toàn bộ thông tin sẵn có so với trường hợp sử dụng thông tin ngoại trừ <span class="math notranslate nohighlight">\(Y_t\)</span>.</p>
+</section>
+<section id="phan-hoi">
+<h3>Phản hồi<a class="headerlink" href="#phan-hoi" title="Permalink to this heading">#</a></h3>
+<p>Nếu <span class="math notranslate nohighlight">\(\sigma^2 (X|\overline U) &lt; \sigma^2 (X| \overline{U-Y})\)</span> và <span class="math notranslate nohighlight">\(\sigma^2 (Y|\overline U) &lt; \sigma^2 (Y| \overline{U-X})\)</span>, ta nói rằng hiện tượng phản hồi xảy ra, được ký hiệu là <span class="math notranslate nohighlight">\(Y_t \iff X_t\)</span>, i.e., tức là phản hồi được cho là xảy ra khi <span class="math notranslate nohighlight">\(X_t\)</span> gây ra <span class="math notranslate nohighlight">\(Y_t\)</span> và đồng thời <span class="math notranslate nohighlight">\(Y_t\)</span> cũng gây ra <span class="math notranslate nohighlight">\(X_t\)</span>.</p>
+</section>
+<section id="nhan-qua-tuc-thoi">
+<h3>Nhân quả tức thời<a class="headerlink" href="#nhan-qua-tuc-thoi" title="Permalink to this heading">#</a></h3>
+<p>Nếu <span class="math notranslate nohighlight">\(\sigma^2 (X|\overline U, \overline{\overline Y}) &lt; \sigma^2 (X| \overline U)\)</span>, ta nói rằng tồn tại nhân quả tức thời <span class="math notranslate nohighlight">\(Y_t \implies X_t\)</span>. Nói cách khác, giá trị hiện tại của <span class="math notranslate nohighlight">\(X_t\)</span> được “dự báo” tốt hơn nếu giá trị hiện tại của <span class="math notranslate nohighlight">\(Y_t\)</span> được đưa vào “dự báo” so với trường hợp không đưa vào.</p>
+</section>
+<section id="do-tre-nhan-qua">
+<h3>Độ trễ nhân quả<a class="headerlink" href="#do-tre-nhan-qua" title="Permalink to this heading">#</a></h3>
+<p>Nếu <span class="math notranslate nohighlight">\(Y_t \implies X_t\)</span>, ta định nghĩa độ trễ nhân quả (số nguyên) <span class="math notranslate nohighlight">\(m\)</span> là giá trị nhỏ nhất của <span class="math notranslate nohighlight">\(k\)</span> sao cho <span class="math notranslate nohighlight">\(\sigma^2 (X|U-Y(k)) &lt; \sigma^2 (X|U-Y(k+1))\)</span>. Do đó, việc biết các giá trị <span class="math notranslate nohighlight">\(Y_{t-j}, \; j=0,1,\ldots,m-1\)</span> sẽ không giúp cải thiện việc dự báo <span class="math notranslate nohighlight">\(X_t\)</span></p>
+</section>
+</section>
+<section id="gia-dinh">
+<h2>Giả định<a class="headerlink" href="#gia-dinh" title="Permalink to this heading">#</a></h2>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(X_t\)</span> và <span class="math notranslate nohighlight">\(Y_t\)</span> là các chuỗi dừng.</p></li>
+<li><p><span class="math notranslate nohighlight">\(P_t (A|B)\)</span> đã được tối ưu.</p></li>
+</ul>
+</section>
+<section id="kiem-dinh-nhan-qua-granger">
+<h2>Kiểm định nhân quả Granger<a class="headerlink" href="#kiem-dinh-nhan-qua-granger" title="Permalink to this heading">#</a></h2>
+<p>Trước tiên, chúng ta sẽ xây dựng các mô hình VAR cho các ví dụ trong phần này. Bên cạnh các bước đã được trình bày trong chương trước, chúng ta sẽ chỉ cần gọi hàm kiểm định nhân quả Granger có sẵn và cấu hình nó cho phù hợp.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pandas.plotting</span><span class="w"> </span><span class="kn">import</span> <span class="n">lag_plot</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">statsmodels.tsa.vector_ar.var_model</span><span class="w"> </span><span class="kn">import</span> <span class="n">VAR</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">statsmodels.tsa.stattools</span><span class="w"> </span><span class="kn">import</span> <span class="n">adfuller</span><span class="p">,</span> <span class="n">kpss</span><span class="p">,</span> <span class="n">grangercausalitytests</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<section id="vi-du-1-bo-du-lieu-dap-ipo">
+<h3>Ví dụ 1: Bộ dữ liệu đập Ipo<a class="headerlink" href="#vi-du-1-bo-du-lieu-dap-ipo" title="Permalink to this heading">#</a></h3>
+<p>Chúng ta sẽ sử dụng bộ dữ liệu Ipo trong ví dụ này. Bộ dữ liệu này chứa các phép đo hằng ngày của các biến sau: lượng mưa (tính bằng milimét), Chỉ số Niño đại dương (Oceanic Niño Index – ONI), lưu lượng xả của NIA (tính bằng mét khối trên giây) và mực nước đập (tính bằng mét).</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ipo_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;../data/Ipo_dataset.csv&#39;</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="s1">&#39;Time&#39;</span><span class="p">);</span>
+<span class="n">ipo_df</span> <span class="o">=</span> <span class="n">ipo_df</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+<span class="n">ipo_df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Rain</th>
+      <th>ONI</th>
+      <th>NIA</th>
+      <th>Dam</th>
+    </tr>
+    <tr>
+      <th>Time</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>0.0</td>
+      <td>-0.7</td>
+      <td>38.225693</td>
+      <td>100.70</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>0.0</td>
+      <td>-0.7</td>
+      <td>57.996530</td>
+      <td>100.63</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>0.0</td>
+      <td>-0.7</td>
+      <td>49.119213</td>
+      <td>100.56</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>0.0</td>
+      <td>-0.7</td>
+      <td>47.034720</td>
+      <td>100.55</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>0.0</td>
+      <td>-0.7</td>
+      <td>42.223380</td>
+      <td>100.48</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span><span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span><span class="mi">8</span><span class="p">),</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">plot_cols</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Rain&#39;</span><span class="p">,</span> <span class="s1">&#39;ONI&#39;</span><span class="p">,</span> <span class="s1">&#39;NIA&#39;</span><span class="p">,</span> <span class="s1">&#39;Dam&#39;</span><span class="p">]</span>
+<span class="n">ipo_df</span><span class="p">[</span><span class="n">plot_cols</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">subplots</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">legend</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ax</span><span class="p">)):</span> 
+    <span class="n">ax</span><span class="p">[</span><span class="n">a</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="n">plot_cols</span><span class="p">[</span><span class="n">a</span><span class="p">])</span>
+<span class="n">ax</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/07278feef8f0cd19da288a7ed6bc22604ec85a1dd1baf5ef0819b6666ea2ff1f.png" src="../_images/07278feef8f0cd19da288a7ed6bc22604ec85a1dd1baf5ef0819b6666ea2ff1f.png" />
+</div>
+</div>
+<section id="nhan-qua-giua-luong-mua-va-muc-nuoc-dap-ipo">
+<h4>Nhân quả giữa lượng mưa và mực nước đập Ipo<a class="headerlink" href="#nhan-qua-giua-luong-mua-va-muc-nuoc-dap-ipo" title="Permalink to this heading">#</a></h4>
+<p>Trong ví dụ này, chúng ta sẽ tập trung vào hai chuỗi thời gian lượng mưa và mực nước đập.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">data_df</span> <span class="o">=</span> <span class="n">ipo_df</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s1">&#39;ONI&#39;</span><span class="p">,</span> <span class="s1">&#39;NIA&#39;</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">data_df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Rain</th>
+      <th>Dam</th>
+    </tr>
+    <tr>
+      <th>Time</th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>0.0</td>
+      <td>100.70</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>0.0</td>
+      <td>100.63</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>0.0</td>
+      <td>100.56</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>0.0</td>
+      <td>100.55</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>0.0</td>
+      <td>100.48</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<p>Chúng ta xem các biểu đồ độ trễ (lag plots) để nhanh chóng kiểm tra tính dừng.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">lag_plots</span><span class="p">(</span><span class="n">data_df</span><span class="p">):</span>
+    <span class="n">f</span><span class="p">,</span> <span class="p">(</span><span class="n">ax1</span><span class="p">,</span> <span class="n">ax2</span><span class="p">)</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+
+    <span class="n">lag_plot</span><span class="p">(</span><span class="n">data_df</span><span class="p">[</span><span class="n">data_df</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax1</span><span class="p">)</span>
+    <span class="n">ax1</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">data_df</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="mi">0</span><span class="p">]);</span>
+
+    <span class="n">lag_plot</span><span class="p">(</span><span class="n">data_df</span><span class="p">[</span><span class="n">data_df</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax2</span><span class="p">)</span>
+    <span class="n">ax2</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">data_df</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
+
+    <span class="n">ax1</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;$y_{t+1}$&#39;</span><span class="p">);</span>
+    <span class="n">ax1</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;$y_t$&#39;</span><span class="p">);</span>
+    <span class="n">ax2</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;$y_{t+1}$&#39;</span><span class="p">);</span>
+    <span class="n">ax2</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;$y_t$&#39;</span><span class="p">);</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">lag_plots</span><span class="p">(</span><span class="n">data_df</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/7f1fb3eb1031d90599e8ac8b32ce7c6f16815a83ee2cbb827eb05afd7517b7d7.png" src="../_images/7f1fb3eb1031d90599e8ac8b32ce7c6f16815a83ee2cbb827eb05afd7517b7d7.png" />
+</div>
+</div>
+<p><strong>Kết quả:</strong> Chuỗi mực nước đập không có vẻ là chuỗi dừng. Biểu đồ độ trễ của lượng mưa chưa cho kết luận rõ ràng.</p>
+<p>Chúng ta sử dụng các kiểm định KPSS và ADF đã được thảo luận trong chương trước để kiểm tra tính dừng một cách chắc chắn.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">kpss_test</span><span class="p">(</span><span class="n">data_df</span><span class="p">):</span>
+    <span class="n">test_stat</span><span class="p">,</span> <span class="n">p_val</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[]</span>
+    <span class="n">cv_1pct</span><span class="p">,</span> <span class="n">cv_2p5pct</span><span class="p">,</span> <span class="n">cv_5pct</span><span class="p">,</span> <span class="n">cv_10pct</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">data_df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span> 
+        <span class="n">kpss_res</span> <span class="o">=</span> <span class="n">kpss</span><span class="p">(</span><span class="n">data_df</span><span class="p">[</span><span class="n">c</span><span class="p">]</span><span class="o">.</span><span class="n">dropna</span><span class="p">(),</span> <span class="n">regression</span><span class="o">=</span><span class="s1">&#39;ct&#39;</span><span class="p">)</span>
+        <span class="n">test_stat</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">kpss_res</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">p_val</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">kpss_res</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">cv_1pct</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">kpss_res</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="s1">&#39;1%&#39;</span><span class="p">])</span>
+        <span class="n">cv_2p5pct</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">kpss_res</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="s1">&#39;2.5%&#39;</span><span class="p">])</span>
+        <span class="n">cv_5pct</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">kpss_res</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="s1">&#39;5%&#39;</span><span class="p">])</span>
+        <span class="n">cv_10pct</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">kpss_res</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="s1">&#39;10%&#39;</span><span class="p">])</span>
+    <span class="n">kpss_res_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;Test statistic&#39;</span><span class="p">:</span> <span class="n">test_stat</span><span class="p">,</span> 
+                               <span class="s1">&#39;p-value&#39;</span><span class="p">:</span> <span class="n">p_val</span><span class="p">,</span> 
+                               <span class="s1">&#39;Critical value - 1%&#39;</span><span class="p">:</span> <span class="n">cv_1pct</span><span class="p">,</span>
+                               <span class="s1">&#39;Critical value - 2.5%&#39;</span><span class="p">:</span> <span class="n">cv_2p5pct</span><span class="p">,</span>
+                               <span class="s1">&#39;Critical value - 5%&#39;</span><span class="p">:</span> <span class="n">cv_5pct</span><span class="p">,</span>
+                               <span class="s1">&#39;Critical value - 10%&#39;</span><span class="p">:</span> <span class="n">cv_10pct</span><span class="p">},</span> 
+                             <span class="n">index</span><span class="o">=</span><span class="n">data_df</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+    <span class="n">kpss_res_df</span> <span class="o">=</span> <span class="n">kpss_res_df</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">kpss_res_df</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">kpss_test</span><span class="p">(</span><span class="n">data_df</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Rain</th>
+      <th>Dam</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>Test statistic</th>
+      <td>0.018</td>
+      <td>1.8045</td>
+    </tr>
+    <tr>
+      <th>p-value</th>
+      <td>0.100</td>
+      <td>0.0100</td>
+    </tr>
+    <tr>
+      <th>Critical value - 1%</th>
+      <td>0.216</td>
+      <td>0.2160</td>
+    </tr>
+    <tr>
+      <th>Critical value - 2.5%</th>
+      <td>0.176</td>
+      <td>0.1760</td>
+    </tr>
+    <tr>
+      <th>Critical value - 5%</th>
+      <td>0.146</td>
+      <td>0.1460</td>
+    </tr>
+    <tr>
+      <th>Critical value - 10%</th>
+      <td>0.119</td>
+      <td>0.1190</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<p><strong>Kết quả:</strong> Chuỗi lượng mưa là chuỗi dừng, trong khi chuỗi mực nước đập thì không.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">adf_test</span><span class="p">(</span><span class="n">data_df</span><span class="p">):</span>
+    <span class="n">test_stat</span><span class="p">,</span> <span class="n">p_val</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[]</span>
+    <span class="n">cv_1pct</span><span class="p">,</span> <span class="n">cv_5pct</span><span class="p">,</span> <span class="n">cv_10pct</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">data_df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span> 
+        <span class="n">adf_res</span> <span class="o">=</span> <span class="n">adfuller</span><span class="p">(</span><span class="n">data_df</span><span class="p">[</span><span class="n">c</span><span class="p">]</span><span class="o">.</span><span class="n">dropna</span><span class="p">())</span>
+        <span class="n">test_stat</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">adf_res</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">p_val</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">adf_res</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">cv_1pct</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">adf_res</span><span class="p">[</span><span class="mi">4</span><span class="p">][</span><span class="s1">&#39;1%&#39;</span><span class="p">])</span>
+        <span class="n">cv_5pct</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">adf_res</span><span class="p">[</span><span class="mi">4</span><span class="p">][</span><span class="s1">&#39;5%&#39;</span><span class="p">])</span>
+        <span class="n">cv_10pct</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">adf_res</span><span class="p">[</span><span class="mi">4</span><span class="p">][</span><span class="s1">&#39;10%&#39;</span><span class="p">])</span>
+    <span class="n">adf_res_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;Test statistic&#39;</span><span class="p">:</span> <span class="n">test_stat</span><span class="p">,</span> 
+                               <span class="s1">&#39;p-value&#39;</span><span class="p">:</span> <span class="n">p_val</span><span class="p">,</span> 
+                               <span class="s1">&#39;Critical value - 1%&#39;</span><span class="p">:</span> <span class="n">cv_1pct</span><span class="p">,</span>
+                               <span class="s1">&#39;Critical value - 5%&#39;</span><span class="p">:</span> <span class="n">cv_5pct</span><span class="p">,</span>
+                               <span class="s1">&#39;Critical value - 10%&#39;</span><span class="p">:</span> <span class="n">cv_10pct</span><span class="p">},</span> 
+                             <span class="n">index</span><span class="o">=</span><span class="n">data_df</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+    <span class="n">adf_res_df</span> <span class="o">=</span> <span class="n">adf_res_df</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">adf_res_df</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">adf_test</span><span class="p">(</span><span class="n">data_df</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Rain</th>
+      <th>Dam</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>Test statistic</th>
+      <td>-8.6223</td>
+      <td>-5.8742</td>
+    </tr>
+    <tr>
+      <th>p-value</th>
+      <td>0.0000</td>
+      <td>0.0000</td>
+    </tr>
+    <tr>
+      <th>Critical value - 1%</th>
+      <td>-3.4313</td>
+      <td>-3.4313</td>
+    </tr>
+    <tr>
+      <th>Critical value - 5%</th>
+      <td>-2.8619</td>
+      <td>-2.8619</td>
+    </tr>
+    <tr>
+      <th>Critical value - 10%</th>
+      <td>-2.5670</td>
+      <td>-2.5670</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<p><strong>Kết quả:</strong> Cả hai chuỗi dữ liệu đều là chuỗi dừng.</p>
+<p>Do cả biểu đồ độ trễ và kiểm định KPSS đều cho thấy chuỗi mực nước đập không dừng, chúng ta áp dụng phép sai phân trước khi xây dựng mô hình VAR.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">data_df</span><span class="p">[</span><span class="s1">&#39;Dam&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data_df</span><span class="p">[</span><span class="s1">&#39;Dam&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">data_df</span><span class="p">[</span><span class="s1">&#39;Dam&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">data_df</span> <span class="o">=</span> <span class="n">data_df</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Chúng ta tiếp tục xem các biểu đồ độ trễ và áp dụng các kiểm định KPSS và ADF.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">lag_plots</span><span class="p">(</span><span class="n">data_df</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/80754bb820a0313c16a18e4ddc82c6975ebc26119be9244e8cf5b243e855b132.png" src="../_images/80754bb820a0313c16a18e4ddc82c6975ebc26119be9244e8cf5b243e855b132.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">kpss_test</span><span class="p">(</span><span class="n">data_df</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Rain</th>
+      <th>Dam</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>Test statistic</th>
+      <td>0.0179</td>
+      <td>0.0047</td>
+    </tr>
+    <tr>
+      <th>p-value</th>
+      <td>0.1000</td>
+      <td>0.1000</td>
+    </tr>
+    <tr>
+      <th>Critical value - 1%</th>
+      <td>0.2160</td>
+      <td>0.2160</td>
+    </tr>
+    <tr>
+      <th>Critical value - 2.5%</th>
+      <td>0.1760</td>
+      <td>0.1760</td>
+    </tr>
+    <tr>
+      <th>Critical value - 5%</th>
+      <td>0.1460</td>
+      <td>0.1460</td>
+    </tr>
+    <tr>
+      <th>Critical value - 10%</th>
+      <td>0.1190</td>
+      <td>0.1190</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">adf_test</span><span class="p">(</span><span class="n">data_df</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Rain</th>
+      <th>Dam</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>Test statistic</th>
+      <td>-8.6227</td>
+      <td>-21.5919</td>
+    </tr>
+    <tr>
+      <th>p-value</th>
+      <td>0.0000</td>
+      <td>0.0000</td>
+    </tr>
+    <tr>
+      <th>Critical value - 1%</th>
+      <td>-3.4313</td>
+      <td>-3.4313</td>
+    </tr>
+    <tr>
+      <th>Critical value - 5%</th>
+      <td>-2.8619</td>
+      <td>-2.8619</td>
+    </tr>
+    <tr>
+      <th>Critical value - 10%</th>
+      <td>-2.5670</td>
+      <td>-2.5670</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<p><strong>Kết quả:</strong> Cả ba phương pháp đều nhất quán và cho thấy rằng cả hai chuỗi dữ liệu hiện nay đều là chuỗi dừng.</p>
+<p>Tiếp theo, chúng ta chia dữ liệu thành tập huấn luyện và tập kiểm tra cho mô hình VAR.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">splitter</span><span class="p">(</span><span class="n">data_df</span><span class="p">):</span>
+    <span class="n">end</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data_df</span><span class="p">)</span><span class="o">*</span><span class="mf">.8</span><span class="p">)</span>
+    <span class="n">train_df</span> <span class="o">=</span> <span class="n">data_df</span><span class="p">[:</span><span class="n">end</span><span class="p">]</span>
+    <span class="n">test_df</span> <span class="o">=</span> <span class="n">data_df</span><span class="p">[</span><span class="n">end</span><span class="p">:]</span>
+    <span class="k">return</span> <span class="n">train_df</span><span class="p">,</span> <span class="n">test_df</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">train_df</span><span class="p">,</span> <span class="n">test_df</span> <span class="o">=</span> <span class="n">splitter</span><span class="p">(</span><span class="n">data_df</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Sau đó, chúng ta lựa chọn bậc VAR <span class="math notranslate nohighlight">\(p\)</span> bằng cách tính các tiêu chí thông tin đa biến khác nhau (AIC, BIC, HQIC) và FPE.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">select_p</span><span class="p">(</span><span class="n">train_df</span><span class="p">):</span>
+    <span class="n">aic</span><span class="p">,</span> <span class="n">bic</span><span class="p">,</span> <span class="n">fpe</span><span class="p">,</span> <span class="n">hqic</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[]</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">VAR</span><span class="p">(</span><span class="n">train_df</span><span class="p">)</span> 
+    <span class="n">p</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">60</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">p</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+        <span class="n">aic</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">aic</span><span class="p">)</span>
+        <span class="n">bic</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">bic</span><span class="p">)</span>
+        <span class="n">fpe</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">fpe</span><span class="p">)</span>
+        <span class="n">hqic</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">hqic</span><span class="p">)</span>
+    <span class="n">lags_metrics_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;AIC&#39;</span><span class="p">:</span> <span class="n">aic</span><span class="p">,</span> 
+                                    <span class="s1">&#39;BIC&#39;</span><span class="p">:</span> <span class="n">bic</span><span class="p">,</span> 
+                                    <span class="s1">&#39;HQIC&#39;</span><span class="p">:</span> <span class="n">hqic</span><span class="p">,</span>
+                                    <span class="s1">&#39;FPE&#39;</span><span class="p">:</span> <span class="n">fpe</span><span class="p">},</span> 
+                                   <span class="n">index</span><span class="o">=</span><span class="n">p</span><span class="p">)</span>    
+    <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">lags_metrics_df</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">subplots</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">lags_metrics_df</span><span class="o">.</span><span class="n">idxmin</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">select_p</span><span class="p">(</span><span class="n">train_df</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>AIC     21
+BIC      8
+HQIC    11
+FPE     21
+dtype: int64
+</pre></div>
+</div>
+<img alt="../_images/50120852c63e5ca4a63b85bcb0e7503e94a1f3ac211fd2f9f6cd82effdbc0fae.png" src="../_images/50120852c63e5ca4a63b85bcb0e7503e94a1f3ac211fd2f9f6cd82effdbc0fae.png" />
+</div>
+</div>
+<p><strong>Kết quả:</strong> Chúng ta thấy rằng BIC đạt giá trị nhỏ nhất tại <span class="math notranslate nohighlight">\(p=8\)</span>, trong khi HQIC đạt giá trị nhỏ nhất tại <span class="math notranslate nohighlight">\(p=11\)</span>. Mặc dù cả AIC và FPE đều đạt giá trị nhỏ nhất tại <span class="math notranslate nohighlight">\(p=21\)</span>, các đồ thị của chúng cũng cho thấy một điểm “khuỷu tay”. Do đó, chúng ta có thể lựa chọn số độ trễ là 8 (đồng thời để đảm bảo hiệu quả tính toán).</p>
+<p>Tiếp theo, chúng ta tiến hành ước lượng mô hình VAR với bậc đã được lựa chọn.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">p</span> <span class="o">=</span> <span class="mi">8</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">VAR</span><span class="p">(</span><span class="n">train_df</span><span class="p">)</span>
+<span class="n">var_model</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Cuối cùng, chúng ta có thể kiểm định nhân quả Granger giữa các biến.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">granger_causation_matrix</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">variables</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">test</span> <span class="o">=</span> <span class="s1">&#39;ssr_chi2test&#39;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>    
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check Granger Causality of all possible combinations of the time series.</span>
+<span class="sd">    The rows are the response variables, columns are predictors. The values in the table </span>
+<span class="sd">    are the P-Values. P-Values lesser than the significance level (0.05), implies </span>
+<span class="sd">    the Null Hypothesis that the coefficients of the corresponding past values is </span>
+<span class="sd">    zero, that is, the X does not cause Y can be rejected.</span>
+
+<span class="sd">    data      : pandas dataframe containing the time series variables</span>
+<span class="sd">    variables : list containing names of the time series variables.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">variables</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">variables</span><span class="p">))),</span> <span class="n">columns</span><span class="o">=</span><span class="n">variables</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">variables</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">:</span>
+            <span class="n">test_result</span> <span class="o">=</span> <span class="n">grangercausalitytests</span><span class="p">(</span><span class="n">data</span><span class="p">[[</span><span class="n">r</span><span class="p">,</span> <span class="n">c</span><span class="p">]],</span> <span class="n">p</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="n">p_values</span> <span class="o">=</span> <span class="p">[</span><span class="nb">round</span><span class="p">(</span><span class="n">test_result</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="n">test</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span><span class="mi">4</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">p</span><span class="p">)]</span>
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Y = </span><span class="si">{</span><span class="n">r</span><span class="si">}</span><span class="s1">, X = </span><span class="si">{</span><span class="n">c</span><span class="si">}</span><span class="s1">, P Values = </span><span class="si">{</span><span class="n">p_values</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="n">min_p_value</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">p_values</span><span class="p">)</span>
+            <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">r</span><span class="p">,</span> <span class="n">c</span><span class="p">]</span> <span class="o">=</span> <span class="n">min_p_value</span>
+    <span class="n">df</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">var</span> <span class="o">+</span> <span class="s1">&#39;_x&#39;</span> <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">variables</span><span class="p">]</span>
+    <span class="n">df</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="p">[</span><span class="n">var</span> <span class="o">+</span> <span class="s1">&#39;_y&#39;</span> <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">variables</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">df</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">granger_causation_matrix</span><span class="p">(</span><span class="n">train_df</span><span class="p">,</span> <span class="n">train_df</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span>  
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Rain_x</th>
+      <th>Dam_x</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>Rain_y</th>
+      <td>1.0</td>
+      <td>0.2169</td>
+    </tr>
+    <tr>
+      <th>Dam_y</th>
+      <td>0.0</td>
+      <td>1.0000</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<p><strong>Nhắc lại:</strong> Nếu một giá trị p-value &lt; mức ý nghĩa (0.05), thì chuỗi X tương ứng (cột)gây ra chuỗi Y (hàng).</p>
+<p><strong>Kết quả:</strong> Đối với ví dụ cụ thể này, chúng ta có thể kết luận rằng lượng mưa có quan hệ nhân quả Granger đối với sự thay đổi của mực nước đập. Điều này có nghĩa là dữ liệu lượng mưa giúp cải thiện hiệu quả dự báo sự thay đổi mực nước đập.</p>
+<p>Ngược lại, sự thay đổi mực nước đập không có quan hệ nhân quả Granger đối với lượng mưa. Điều này có nghĩa là dữ liệu về sự thay đổi mực nước đập không giúp cải thiện hiệu quả dự báo lượng mưa.</p>
+</section>
+<section id="nhan-qua-giua-luu-luong-xa-nia-va-muc-nuoc-dap-ipo">
+<h4>Nhân quả giữa lưu lượng xả NIA và mực nước đập Ipo<a class="headerlink" href="#nhan-qua-giua-luu-luong-xa-nia-va-muc-nuoc-dap-ipo" title="Permalink to this heading">#</a></h4>
+<p>Trong ví dụ tiếp theo này, chúng ta sẽ tập trung vào hai chuỗi thời gian lưu lượng xả NIA và mực nước đập.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">data_df</span> <span class="o">=</span> <span class="n">ipo_df</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s1">&#39;ONI&#39;</span><span class="p">,</span> <span class="s1">&#39;Rain&#39;</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">data_df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>NIA</th>
+      <th>Dam</th>
+    </tr>
+    <tr>
+      <th>Time</th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>38.225693</td>
+      <td>100.70</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>57.996530</td>
+      <td>100.63</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>49.119213</td>
+      <td>100.56</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>47.034720</td>
+      <td>100.55</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>42.223380</td>
+      <td>100.48</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<p>Trước tiên, chúng ta kiểm tra tính dừng bằng cách quan sát các biểu đồ độ trễ và áp dụng các kiểm định KPSS và ADF.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">lag_plots</span><span class="p">(</span><span class="n">data_df</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/a44d74a49ede69fc2c94a2779c99f664480b82775f2e5df4625d4a46e5352180.png" src="../_images/a44d74a49ede69fc2c94a2779c99f664480b82775f2e5df4625d4a46e5352180.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">kpss_test</span><span class="p">(</span><span class="n">data_df</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>NIA</th>
+      <th>Dam</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>Test statistic</th>
+      <td>0.184</td>
+      <td>1.8045</td>
+    </tr>
+    <tr>
+      <th>p-value</th>
+      <td>0.022</td>
+      <td>0.0100</td>
+    </tr>
+    <tr>
+      <th>Critical value - 1%</th>
+      <td>0.216</td>
+      <td>0.2160</td>
+    </tr>
+    <tr>
+      <th>Critical value - 2.5%</th>
+      <td>0.176</td>
+      <td>0.1760</td>
+    </tr>
+    <tr>
+      <th>Critical value - 5%</th>
+      <td>0.146</td>
+      <td>0.1460</td>
+    </tr>
+    <tr>
+      <th>Critical value - 10%</th>
+      <td>0.119</td>
+      <td>0.1190</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">adf_test</span><span class="p">(</span><span class="n">data_df</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>NIA</th>
+      <th>Dam</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>Test statistic</th>
+      <td>-6.6030</td>
+      <td>-5.8742</td>
+    </tr>
+    <tr>
+      <th>p-value</th>
+      <td>0.0000</td>
+      <td>0.0000</td>
+    </tr>
+    <tr>
+      <th>Critical value - 1%</th>
+      <td>-3.4313</td>
+      <td>-3.4313</td>
+    </tr>
+    <tr>
+      <th>Critical value - 5%</th>
+      <td>-2.8619</td>
+      <td>-2.8619</td>
+    </tr>
+    <tr>
+      <th>Critical value - 10%</th>
+      <td>-2.5670</td>
+      <td>-2.5670</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<p><strong>Kết quả:</strong> Cả ba phương pháp đều cho thấy rõ ràng rằng cả hai chuỗi dữ liệu đều không dừng.</p>
+<p>Chúng ta áp dụng phép sai phân và kiểm tra lại tính dừng.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">data_df</span><span class="p">[</span><span class="s1">&#39;NIA&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data_df</span><span class="p">[</span><span class="s1">&#39;NIA&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">data_df</span><span class="p">[</span><span class="s1">&#39;NIA&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">data_df</span><span class="p">[</span><span class="s1">&#39;Dam&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data_df</span><span class="p">[</span><span class="s1">&#39;Dam&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">data_df</span><span class="p">[</span><span class="s1">&#39;Dam&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">data_df</span> <span class="o">=</span> <span class="n">data_df</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">lag_plots</span><span class="p">(</span><span class="n">data_df</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/401b23584a692cd489f4350656c725770f93475922a3c6cd49d8e03336cefd4d.png" src="../_images/401b23584a692cd489f4350656c725770f93475922a3c6cd49d8e03336cefd4d.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">kpss_test</span><span class="p">(</span><span class="n">data_df</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>NIA</th>
+      <th>Dam</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>Test statistic</th>
+      <td>0.0048</td>
+      <td>0.0047</td>
+    </tr>
+    <tr>
+      <th>p-value</th>
+      <td>0.1000</td>
+      <td>0.1000</td>
+    </tr>
+    <tr>
+      <th>Critical value - 1%</th>
+      <td>0.2160</td>
+      <td>0.2160</td>
+    </tr>
+    <tr>
+      <th>Critical value - 2.5%</th>
+      <td>0.1760</td>
+      <td>0.1760</td>
+    </tr>
+    <tr>
+      <th>Critical value - 5%</th>
+      <td>0.1460</td>
+      <td>0.1460</td>
+    </tr>
+    <tr>
+      <th>Critical value - 10%</th>
+      <td>0.1190</td>
+      <td>0.1190</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">adf_test</span><span class="p">(</span><span class="n">data_df</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>NIA</th>
+      <th>Dam</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>Test statistic</th>
+      <td>-21.2837</td>
+      <td>-21.5919</td>
+    </tr>
+    <tr>
+      <th>p-value</th>
+      <td>0.0000</td>
+      <td>0.0000</td>
+    </tr>
+    <tr>
+      <th>Critical value - 1%</th>
+      <td>-3.4313</td>
+      <td>-3.4313</td>
+    </tr>
+    <tr>
+      <th>Critical value - 5%</th>
+      <td>-2.8619</td>
+      <td>-2.8619</td>
+    </tr>
+    <tr>
+      <th>Critical value - 10%</th>
+      <td>-2.5670</td>
+      <td>-2.5670</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<p><strong>Kết quả:</strong> Cả ba phương pháp đều nhất quán và cho thấy rằng cả hai chuỗi dữ liệu hiện nay đều là chuỗi dừng.</p>
+<p>Tiếp theo, chúng ta chia dữ liệu và lựa chọn bậc độ trễ <span class="math notranslate nohighlight">\(p\)</span>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">train_df</span><span class="p">,</span> <span class="n">test_df</span> <span class="o">=</span> <span class="n">splitter</span><span class="p">(</span><span class="n">data_df</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">select_p</span><span class="p">(</span><span class="n">train_df</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>AIC     27
+BIC      8
+HQIC    13
+FPE     27
+dtype: int64
+</pre></div>
+</div>
+<img alt="../_images/e61b796a223cbeccbe954f9d1c76791cbf55620d3fd821c9137df977617635fb.png" src="../_images/e61b796a223cbeccbe954f9d1c76791cbf55620d3fd821c9137df977617635fb.png" />
+</div>
+</div>
+<p>Chúng ta chọn <span class="math notranslate nohighlight">\(p=8\)</span> với cùng các lý do như trước. Cuối cùng, chúng ta ước lượng mô hình VAR và thực hiện kiểm định nhân quả Granger.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">p</span> <span class="o">=</span> <span class="mi">8</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">VAR</span><span class="p">(</span><span class="n">train_df</span><span class="p">)</span>
+<span class="n">var_model</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">granger_causation_matrix</span><span class="p">(</span><span class="n">train_df</span><span class="p">,</span> <span class="n">train_df</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span>  
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>NIA_x</th>
+      <th>Dam_x</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>NIA_y</th>
+      <td>1.0000</td>
+      <td>0.0007</td>
+    </tr>
+    <tr>
+      <th>Dam_y</th>
+      <td>0.0216</td>
+      <td>1.0000</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<p><strong>Nhắc lại:</strong> Nếu một giá trị p-value &lt; mức ý nghĩa (0.05), thì chuỗi X tương ứng (cột) gây ra chuỗi Y (hàng).</p>
+<p><strong>Kết quả:</strong> Đối với ví dụ cụ thể này, chúng ta có thể kết luận rằng sự thay đổi của lưu lượng xả NIA có quan hệ nhân quả Granger đối với sự thay đổi của mực nước đập. Ngược lại, sự thay đổi của mực nước đập cũng có quan hệ nhân quả Granger đối với sự thay đổi của lưu lượng xả NIA. Đây là một ví dụ về hiện tượng phản hồi đã được đề cập ở phần trước. Điều này có nghĩa là dữ liệu về lưu lượng xả NIA giúp cải thiện hiệu quả dự báo sự thay đổi mực nước đập, và dữ liệu về mực nước đập cũng giúp cải thiện hiệu quả dự báo sự thay đổi lưu lượng xả NIA.</p>
+</section>
+</section>
+<section id="vi-du-2-nhan-qua-doi-voi-dap-la-mesa">
+<h3>Ví dụ 2: Nhân quả đối với đập La Mesa<a class="headerlink" href="#vi-du-2-nhan-qua-doi-voi-dap-la-mesa" title="Permalink to this heading">#</a></h3>
+<p>Chúng ta tiếp tục thực hiện các bước tương tự cho bộ dữ liệu La Mesa.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">lamesa_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;../data/La Mesa_dataset.csv&#39;</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="s1">&#39;Time&#39;</span><span class="p">);</span>
+<span class="n">lamesa_df</span> <span class="o">=</span> <span class="n">lamesa_df</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+<span class="n">lamesa_df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Rain</th>
+      <th>ONI</th>
+      <th>NIA</th>
+      <th>Dam</th>
+    </tr>
+    <tr>
+      <th>Time</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>0.0</td>
+      <td>-0.7</td>
+      <td>38.225693</td>
+      <td>78.63</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>0.0</td>
+      <td>-0.7</td>
+      <td>57.996530</td>
+      <td>78.63</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>0.0</td>
+      <td>-0.7</td>
+      <td>49.119213</td>
+      <td>78.61</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>0.0</td>
+      <td>-0.7</td>
+      <td>47.034720</td>
+      <td>78.59</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>0.0</td>
+      <td>-0.7</td>
+      <td>42.223380</td>
+      <td>78.56</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span><span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span><span class="mi">8</span><span class="p">),</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">plot_cols</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Rain&#39;</span><span class="p">,</span> <span class="s1">&#39;ONI&#39;</span><span class="p">,</span> <span class="s1">&#39;NIA&#39;</span><span class="p">,</span> <span class="s1">&#39;Dam&#39;</span><span class="p">]</span>
+<span class="n">lamesa_df</span><span class="p">[</span><span class="n">plot_cols</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">subplots</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">legend</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ax</span><span class="p">)):</span> 
+    <span class="n">ax</span><span class="p">[</span><span class="n">a</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="n">plot_cols</span><span class="p">[</span><span class="n">a</span><span class="p">])</span>
+<span class="n">ax</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/785aee77d75edf395a70f2737c7c657fb538e5be3e1c1ef20464088decf565a1.png" src="../_images/785aee77d75edf395a70f2737c7c657fb538e5be3e1c1ef20464088decf565a1.png" />
+</div>
+</div>
+<section id="nhan-qua-giua-luong-mua-va-muc-nuoc-dap-la-mesa">
+<h4>Nhân quả giữa lượng mưa và mực nước đập La Mesa<a class="headerlink" href="#nhan-qua-giua-luong-mua-va-muc-nuoc-dap-la-mesa" title="Permalink to this heading">#</a></h4>
+<p>Trong ví dụ tiếp theo này, trước tiên chúng ta xem xét hai chuỗi thời gian lượng mưa và mực nước đập.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">data_df</span> <span class="o">=</span> <span class="n">lamesa_df</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s1">&#39;ONI&#39;</span><span class="p">,</span> <span class="s1">&#39;NIA&#39;</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">data_df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Rain</th>
+      <th>Dam</th>
+    </tr>
+    <tr>
+      <th>Time</th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>0.0</td>
+      <td>78.63</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>0.0</td>
+      <td>78.63</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>0.0</td>
+      <td>78.61</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>0.0</td>
+      <td>78.59</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>0.0</td>
+      <td>78.56</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<p>Chúng ta kiểm tra tính dừng bằng cách quan sát các biểu đồ độ trễ và áp dụng các kiểm định KPSS và ADF.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">lag_plots</span><span class="p">(</span><span class="n">data_df</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/bf9ef942ec6db09a20b9e074fbbd05b787966353149899ba8edc31f2d85569a8.png" src="../_images/bf9ef942ec6db09a20b9e074fbbd05b787966353149899ba8edc31f2d85569a8.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">kpss_test</span><span class="p">(</span><span class="n">data_df</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Rain</th>
+      <th>Dam</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>Test statistic</th>
+      <td>0.0327</td>
+      <td>1.8845</td>
+    </tr>
+    <tr>
+      <th>p-value</th>
+      <td>0.1000</td>
+      <td>0.0100</td>
+    </tr>
+    <tr>
+      <th>Critical value - 1%</th>
+      <td>0.2160</td>
+      <td>0.2160</td>
+    </tr>
+    <tr>
+      <th>Critical value - 2.5%</th>
+      <td>0.1760</td>
+      <td>0.1760</td>
+    </tr>
+    <tr>
+      <th>Critical value - 5%</th>
+      <td>0.1460</td>
+      <td>0.1460</td>
+    </tr>
+    <tr>
+      <th>Critical value - 10%</th>
+      <td>0.1190</td>
+      <td>0.1190</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">adf_test</span><span class="p">(</span><span class="n">data_df</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Rain</th>
+      <th>Dam</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>Test statistic</th>
+      <td>-8.7136</td>
+      <td>-4.2004</td>
+    </tr>
+    <tr>
+      <th>p-value</th>
+      <td>0.0000</td>
+      <td>0.0007</td>
+    </tr>
+    <tr>
+      <th>Critical value - 1%</th>
+      <td>-3.4313</td>
+      <td>-3.4313</td>
+    </tr>
+    <tr>
+      <th>Critical value - 5%</th>
+      <td>-2.8619</td>
+      <td>-2.8619</td>
+    </tr>
+    <tr>
+      <th>Critical value - 10%</th>
+      <td>-2.5670</td>
+      <td>-2.5670</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<p><strong>Kết quả:</strong> Cả ba phương pháp đều cho thấy rõ ràng rằng một lần nữa chuỗi lượng mưa là chuỗi dừng, trong khi chuỗi mực nước đập thì không dừng.</p>
+<p>Chúng ta áp dụng phép sai phân và kiểm tra lại tính dừng.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">data_df</span><span class="p">[</span><span class="s1">&#39;Dam&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data_df</span><span class="p">[</span><span class="s1">&#39;Dam&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">data_df</span><span class="p">[</span><span class="s1">&#39;Dam&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">data_df</span> <span class="o">=</span> <span class="n">data_df</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">lag_plots</span><span class="p">(</span><span class="n">data_df</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/86c6b8684dad4d4aee1c539443e3a1313a5c733c02ccbea820110b751dfe0017.png" src="../_images/86c6b8684dad4d4aee1c539443e3a1313a5c733c02ccbea820110b751dfe0017.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">kpss_test</span><span class="p">(</span><span class="n">data_df</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Rain</th>
+      <th>Dam</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>Test statistic</th>
+      <td>0.0327</td>
+      <td>0.0226</td>
+    </tr>
+    <tr>
+      <th>p-value</th>
+      <td>0.1000</td>
+      <td>0.1000</td>
+    </tr>
+    <tr>
+      <th>Critical value - 1%</th>
+      <td>0.2160</td>
+      <td>0.2160</td>
+    </tr>
+    <tr>
+      <th>Critical value - 2.5%</th>
+      <td>0.1760</td>
+      <td>0.1760</td>
+    </tr>
+    <tr>
+      <th>Critical value - 5%</th>
+      <td>0.1460</td>
+      <td>0.1460</td>
+    </tr>
+    <tr>
+      <th>Critical value - 10%</th>
+      <td>0.1190</td>
+      <td>0.1190</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">adf_test</span><span class="p">(</span><span class="n">data_df</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Rain</th>
+      <th>Dam</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>Test statistic</th>
+      <td>-8.7138</td>
+      <td>-26.5948</td>
+    </tr>
+    <tr>
+      <th>p-value</th>
+      <td>0.0000</td>
+      <td>0.0000</td>
+    </tr>
+    <tr>
+      <th>Critical value - 1%</th>
+      <td>-3.4313</td>
+      <td>-3.4313</td>
+    </tr>
+    <tr>
+      <th>Critical value - 5%</th>
+      <td>-2.8619</td>
+      <td>-2.8619</td>
+    </tr>
+    <tr>
+      <th>Critical value - 10%</th>
+      <td>-2.5670</td>
+      <td>-2.5670</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<p><strong>Kết quả:</strong> Cả ba phương pháp đều cho thấy rõ ràng rằng cả hai chuỗi dữ liệu đều không dừng.</p>
+<p>Tiếp theo, chúng ta chia dữ liệu và lựa chọn bậc độ trễ <span class="math notranslate nohighlight">\(p\)</span>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">train_df</span><span class="p">,</span> <span class="n">test_df</span> <span class="o">=</span> <span class="n">splitter</span><span class="p">(</span><span class="n">data_df</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">select_p</span><span class="p">(</span><span class="n">train_df</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>AIC     7
+BIC     6
+HQIC    7
+FPE     7
+dtype: int64
+</pre></div>
+</div>
+<img alt="../_images/de46626a944e1cf302820bf6c3adad964836aef26780e31668370f19746c04c0.png" src="../_images/de46626a944e1cf302820bf6c3adad964836aef26780e31668370f19746c04c0.png" />
+</div>
+</div>
+<p>Chúng ta lựa chọn <span class="math notranslate nohighlight">\(p=7\)</span>. Cuối cùng, chúng ta ước lượng mô hình VAR và kiểm định nhân quả Granger.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">p</span> <span class="o">=</span> <span class="mi">7</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">VAR</span><span class="p">(</span><span class="n">train_df</span><span class="p">)</span>
+<span class="n">var_model</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">granger_causation_matrix</span><span class="p">(</span><span class="n">train_df</span><span class="p">,</span> <span class="n">train_df</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span>  
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Rain_x</th>
+      <th>Dam_x</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>Rain_y</th>
+      <td>1.0</td>
+      <td>0.0005</td>
+    </tr>
+    <tr>
+      <th>Dam_y</th>
+      <td>0.0</td>
+      <td>1.0000</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<p><strong>Nhắc lại:</strong> Nếu một giá trị p-value &lt; mức ý nghĩa (0.05), thì chuỗi X tương ứng (cột) gây ra chuỗi Y (hàng).</p>
+<p><strong>Kết quả:</strong> Đối với ví dụ cụ thể này, chúng ta có thể kết luận rằng lượng mưa có quan hệ nhân quả Granger đối với sự thay đổi của mực nước đập. Ngược lại, sự thay đổi của mực nước đập cũng có quan hệ nhân quả Granger đối với lượng mưa. Đây là một ví dụ khác về hiện tượng phản hồi. Điều này có nghĩa là dữ liệu lượng mưa giúp cải thiện hiệu quả dự báo sự thay đổi mực nước đập, và dữ liệu mực nước đập cũng giúp cải thiện hiệu quả dự báo lượng mưa.</p>
+</section>
+<section id="nhan-qua-giua-luu-luong-xa-nia-va-muc-nuoc-dap-la-mesa">
+<h4>Nhân quả giữa lưu lượng xả NIA và mực nước đập La Mesa<a class="headerlink" href="#nhan-qua-giua-luu-luong-xa-nia-va-muc-nuoc-dap-la-mesa" title="Permalink to this heading">#</a></h4>
+<p>Trong ví dụ tiếp theo này, chúng ta sẽ tập trung vào hai chuỗi thời gian lưu lượng xả NIA và mực nước đập.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">data_df</span> <span class="o">=</span> <span class="n">lamesa_df</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s1">&#39;ONI&#39;</span><span class="p">,</span> <span class="s1">&#39;Rain&#39;</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">data_df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>NIA</th>
+      <th>Dam</th>
+    </tr>
+    <tr>
+      <th>Time</th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>38.225693</td>
+      <td>78.63</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>57.996530</td>
+      <td>78.63</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>49.119213</td>
+      <td>78.61</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>47.034720</td>
+      <td>78.59</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>42.223380</td>
+      <td>78.56</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<p>Trước tiên, chúng ta kiểm tra tính dừng bằng cách quan sát các biểu đồ độ trễ và áp dụng các kiểm định KPSS và ADF.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">lag_plots</span><span class="p">(</span><span class="n">data_df</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/1950a054ecbbf4b12e59a4ea467a9ff5ad82300422706938c0c1cb5625d0ed67.png" src="../_images/1950a054ecbbf4b12e59a4ea467a9ff5ad82300422706938c0c1cb5625d0ed67.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">kpss_test</span><span class="p">(</span><span class="n">data_df</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>NIA</th>
+      <th>Dam</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>Test statistic</th>
+      <td>0.184</td>
+      <td>1.8845</td>
+    </tr>
+    <tr>
+      <th>p-value</th>
+      <td>0.022</td>
+      <td>0.0100</td>
+    </tr>
+    <tr>
+      <th>Critical value - 1%</th>
+      <td>0.216</td>
+      <td>0.2160</td>
+    </tr>
+    <tr>
+      <th>Critical value - 2.5%</th>
+      <td>0.176</td>
+      <td>0.1760</td>
+    </tr>
+    <tr>
+      <th>Critical value - 5%</th>
+      <td>0.146</td>
+      <td>0.1460</td>
+    </tr>
+    <tr>
+      <th>Critical value - 10%</th>
+      <td>0.119</td>
+      <td>0.1190</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">adf_test</span><span class="p">(</span><span class="n">data_df</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>NIA</th>
+      <th>Dam</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>Test statistic</th>
+      <td>-6.6030</td>
+      <td>-4.2004</td>
+    </tr>
+    <tr>
+      <th>p-value</th>
+      <td>0.0000</td>
+      <td>0.0007</td>
+    </tr>
+    <tr>
+      <th>Critical value - 1%</th>
+      <td>-3.4313</td>
+      <td>-3.4313</td>
+    </tr>
+    <tr>
+      <th>Critical value - 5%</th>
+      <td>-2.8619</td>
+      <td>-2.8619</td>
+    </tr>
+    <tr>
+      <th>Critical value - 10%</th>
+      <td>-2.5670</td>
+      <td>-2.5670</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<p><strong>Kết quả:</strong> Cả ba phương pháp đều cho thấy rõ ràng rằng cả hai chuỗi dữ liệu đều không dừng.</p>
+<p>Chúng ta áp dụng phép sai phân và kiểm tra lại tính dừng.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">data_df</span><span class="p">[</span><span class="s1">&#39;NIA&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data_df</span><span class="p">[</span><span class="s1">&#39;NIA&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">data_df</span><span class="p">[</span><span class="s1">&#39;NIA&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">data_df</span><span class="p">[</span><span class="s1">&#39;Dam&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data_df</span><span class="p">[</span><span class="s1">&#39;Dam&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">data_df</span><span class="p">[</span><span class="s1">&#39;Dam&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">data_df</span> <span class="o">=</span> <span class="n">data_df</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">lag_plots</span><span class="p">(</span><span class="n">data_df</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/4829d28c2f5dc05467ce8c2356aefc74c7e0eb95fce8014aa983e9cc5bae7fc4.png" src="../_images/4829d28c2f5dc05467ce8c2356aefc74c7e0eb95fce8014aa983e9cc5bae7fc4.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">kpss_test</span><span class="p">(</span><span class="n">data_df</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>NIA</th>
+      <th>Dam</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>Test statistic</th>
+      <td>0.0048</td>
+      <td>0.0226</td>
+    </tr>
+    <tr>
+      <th>p-value</th>
+      <td>0.1000</td>
+      <td>0.1000</td>
+    </tr>
+    <tr>
+      <th>Critical value - 1%</th>
+      <td>0.2160</td>
+      <td>0.2160</td>
+    </tr>
+    <tr>
+      <th>Critical value - 2.5%</th>
+      <td>0.1760</td>
+      <td>0.1760</td>
+    </tr>
+    <tr>
+      <th>Critical value - 5%</th>
+      <td>0.1460</td>
+      <td>0.1460</td>
+    </tr>
+    <tr>
+      <th>Critical value - 10%</th>
+      <td>0.1190</td>
+      <td>0.1190</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">adf_test</span><span class="p">(</span><span class="n">data_df</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>NIA</th>
+      <th>Dam</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>Test statistic</th>
+      <td>-21.2837</td>
+      <td>-26.5948</td>
+    </tr>
+    <tr>
+      <th>p-value</th>
+      <td>0.0000</td>
+      <td>0.0000</td>
+    </tr>
+    <tr>
+      <th>Critical value - 1%</th>
+      <td>-3.4313</td>
+      <td>-3.4313</td>
+    </tr>
+    <tr>
+      <th>Critical value - 5%</th>
+      <td>-2.8619</td>
+      <td>-2.8619</td>
+    </tr>
+    <tr>
+      <th>Critical value - 10%</th>
+      <td>-2.5670</td>
+      <td>-2.5670</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<p><strong>Kết quả:</strong> Cả ba phương pháp đều nhất quán và cho thấy rằng cả hai chuỗi dữ liệu hiện nay đều là chuỗi dừng.</p>
+<p>Tiếp theo, chúng ta chia dữ liệu và lựa chọn bậc độ trễ <span class="math notranslate nohighlight">\(p\)</span>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">train_df</span><span class="p">,</span> <span class="n">test_df</span> <span class="o">=</span> <span class="n">splitter</span><span class="p">(</span><span class="n">data_df</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">select_p</span><span class="p">(</span><span class="n">train_df</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>AIC     14
+BIC      2
+HQIC     8
+FPE     14
+dtype: int64
+</pre></div>
+</div>
+<img alt="../_images/44628b309d18448a6f141a97f5379cfb9960f228764b44ee111d2384759e0516.png" src="../_images/44628b309d18448a6f141a97f5379cfb9960f228764b44ee111d2384759e0516.png" />
+</div>
+</div>
+<p>Chúng ta lựa chọn <span class="math notranslate nohighlight">\(p=14\)</span>. Cuối cùng, chúng ta ước lượng mô hình VAR và kiểm định nhân quả Granger.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">p</span> <span class="o">=</span> <span class="mi">14</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">VAR</span><span class="p">(</span><span class="n">train_df</span><span class="p">)</span>
+<span class="n">var_model</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">granger_causation_matrix</span><span class="p">(</span><span class="n">train_df</span><span class="p">,</span> <span class="n">train_df</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span>  
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>NIA_x</th>
+      <th>Dam_x</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>NIA_y</th>
+      <td>1.000</td>
+      <td>0.1632</td>
+    </tr>
+    <tr>
+      <th>Dam_y</th>
+      <td>0.636</td>
+      <td>1.0000</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<p><strong>Nhắc lại:</strong> Nếu một giá trị p-value &lt; mức ý nghĩa (0.05), thì chuỗi X tương ứng (cột) gây ra chuỗi Y (hàng).</p>
+<p><strong>Kết quả:</strong> Chúng ta thấy rằng, không giống như trường hợp của đập Ipo, sự thay đổi của lưu lượng xả NIA và sự thay đổi của mực nước đập không có quan hệ nhân quả Granger lẫn nhau đối với đập La Mesa. Điều này có nghĩa là dữ liệu về lưu lượng xả NIA không cải thiện hiệu quả dự báo sự thay đổi mực nước đập, và dữ liệu về mực nước đập cũng không cải thiện hiệu quả dự báo sự thay đổi lưu lượng xả NIA.</p>
+</section>
+</section>
+<section id="bai-tap">
+<h3>Bài tập<a class="headerlink" href="#bai-tap" title="Permalink to this heading">#</a></h3>
+<p>Như các bài tập, người đọc có thể kiểm định nhân quả Granger giữa các cặp biến khác từ cả hai bộ dữ liệu Ipo và La Mesa, cũng như từ bộ dữ liệu Angat.</p>
+<p>Ví dụ 3: Dữ liệu khí hậu Jena</p>
+<p>Chúng ta quay lại bộ dữ liệu khí hậu Jena và khám phá xem những biến nào có quan hệ nhân quả Granger đối với các biến khác.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">train_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;../data/train_series_datetime.csv&#39;</span><span class="p">,</span><span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;Date Time&#39;</span><span class="p">)</span>
+<span class="n">val_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;../data/val_series_datetime.csv&#39;</span><span class="p">,</span><span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;Date Time&#39;</span><span class="p">)</span>
+<span class="n">test_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;../data/test_series_datetime.csv&#39;</span><span class="p">,</span><span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;Date Time&#39;</span><span class="p">)</span>
+<span class="n">train_df</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">train_df</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+<span class="n">val_df</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">val_df</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+<span class="n">test_df</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">test_df</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+
+<span class="n">train_val_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">train_df</span><span class="p">,</span> <span class="n">val_df</span><span class="p">])</span>
+<span class="n">jena_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">train_df</span><span class="p">,</span> <span class="n">val_df</span><span class="p">,</span> <span class="n">test_df</span><span class="p">])</span>
+<span class="n">jena_df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>p (mbar)</th>
+      <th>T (degC)</th>
+      <th>Tpot (K)</th>
+      <th>Tdew (degC)</th>
+      <th>rh (%)</th>
+      <th>VPmax (mbar)</th>
+      <th>VPact (mbar)</th>
+      <th>VPdef (mbar)</th>
+      <th>sh (g/kg)</th>
+      <th>H2OC (mmol/mol)</th>
+      <th>rho (g/m**3)</th>
+      <th>wv (m/s)</th>
+      <th>max. wv (m/s)</th>
+      <th>wd (deg)</th>
+    </tr>
+    <tr>
+      <th>Date Time</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>2009-01-01 00:10:00</th>
+      <td>996.52</td>
+      <td>-8.02</td>
+      <td>265.40</td>
+      <td>-8.90</td>
+      <td>93.3</td>
+      <td>3.33</td>
+      <td>3.11</td>
+      <td>0.22</td>
+      <td>1.94</td>
+      <td>3.12</td>
+      <td>1307.75</td>
+      <td>1.03</td>
+      <td>1.75</td>
+      <td>152.3</td>
+    </tr>
+    <tr>
+      <th>2009-01-01 01:10:00</th>
+      <td>996.50</td>
+      <td>-7.62</td>
+      <td>265.81</td>
+      <td>-8.30</td>
+      <td>94.8</td>
+      <td>3.44</td>
+      <td>3.26</td>
+      <td>0.18</td>
+      <td>2.04</td>
+      <td>3.27</td>
+      <td>1305.68</td>
+      <td>0.18</td>
+      <td>0.63</td>
+      <td>166.5</td>
+    </tr>
+    <tr>
+      <th>2009-01-01 02:10:00</th>
+      <td>996.63</td>
+      <td>-8.85</td>
+      <td>264.57</td>
+      <td>-9.70</td>
+      <td>93.5</td>
+      <td>3.12</td>
+      <td>2.92</td>
+      <td>0.20</td>
+      <td>1.82</td>
+      <td>2.93</td>
+      <td>1312.11</td>
+      <td>0.16</td>
+      <td>0.50</td>
+      <td>158.3</td>
+    </tr>
+    <tr>
+      <th>2009-01-01 03:10:00</th>
+      <td>996.87</td>
+      <td>-8.84</td>
+      <td>264.56</td>
+      <td>-9.69</td>
+      <td>93.5</td>
+      <td>3.13</td>
+      <td>2.92</td>
+      <td>0.20</td>
+      <td>1.83</td>
+      <td>2.93</td>
+      <td>1312.37</td>
+      <td>0.07</td>
+      <td>0.25</td>
+      <td>129.3</td>
+    </tr>
+    <tr>
+      <th>2009-01-01 04:10:00</th>
+      <td>997.05</td>
+      <td>-9.23</td>
+      <td>264.15</td>
+      <td>-10.25</td>
+      <td>92.2</td>
+      <td>3.03</td>
+      <td>2.79</td>
+      <td>0.24</td>
+      <td>1.74</td>
+      <td>2.80</td>
+      <td>1314.62</td>
+      <td>0.10</td>
+      <td>0.38</td>
+      <td>203.9</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<section id="nhan-qua-giua-ap-suat-va-nhiet-do">
+<h4>Nhân quả giữa áp suất và nhiệt độ<a class="headerlink" href="#nhan-qua-giua-ap-suat-va-nhiet-do" title="Permalink to this heading">#</a></h4>
+<p>Trong ví dụ tiếp theo này, trước tiên chúng ta xem xét hai chuỗi thời gian p và T.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">data_df</span> <span class="o">=</span> <span class="n">jena_df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,:</span><span class="mi">2</span><span class="p">]</span>
+<span class="n">data_df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>p (mbar)</th>
+      <th>T (degC)</th>
+    </tr>
+    <tr>
+      <th>Date Time</th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>2009-01-01 00:10:00</th>
+      <td>996.52</td>
+      <td>-8.02</td>
+    </tr>
+    <tr>
+      <th>2009-01-01 01:10:00</th>
+      <td>996.50</td>
+      <td>-7.62</td>
+    </tr>
+    <tr>
+      <th>2009-01-01 02:10:00</th>
+      <td>996.63</td>
+      <td>-8.85</td>
+    </tr>
+    <tr>
+      <th>2009-01-01 03:10:00</th>
+      <td>996.87</td>
+      <td>-8.84</td>
+    </tr>
+    <tr>
+      <th>2009-01-01 04:10:00</th>
+      <td>997.05</td>
+      <td>-9.23</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<p>Chúng ta kiểm tra tính dừng bằng cách quan sát các biểu đồ độ trễ và áp dụng các kiểm định KPSS và ADF.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">lag_plots</span><span class="p">(</span><span class="n">data_df</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/4eacf4491bc22916d6142648f7842d2116761380f10d89877006ca4cc64117fb.png" src="../_images/4eacf4491bc22916d6142648f7842d2116761380f10d89877006ca4cc64117fb.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">kpss_test</span><span class="p">(</span><span class="n">data_df</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>p (mbar)</th>
+      <th>T (degC)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>Test statistic</th>
+      <td>0.2295</td>
+      <td>0.3649</td>
+    </tr>
+    <tr>
+      <th>p-value</th>
+      <td>0.0100</td>
+      <td>0.0100</td>
+    </tr>
+    <tr>
+      <th>Critical value - 1%</th>
+      <td>0.2160</td>
+      <td>0.2160</td>
+    </tr>
+    <tr>
+      <th>Critical value - 2.5%</th>
+      <td>0.1760</td>
+      <td>0.1760</td>
+    </tr>
+    <tr>
+      <th>Critical value - 5%</th>
+      <td>0.1460</td>
+      <td>0.1460</td>
+    </tr>
+    <tr>
+      <th>Critical value - 10%</th>
+      <td>0.1190</td>
+      <td>0.1190</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">adf_test</span><span class="p">(</span><span class="n">data_df</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>p (mbar)</th>
+      <th>T (degC)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>Test statistic</th>
+      <td>-18.3281</td>
+      <td>-8.5824</td>
+    </tr>
+    <tr>
+      <th>p-value</th>
+      <td>0.0000</td>
+      <td>0.0000</td>
+    </tr>
+    <tr>
+      <th>Critical value - 1%</th>
+      <td>-3.4304</td>
+      <td>-3.4304</td>
+    </tr>
+    <tr>
+      <th>Critical value - 5%</th>
+      <td>-2.8616</td>
+      <td>-2.8616</td>
+    </tr>
+    <tr>
+      <th>Critical value - 10%</th>
+      <td>-2.5668</td>
+      <td>-2.5668</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<p><strong>Kết quả:</strong> Cả ba phương pháp đều cho thấy rõ ràng rằng cả hai chuỗi dữ liệu đều không dừng.</p>
+<p>Chúng ta áp dụng phép sai phân và kiểm tra lại tính dừng.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">data_df</span><span class="p">[</span><span class="s1">&#39;p (mbar)&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data_df</span><span class="p">[</span><span class="s1">&#39;p (mbar)&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">data_df</span><span class="p">[</span><span class="s1">&#39;p (mbar)&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">data_df</span><span class="p">[</span><span class="s1">&#39;T (degC)&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data_df</span><span class="p">[</span><span class="s1">&#39;T (degC)&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">data_df</span><span class="p">[</span><span class="s1">&#39;T (degC)&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">data_df</span> <span class="o">=</span> <span class="n">data_df</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">lag_plots</span><span class="p">(</span><span class="n">data_df</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/74e5b8fe66adbc1588609716f63f4f5b3c5e20d8afe72e5380392c271f42a377.png" src="../_images/74e5b8fe66adbc1588609716f63f4f5b3c5e20d8afe72e5380392c271f42a377.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">kpss_test</span><span class="p">(</span><span class="n">data_df</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>p (mbar)</th>
+      <th>T (degC)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>Test statistic</th>
+      <td>0.0009</td>
+      <td>0.0024</td>
+    </tr>
+    <tr>
+      <th>p-value</th>
+      <td>0.1000</td>
+      <td>0.1000</td>
+    </tr>
+    <tr>
+      <th>Critical value - 1%</th>
+      <td>0.2160</td>
+      <td>0.2160</td>
+    </tr>
+    <tr>
+      <th>Critical value - 2.5%</th>
+      <td>0.1760</td>
+      <td>0.1760</td>
+    </tr>
+    <tr>
+      <th>Critical value - 5%</th>
+      <td>0.1460</td>
+      <td>0.1460</td>
+    </tr>
+    <tr>
+      <th>Critical value - 10%</th>
+      <td>0.1190</td>
+      <td>0.1190</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">adf_test</span><span class="p">(</span><span class="n">data_df</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>p (mbar)</th>
+      <th>T (degC)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>Test statistic</th>
+      <td>-38.6219</td>
+      <td>-41.3374</td>
+    </tr>
+    <tr>
+      <th>p-value</th>
+      <td>0.0000</td>
+      <td>0.0000</td>
+    </tr>
+    <tr>
+      <th>Critical value - 1%</th>
+      <td>-3.4304</td>
+      <td>-3.4304</td>
+    </tr>
+    <tr>
+      <th>Critical value - 5%</th>
+      <td>-2.8616</td>
+      <td>-2.8616</td>
+    </tr>
+    <tr>
+      <th>Critical value - 10%</th>
+      <td>-2.5668</td>
+      <td>-2.5668</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<p><strong>Kết quả:</strong> Cả ba phương pháp đều nhất quán và cho thấy rằng cả hai chuỗi dữ liệu hiện nay đều là chuỗi dừng.</p>
+<p>Tiếp theo, chúng ta chia dữ liệu và lựa chọn bậc độ trễ <span class="math notranslate nohighlight">\(p\)</span>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">train_df</span><span class="p">,</span> <span class="n">test_df</span> <span class="o">=</span> <span class="n">splitter</span><span class="p">(</span><span class="n">data_df</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">select_p</span><span class="p">(</span><span class="n">train_df</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>AIC     59
+BIC     53
+HQIC    54
+FPE     59
+dtype: int64
+</pre></div>
+</div>
+<img alt="../_images/1f26e1799b9decb504651f842651ca099fd2a86eafd2c925118b61a9879b4190.png" src="../_images/1f26e1799b9decb504651f842651ca099fd2a86eafd2c925118b61a9879b4190.png" />
+</div>
+</div>
+<p>Chúng tôi lựa chọn <span class="math notranslate nohighlight">\(p=30\)</span>. Cuối cùng, chúng ta ước lượng mô hình VAR và kiểm định nhân quả Granger.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">p</span> <span class="o">=</span> <span class="mi">30</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">VAR</span><span class="p">(</span><span class="n">train_df</span><span class="p">)</span>
+<span class="n">var_model</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">granger_causation_matrix</span><span class="p">(</span><span class="n">train_df</span><span class="p">,</span> <span class="n">train_df</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span>  
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>p (mbar)_x</th>
+      <th>T (degC)_x</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>p (mbar)_y</th>
+      <td>1.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>T (degC)_y</th>
+      <td>0.0</td>
+      <td>1.0</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<p><strong>Nhắc lại:</strong> Nếu một giá trị p-value &lt; mức ý nghĩa (0.05), thì chuỗi X tương ứng (cột) gây ra chuỗi Y (hàng).</p>
+<p><strong>Kết quả:</strong> Đối với ví dụ cụ thể này, chúng ta có thể kết luận rằng sự thay đổi của áp suất có quan hệ nhân quả Granger đối với sự thay đổi của nhiệt độ. Ngược lại, sự thay đổi của nhiệt độ cũng có quan hệ nhân quả Granger đối với áp suất. Đây là một ví dụ khác về hiện tượng phản hồi. Điều này có nghĩa là dữ liệu áp suất giúp cải thiện hiệu quả dự báo sự thay đổi nhiệt độ, và dữ liệu nhiệt độ cũng giúp cải thiện hiệu quả dự báo sự thay đổi áp suất.</p>
+</section>
+</section>
+</section>
+<section id="tom-tat">
+<h2>Tóm tắt<a class="headerlink" href="#tom-tat" title="Permalink to this heading">#</a></h2>
+<p>Trong chương này, chúng ta đã giới thiệu khái niệm nhân quả và thảo luận các hàm ý của nó đối với phân tích chuỗi thời gian. Chúng ta cũng đã áp dụng kiểm định nhân quả Granger cho các mô hình VAR tuyến tính trên nhiều bộ dữ liệu khác nhau, qua đó quan sát các ví dụ đa dạng về mối quan hệ nhân quả giữa các biến được xem xét.</p>
+<p>Khái niệm nhân quả sẽ được đề cập lại trong một chương sau, đặc biệt là nhằm giải quyết các hạn chế của phương pháp được thảo luận trong chương này và bàn luận về nhân quả đối với các mô hình phi tuyến.</p>
+</section>
+<section id="tai-lieu-tham-khao">
+<h2>Tài liệu tham khảo<a class="headerlink" href="#tai-lieu-tham-khao" title="Permalink to this heading">#</a></h2>
+<p>Nội dung của notebook này được tổng hợp từ các tài liệu tham khảo sau:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://www.jstor.org/stable/1912791">Granger, C. (1969). Investigating Causal Relations by Econometric Models and Cross-spectral Methods. Econometrica, 37(3), 424-438.</a></p></li>
+<li><p><a class="reference external" href="https://ideas.repec.org/a/eee/econom/v66y1995i1-2p225-250.html">Toda, Hiro Y. &amp; Yamamoto, Taku (1995). Statistical inference in vector autoregressions with possibly integrated processes. Journal of Econometrics, 66(1-2), 225-250.</a></p></li>
+<li><p><a class="reference external" href="https://www.jstor.org/stable/25791939">Hood, M., Kidd, Q., &amp; Morris, I. (2008). Two Sides of the Same Coin? Employing Granger Causality Tests in a Time Series Cross-Section Framework. Political Analysis, 16(3), 324-344.</a></p></li>
+<li><p><a class="reference external" href="https://rishi-a.github.io/2020/05/25/granger-causality.html">Testing for Granger Causality Using Python</a></p></li>
+</ul>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./04_GrangerCausality"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../03_VectorAutoregressiveModels/03_VectorAutoregressiveMethods.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Chương 3: Các phương pháp Vectơ tự hồi quy (Vector Autoregressive Methods)</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../05_SimplexandSmapProjections/05_Empirical%20Dynamic%20Modelling%20%28Simplex%20and%20SMap_Projections%29.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Chương 5: Các phương pháp dự báo động lực (Simplex và SMap Projections)</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ky-hieu">Ký hiệu</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dinh-nghia">Định nghĩa</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nhan-qua">Nhân quả</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#phan-hoi">Phản hồi</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nhan-qua-tuc-thoi">Nhân quả tức thời</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#do-tre-nhan-qua">Độ trễ nhân quả</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gia-dinh">Giả định</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#kiem-dinh-nhan-qua-granger">Kiểm định nhân quả Granger</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#vi-du-1-bo-du-lieu-dap-ipo">Ví dụ 1: Bộ dữ liệu đập Ipo</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#nhan-qua-giua-luong-mua-va-muc-nuoc-dap-ipo">Nhân quả giữa lượng mưa và mực nước đập Ipo</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#nhan-qua-giua-luu-luong-xa-nia-va-muc-nuoc-dap-ipo">Nhân quả giữa lưu lượng xả NIA và mực nước đập Ipo</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#vi-du-2-nhan-qua-doi-voi-dap-la-mesa">Ví dụ 2: Nhân quả đối với đập La Mesa</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#nhan-qua-giua-luong-mua-va-muc-nuoc-dap-la-mesa">Nhân quả giữa lượng mưa và mực nước đập La Mesa</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#nhan-qua-giua-luu-luong-xa-nia-va-muc-nuoc-dap-la-mesa">Nhân quả giữa lưu lượng xả NIA và mực nước đập La Mesa</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bai-tap">Bài tập</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#nhan-qua-giua-ap-suat-va-nhiet-do">Nhân quả giữa áp suất và nhiệt độ</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tom-tat">Tóm tắt</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tai-lieu-tham-khao">Tài liệu tham khảo</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By By AI Department - TLU
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2022.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
